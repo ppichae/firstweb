@@ -6,6 +6,7 @@ import { esc, badges, shuffle, today } from "../util.js";
 import { mountQuestion } from "../quiz.js";
 import { GRADES, schedule, preview, newCard } from "../srs.js";
 import { listBadges, LIST_POS, buildQuestion } from "./listStudy.js";
+import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
@@ -155,6 +156,7 @@ export function createVocabView(cfg) {
     if (src) src.onchange = e => { ui.src = e.target.value; reset(); };
     if (topic) topic.onchange = e => { ui.topic = e.target.value; reset(); };
     el.onclick = e => {
+      if (handleKanjiClick(e, cfg.roomId)) return;
       const stt = e.target.closest("[data-status]"), face = e.target.closest("[data-word]"), act = e.target.closest("[data-act]");
       if (stt) {
         ui.status = stt.dataset.status; ui.shown = PAGE;
@@ -232,6 +234,7 @@ export function createVocabView(cfg) {
       "</button>" +
       '<div class="card-meta"><span class="pos">' + meta + "</span>" +
         (needsReview(v.id) ? '<span class="badge warn">복습 필요</span>' : "") + "</div>" +
+      kanjiRowHTML(v.word, v.reading) +
       '<div class="card-foot">' +
         '<button type="button" class="mark star" data-act="fav" data-id="' + v.id + '" aria-pressed="' + !!s.fav + '" aria-label="즐겨찾기">' + (s.fav ? "★" : "☆") + "</button>" +
         '<span class="foot-right">' +
@@ -270,7 +273,7 @@ export function createVocabView(cfg) {
           (session.flipped
             ? '<div class="flash-back">' + (v.reading && v.reading !== v.word ? '<div class="reading" lang="ja">' + esc(v.reading) + "</div>" : "") +
               '<div class="meaning">' + esc(v.meaning) + "</div>" +
-              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : "") + "</div>"
+              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : "") + kanjiRowHTML(v.word, v.reading) + "</div>"
             : '<button type="button" class="btn" id="flip">답 보기</button>') +
         "</div>" +
         (session.flipped
@@ -281,6 +284,7 @@ export function createVocabView(cfg) {
       if (flip) { flip.onclick = () => { session.flipped = true; draw(); }; flip.focus(); }
     };
     el.onclick = e => {
+      if (handleKanjiClick(e, cfg.roomId)) return;
       const g = e.target.closest("[data-grade]");
       if (!g) return;
       const id = session.queue.shift();
@@ -380,7 +384,7 @@ export function createVocabView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources"], render },
+    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji"], render },
     needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, total: () => items().length,
   };
 }
@@ -475,6 +479,7 @@ export function createGrammarView(cfg) {
     const src = el.querySelector("#g-src");
     if (src) src.onchange = e => { ui.src = e.target.value; ui.shown = PAGE; draw(); };
     el.onclick = e => {
+      if (handleKanjiClick(e, cfg.roomId)) return;
       const f = e.target.closest("[data-gfilter]"), act = e.target.closest("[data-gact]");
       if (f) {
         ui.filter = f.dataset.gfilter; ui.shown = PAGE;
@@ -534,6 +539,7 @@ export function createGrammarView(cfg) {
     return '<div class="g-item" id="' + g.id + '">' +
       '<div><div class="g-pattern" lang="ja">' + esc(g.pattern) + "</div>" +
         (g.reading && !e.core ? '<div class="g-conn" lang="ja">' + esc(g.reading) + "</div>" : "") +
+        kanjiRowHTML(g.pattern, g.reading) +
         '<div class="g-actions">' +
           '<button type="button" class="mark star" data-gact="fav" data-id="' + g.id + '" aria-pressed="' + !!s.fav + '" aria-label="즐겨찾기">' + (s.fav ? "★" : "☆") + "</button>" +
           '<button type="button" class="mark" data-gact="studied" data-id="' + g.id + '" aria-pressed="' + !!s.studied + '">' + (s.studied ? "공부했어요 ✓" : "공부했어요") + "</button>" +
@@ -657,7 +663,7 @@ export function createGrammarView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources"], render },
+    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji"], render },
     studiedCount, total: () => items().length,
   };
 }

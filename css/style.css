@@ -641,3 +641,62 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 @media (max-width: 520px) { .cheers li { grid-template-columns: 1fr auto; } .cheer-text { grid-column: 1 / -1; grid-row: 2; } }
 .confirm-box { border: 1px solid var(--bad); background: var(--bad-soft); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; }
 .confirm-box p, .confirm-box ul { margin: 0; }
+
+/* ---------- 5단계: 한자 심층 학습 ---------- */
+.kanji-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 18px 0; }
+.flash-back .kanji-row, .g-body .kanji-row, .g-item .kanji-row { padding: 6px 0 0; justify-content: inherit; }
+.kr-label { font-size: 12px; color: var(--muted); margin-right: 2px; }
+.kj {
+  min-width: 40px; min-height: 40px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--ink);
+  background: var(--ink-soft); color: var(--ink); font-family: var(--font-jp); font-size: 18px; font-weight: 700; line-height: 1;
+}
+.kj:hover { background: var(--ink); color: var(--surface); }
+.kj.no-data { border-style: dashed; border-color: var(--line); background: var(--surface); color: var(--fg); font-weight: 500; }
+.kanji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.kanji-tile {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 8px;
+  display: grid; justify-items: center; gap: 2px; min-height: 120px; min-width: 0;
+}
+.kanji-tile:hover { border-color: var(--ink); }
+.kanji-tile.seen { border-color: var(--ink-soft); background: var(--ink-soft); }
+.kt-char { font-family: var(--font-jp); font-size: 44px; font-weight: 700; line-height: 1.15; }
+.kt-ko { font-size: 13px; font-weight: 600; text-align: center; }
+.kt-n { font-size: 12px; color: var(--muted); }
+.kanji-others { display: flex; flex-wrap: wrap; gap: 6px; max-height: 260px; overflow-y: auto; }
+
+.kanji-dialog {
+  border: 0; padding: 0; border-radius: 16px; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
+  background: var(--surface); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); overflow-y: auto;
+}
+.kanji-dialog::backdrop { background: rgba(10, 12, 20, .45); }
+.kd { display: grid; gap: 14px; padding: 20px; }
+@media (max-width: 520px) { .kd { padding: 16px; } }
+.kd-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start; }
+@media (max-width: 420px) { .kd-head { grid-template-columns: auto minmax(0, 1fr); } .kd-actions { grid-column: 1 / -1; } }
+.kd-char { font-family: var(--font-jp); font-size: 72px; font-weight: 700; line-height: 1; padding: 6px 12px; border: 1px solid var(--line); border-radius: 12px; }
+.kd-title { display: grid; gap: 4px; min-width: 0; }
+.kd-ko { font-size: 20px; }
+.kd-ko b { color: var(--ink); }
+.kd-mean { color: var(--muted); }
+.kd-actions { display: flex; gap: 6px; align-items: center; }
+.kd-word { background: var(--bg); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; font-size: 14.5px; }
+.rd-in { color: var(--ink); font-size: 17px; }
+.kd-sec { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+.kd-sec h4 { margin: 0; font-size: 15px; color: var(--ink); }
+.kd-dl { margin: 0; display: grid; gap: 8px; }
+.kd-dl > div { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); gap: 8px; align-items: baseline; }
+@media (max-width: 420px) { .kd-dl > div { grid-template-columns: 1fr; gap: 2px; } }
+.kd-dl dt { font-size: 13px; color: var(--muted); }
+.kd-dl dd { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+.rd { font-family: var(--font-jp); font-size: 17px; padding: 2px 10px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
+.rd.on { color: var(--ink); }
+.okuri { color: var(--muted); }
+.comp { display: inline-flex; gap: 4px; align-items: baseline; padding: 2px 8px; border-radius: 8px; background: var(--bg); font-size: 14px; }
+.kd-note { margin: 0; font-size: 13.5px; color: var(--warn); }
+.kd-box { border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; }
+.kd-box p { margin: 0; }
+.kd-box.origin { background: var(--bg); border: 1px solid var(--line); }
+.kd-box.story { background: var(--ink-soft); border: 1px dashed var(--ink); }
+.kd-box-label { font-size: 13px; font-weight: 700; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.kd-words, .kd-ex { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 14.5px; }
+.kd-foot { margin: 0; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }

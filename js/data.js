@@ -47,6 +47,9 @@ const EXTRA_FILES = {
   n3vocab: "data/n3/vocab.json",
   n3grammar: "data/n3/grammar.json",
   n3basics: "data/n3/basics.json",
+  kanji: "data/kanji/common.json",
+  kanjiN1: "data/kanji/n1.json",
+  kanjiN3: "data/kanji/n3.json",
 };
 export const EXTRA = {};
 const pending = {};

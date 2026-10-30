@@ -9,6 +9,7 @@ import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone } from "./basics.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { badgesOf } from "../../summary.js";
+import { roomKanjiList } from "../../kanji.js";
 
 const WEEKS = [
   { n: 1, title: "가나 + N5", items: [["#n3/basics", "가나 표 · 가나 퀴즈"], ["#n3/basics", "기초 단원 1~7 (발음 · 인사 · です · 조사 · こそあど · 형용사 · ます형)"]] },
@@ -33,6 +34,7 @@ function render(app) {
   const openNotes = noteEntries(n3store).filter(n => !n.resolved).length;
   const attempts = n3store.get("attempts");
   const correct = attempts.filter(a => a.correct).length;
+  const kanjiSet = roomKanjiList("n3");
   const tests = n3store.get("tests");
   const best = tests.length ? Math.max(...tests.map(t => Math.round(t.correct / t.total * 100))) : null;
 
@@ -75,7 +77,8 @@ function render(app) {
         course("B", "N3 집중 과정", "#n3/vocab", [
           ["단어", n3vocab.total() ? n3vocab.studiedCount() + " / " + n3vocab.total() + " 학습" : "콘텐츠 준비 중"],
           ["문법", n3grammar.total() ? n3grammar.studiedCount() + " / " + n3grammar.total() + " 공부함" : "콘텐츠 준비 중"],
-          ["한자 · 독해 · 청해", "콘텐츠 준비 중"],
+          ["한자", kanjiSet.length ? kanjiSet.filter(c => (n3store.get("kanji")[c] || {}).seen).length + " / " + kanjiSet.length + " 살펴봄" : "콘텐츠 준비 중"],
+          ["독해 · 청해", "콘텐츠 준비 중"],
         ]) +
         course("C", "시험 대비 과정", "#n3/exam", [
           ["연습 테스트", tests.length ? tests.length + "회 · 최고 " + best + "%" : "아직 없음"],
@@ -102,7 +105,7 @@ function course(letter, title, href, rows) {
     '<dl class="course-rows">' + rows.map(([t, v]) => "<div><dt>" + esc(t) + "</dt><dd>" + esc(v) + "</dd></div>").join("") + "</dl></article>";
 }
 
-export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources"], render };
+export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources", "kanji", "kanjiN3"], render };
 
 function badgeCard() {
   const list = badgesOf("n3");

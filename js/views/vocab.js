@@ -6,7 +6,7 @@ import { createVocabView } from "./study.js";
 
 export { LIST_POS as POS } from "./listStudy.js";
 
-const v = createVocabView({ id: "vocab", st: store, core: () => DB.vocab, extraKey: "n1vocab", idPrefix: "gen" });
+const v = createVocabView({ id: "vocab", roomId: "n1", st: store, core: () => DB.vocab, extraKey: "n1vocab", idPrefix: "gen" });
 
 export const needsReview = v.needsReview;
 export const reviewWordIds = v.reviewWordIds;

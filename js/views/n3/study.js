@@ -3,5 +3,5 @@ import { n3store } from "../../store.js";
 import { createVocabView, createGrammarView } from "../study.js";
 import { award } from "./game.js";
 
-export const n3vocab = createVocabView({ id: "n3/vocab", st: n3store, core: null, extraKey: "n3vocab", idPrefix: "n3", onEvent: award });
-export const n3grammar = createGrammarView({ id: "n3/grammar", st: n3store, core: null, extraKey: "n3grammar", idPrefix: "n3", onEvent: award });
+export const n3vocab = createVocabView({ id: "n3/vocab", roomId: "n3", st: n3store, core: null, extraKey: "n3vocab", idPrefix: "n3", onEvent: award });
+export const n3grammar = createGrammarView({ id: "n3/grammar", roomId: "n3", st: n3store, core: null, extraKey: "n3grammar", idPrefix: "n3", onEvent: award });

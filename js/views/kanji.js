@@ -1,0 +1,84 @@
+// 한자 화면: 이 방에서 고른 한자(상세 자료 있음)와, 단어 목록에 나오는 다른 한자(상세 준비 중)를 모아 본다
+// 한자를 누르면 상세 창이 열린다. 본 한자·즐겨찾기 기록은 방마다 따로 저장한다.
+import { EXTRA } from "../data.js";
+import { store, n3store } from "../store.js";
+import { esc } from "../util.js";
+import { kanjiInfo, roomKanjiList, wordsWith, isKanji, handleKanjiClick } from "../kanji.js";
+import { DB } from "../data.js";
+
+const STORES = { n1: store, n3: n3store };
+
+export function createKanjiView(id, roomId) {
+  const ui = { q: "", filter: "all" };
+  const st = STORES[roomId];
+  let appRef = null;
+  window.addEventListener("kanji-changed", () => { if (appRef && location.hash === "#" + id) drawGrid(appRef); });
+
+  function otherKanji() {
+    const featured = new Set(roomKanjiList(roomId));
+    const words = roomId === "n1" ? [...((DB.vocab && DB.vocab.items) || []), ...((EXTRA.n1vocab && EXTRA.n1vocab.items) || [])] : ((EXTRA.n3vocab && EXTRA.n3vocab.items) || []);
+    const count = new Map();
+    words.forEach(v => [...new Set([...(v.word || "")])].forEach(c => { if (isKanji(c) && c !== "々" && !featured.has(c)) count.set(c, (count.get(c) || 0) + 1); }));
+    return [...count.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]);
+  }
+
+  function render(app) {
+    appRef = app;
+    const list = roomKanjiList(roomId);
+    if (!list.length || !EXTRA.kanji) {
+      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>한자</h2></div></div><p class="notice">콘텐츠 준비 중이에요. 한자 자료 파일을 불러오지 못했어요.</p></section>';
+      return;
+    }
+    const seen = list.filter(c => (st.get("kanji")[c] || {}).seen).length;
+    app.innerHTML =
+      '<section class="panel">' +
+        '<div class="panel-head"><div><h2>한자</h2><p>한자를 누르면 한국 한자음과 뜻, 음독·훈독, 부수와 구성 요소, 이 방 단어 목록에서 쓰인 단어를 볼 수 있어요.</p></div>' +
+          '<div class="toolbar"><div class="progress">살펴본 한자 <strong>' + seen + "</strong> / " + list.length + "</div>" +
+          '<div class="bar" aria-hidden="true"><span style="width:' + (seen / list.length * 100) + '%"></span></div></div></div>' +
+        '<p class="notice">한자 정보는 AI가 작성했고 아직 <b>검수 필요</b> 상태예요. 어원과 학습용 연상 이야기는 따로 표시했어요. 단어 화면에서도 단어 아래의 한자 버튼을 누르면 같은 창이 열려요.</p>' +
+        '<div class="filters"><div class="field search"><label for="k-q">검색</label><input id="k-q" type="search" placeholder="한자, 한국 한자음·뜻, 읽기로 찾기" value="' + esc(ui.q) + '"></div></div>' +
+        '<div class="toolbar">' + [["all", "전체"], ["unseen", "아직 안 본 한자"], ["seen", "살펴본 한자"], ["fav", "즐겨찾기"]].map(([k, l]) =>
+          '<button type="button" class="chip" data-kf="' + k + '" aria-pressed="' + (ui.filter === k) + '">' + l + "</button>").join("") + "</div>" +
+        '<div class="kanji-grid" id="k-grid"></div>' +
+        '<article class="card-box"><h3>이 방 단어 목록에 나오는 다른 한자 <small class="hint" id="k-other-n"></small></h3>' +
+          '<p class="hint">상세 정보는 준비 중이에요. 누르면 이 한자가 쓰인 단어를 볼 수 있어요.</p><div class="kanji-others" id="k-others"></div></article>' +
+      "</section>";
+    app.querySelector("#k-q").oninput = e => { ui.q = e.target.value.trim(); drawGrid(app); };
+    app.onclick = e => {
+      if (handleKanjiClick(e, roomId)) return;
+      const f = e.target.closest("[data-kf]");
+      if (f) { ui.filter = f.dataset.kf; app.querySelectorAll("[data-kf]").forEach(b => b.setAttribute("aria-pressed", b === f)); drawGrid(app); }
+    };
+    drawGrid(app);
+    const others = otherKanji();
+    app.querySelector("#k-other-n").textContent = others.length + "자";
+    app.querySelector("#k-others").innerHTML = others.map(c => '<button type="button" class="kj no-data" data-kanji="' + esc(c) + '" lang="ja">' + esc(c) + "</button>").join("");
+  }
+
+  function drawGrid(app) {
+    const grid = app.querySelector("#k-grid");
+    if (!grid) return;
+    const rec = st.get("kanji");
+    const q = ui.q;
+    const items = roomKanjiList(roomId).map(c => kanjiInfo(c)).filter(Boolean).filter(k => {
+      const r = rec[k.char] || {};
+      if (ui.filter === "seen" && !r.seen) return false;
+      if (ui.filter === "unseen" && r.seen) return false;
+      if (ui.filter === "fav" && !r.fav) return false;
+      if (q) {
+        const hay = [k.char, k.ko ? k.ko.hun + " " + k.ko.eum : "", k.meaning, ...k.on, ...k.kun.map(x => x.replace("-", ""))].join(" ");
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    grid.innerHTML = items.length ? items.map(k => {
+      const r = rec[k.char] || {};
+      return '<button type="button" class="kanji-tile' + (r.seen ? " seen" : "") + '" data-kanji="' + esc(k.char) + '">' +
+        '<span class="kt-char" lang="ja">' + esc(k.char) + "</span>" +
+        '<span class="kt-ko">' + (k.ko ? esc(k.ko.hun) + " " + esc(k.ko.eum) : "국자") + (r.fav ? " ★" : "") + "</span>" +
+        '<span class="kt-n">' + wordsWith(k.char, roomId).length + "단어</span></button>";
+    }).join("") : '<p class="empty">조건에 맞는 한자가 없어요.</p>';
+  }
+
+  return { id, label: "한자", jp: "漢字", needs: ["kanji", roomId === "n1" ? "kanjiN1" : "kanjiN3", roomId === "n1" ? "n1vocab" : "n3vocab", "sources"], render };
+}

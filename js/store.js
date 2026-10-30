@@ -20,6 +20,7 @@ const N1_DEFAULTS = {
   profile: null,   // { name: 화면에 보일 이름 }
   goal: null,      // { weeklyMinutes: 이번 주 목표 학습 시간(분) }
   cheers: [],      // 이 사람이 보낸 응원 메시지 { text, at }
+  kanji: {},       // 한자 → { seen: 처음 본 날, last, fav }
 };
 
 // 정해 두지 않은 종류(예: N3 방의 "words")를 물으면 오류 없이 undefined를 돌려준다
@@ -120,4 +121,5 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   profile: null,
   goal: null,
   cheers: [],
+  kanji: {},
 });
