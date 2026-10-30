@@ -146,7 +146,430 @@
       "collocations": ["妥協点を探る", "妥協を許さない"],
       "usage": "서로 양보해서 의견을 맞출 때 써요. 「妥協しない」는 '양보하지 않고 끝까지 고집한다'라는 뜻이에요.",
       "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v015", "word": "憂慮", "reading": "ゆうりょ", "meaning": "우려, 근심", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "事態は憂慮すべき状況にある。", "ko": "사태는 우려할 만한 상황에 있다." }],
+      "synonyms": ["懸念", "心配"], "antonyms": ["楽観"],
+      "collocations": ["憂慮すべき事態", "深く憂慮する"],
+      "usage": "사회 문제나 심각한 사태를 깊이 걱정할 때 써요. 「憂慮すべき」 형태가 많이 쓰여요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v016", "word": "危惧", "reading": "きぐ", "meaning": "위구, 나쁜 결과를 걱정함", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "専門家は環境への影響を危惧している。", "ko": "전문가는 환경에 미칠 영향을 걱정하고 있다." }],
+      "synonyms": ["懸念", "不安"], "antonyms": ["安心"],
+      "collocations": ["〜を危惧する", "絶滅危惧種"],
+      "usage": "앞으로 나쁜 일이 생기지 않을까 두려워할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v017", "word": "斡旋", "reading": "あっせん", "meaning": "알선, 중개", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "大学が学生にアルバイトを斡旋している。", "ko": "대학이 학생에게 아르바이트를 알선하고 있다." }],
+      "synonyms": ["仲介", "紹介"], "antonyms": [],
+      "collocations": ["仕事を斡旋する", "就職の斡旋"],
+      "usage": "사이에 들어가 일자리나 거래 상대를 연결해 줄 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v018", "word": "打診", "reading": "だしん", "meaning": "타진, 의향을 떠봄", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "取引先に値下げの可能性を打診した。", "ko": "거래처에 가격 인하가 가능한지 의향을 떠보았다." }],
+      "synonyms": ["探る"], "antonyms": [],
+      "collocations": ["意向を打診する", "出演を打診する"],
+      "usage": "정식으로 부탁하기 전에 상대의 생각을 미리 알아볼 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v019", "word": "措置", "reading": "そち", "meaning": "조치", "pos": "noun",
+      "topic": "사회·경제", "level": 1,
+      "examples": [{ "ja": "政府は緊急の措置を講じた。", "ko": "정부는 긴급 조치를 취했다." }],
+      "synonyms": ["対策", "処置"], "antonyms": [],
+      "collocations": ["措置を講じる", "緊急措置", "特例措置"],
+      "usage": "문제를 해결하려고 취하는 공식적인 대응이에요. 「措置を講じる」가 대표적인 짝이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v020", "word": "頻繁", "reading": "ひんぱん", "meaning": "빈번함", "pos": "na-adj",
+      "topic": "생활·감정", "level": 1,
+      "examples": [{ "ja": "最近、頻繁に停電が起きている。", "ko": "최근 정전이 빈번하게 일어나고 있다." }],
+      "synonyms": ["しばしば", "たびたび"], "antonyms": ["まれ"],
+      "collocations": ["頻繁に〜する", "頻繁な連絡"],
+      "usage": "같은 일이 짧은 간격으로 여러 번 일어날 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v021", "word": "該当", "reading": "がいとう", "meaning": "해당", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 1,
+      "examples": [{ "ja": "該当する項目に丸をつけてください。", "ko": "해당하는 항목에 동그라미를 쳐 주세요." }],
+      "synonyms": ["当てはまる"], "antonyms": [],
+      "collocations": ["該当者", "〜に該当する"],
+      "usage": "조건이나 기준에 들어맞을 때 써요. 서류·안내문에서 자주 보여요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v022", "word": "抜粋", "reading": "ばっすい", "meaning": "발췌", "pos": "noun-suru",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "報告書から要点を抜粋して配布した。", "ko": "보고서에서 요점을 발췌해 나눠 주었다." }],
+      "synonyms": ["抜き書き"], "antonyms": [],
+      "collocations": ["〜から抜粋する", "抜粋版"],
+      "usage": "글이나 자료에서 필요한 부분만 골라 뽑을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v023", "word": "把握", "reading": "はあく", "meaning": "파악", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 1,
+      "examples": [{ "ja": "まずは現状を正確に把握することが大切だ。", "ko": "우선 현재 상황을 정확히 파악하는 것이 중요하다." }],
+      "synonyms": ["理解"], "antonyms": [],
+      "collocations": ["状況を把握する", "実態把握"],
+      "usage": "상황이나 내용을 확실하게 이해할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v024", "word": "推移", "reading": "すいい", "meaning": "추이, 변화의 흐름", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "過去十年の人口の推移をグラフで示す。", "ko": "지난 10년간의 인구 추이를 그래프로 나타내다." }],
+      "synonyms": ["変遷", "移り変わり"], "antonyms": [],
+      "collocations": ["推移を見守る", "〜の推移"],
+      "usage": "시간에 따라 상황이나 수치가 변해 가는 흐름을 말할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v025", "word": "収拾", "reading": "しゅうしゅう", "meaning": "수습", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 3,
+      "examples": [{ "ja": "混乱した事態を収拾するのに時間がかかった。", "ko": "혼란한 사태를 수습하는 데 시간이 걸렸다." }],
+      "synonyms": ["収める"], "antonyms": [],
+      "collocations": ["事態を収拾する", "収拾がつかない"],
+      "usage": "어지러운 상황을 정리해서 바로잡을 때 써요. 같은 읽기인 「収集」(수집)과 헷갈리기 쉬워요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v026", "word": "収集", "reading": "しゅうしゅう", "meaning": "수집", "pos": "noun-suru",
+      "topic": "생활·감정", "level": 1,
+      "examples": [{ "ja": "必要な情報を収集してから判断する。", "ko": "필요한 정보를 수집한 뒤에 판단한다." }],
+      "synonyms": ["集める"], "antonyms": [],
+      "collocations": ["情報収集", "ごみの収集"],
+      "usage": "물건이나 정보를 모을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v027", "word": "寄与", "reading": "きよ", "meaning": "기여", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "この研究は医療の発展に大きく寄与した。", "ko": "이 연구는 의료 발전에 크게 기여했다." }],
+      "synonyms": ["貢献"], "antonyms": [],
+      "collocations": ["〜に寄与する", "社会に寄与する"],
+      "usage": "어떤 일의 발전이나 성과에 도움이 될 때 써요. 「貢献」보다 조금 딱딱한 말이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v028", "word": "根拠", "reading": "こんきょ", "meaning": "근거", "pos": "noun",
+      "topic": "학술·사고", "level": 1,
+      "examples": [{ "ja": "根拠のないうわさを信じてはいけない。", "ko": "근거 없는 소문을 믿어서는 안 된다." }],
+      "synonyms": ["裏付け"], "antonyms": [],
+      "collocations": ["根拠を示す", "根拠のない", "〜を根拠に"],
+      "usage": "주장이나 판단을 뒷받침하는 이유를 말할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v029", "word": "逸脱", "reading": "いつだつ", "meaning": "일탈, 벗어남", "pos": "noun-suru",
+      "topic": "학술·사고", "level": 3,
+      "examples": [{ "ja": "議論が本来の目的から逸脱してしまった。", "ko": "논의가 본래 목적에서 벗어나 버렸다." }],
+      "synonyms": ["外れる"], "antonyms": [],
+      "collocations": ["〜から逸脱する", "逸脱行為"],
+      "usage": "정해진 범위, 규칙, 목적에서 벗어날 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v030", "word": "一律", "reading": "いちりつ", "meaning": "일률, 모두 똑같이", "pos": "na-adj",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "参加費は年齢に関係なく一律千円です。", "ko": "참가비는 나이와 관계없이 일률적으로 천 엔입니다." }],
+      "synonyms": ["一様"], "antonyms": [],
+      "collocations": ["一律に〜する", "一律〇〇円"],
+      "usage": "모든 대상에 같은 기준(금액, 비율)을 적용할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v031", "word": "臨機応変", "reading": "りんきおうへん", "meaning": "임기응변", "pos": "na-adj",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "予想外のトラブルにも臨機応変に対応した。", "ko": "예상치 못한 문제에도 임기응변으로 대응했다." }],
+      "synonyms": ["柔軟"], "antonyms": [],
+      "collocations": ["臨機応変に対応する"],
+      "usage": "상황에 맞춰 그때그때 알맞게 대처할 때 써요. 「臨機応変に」 형태가 가장 많이 쓰여요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v032", "word": "概ね", "reading": "おおむね", "meaning": "대체로, 대강", "pos": "adverb",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "計画はおおむね順調に進んでいる。", "ko": "계획은 대체로 순조롭게 진행되고 있다." }],
+      "synonyms": ["だいたい", "ほぼ"], "antonyms": [],
+      "collocations": ["おおむね良好", "おおむね賛成"],
+      "usage": "세부적으로는 다를 수 있지만 전체적으로 보면 그렇다는 뜻이에요. 히라가나로도 많이 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v033", "word": "いささか", "reading": "いささか", "meaning": "다소, 조금", "pos": "adverb",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "その説明にはいささか疑問が残る。", "ko": "그 설명에는 다소 의문이 남는다." }],
+      "synonyms": ["少し", "やや"], "antonyms": [],
+      "collocations": ["いささか疲れた", "いささかも〜ない"],
+      "usage": "「少し」보다 딱딱한 말이에요. 「いささかも〜ない」는 '조금도 ~않다'라는 뜻이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v034", "word": "ことごとく", "reading": "ことごとく", "meaning": "모조리, 전부", "pos": "adverb",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "彼の提案はことごとく却下された。", "ko": "그의 제안은 모조리 기각되었다." }],
+      "synonyms": ["すべて", "全部"], "antonyms": [],
+      "collocations": ["ことごとく失敗する"],
+      "usage": "하나도 남김없이 모두라는 뜻이에요. 좋지 않은 결과에 자주 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v035", "word": "とっさに", "reading": "とっさに", "meaning": "순간적으로, 엉겁결에", "pos": "adverb",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "ボールが飛んできて、とっさに身をかわした。", "ko": "공이 날아와서 순간적으로 몸을 피했다." }],
+      "synonyms": ["瞬時に"], "antonyms": [],
+      "collocations": ["とっさの判断", "とっさに〜する"],
+      "usage": "생각할 틈도 없이 바로 행동할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v036", "word": "ほのめかす", "reading": "ほのめかす", "meaning": "넌지시 비추다", "pos": "verb",
+      "topic": "생활·감정", "level": 3,
+      "examples": [{ "ja": "社長は記者会見で辞任をほのめかした。", "ko": "사장은 기자 회견에서 사임을 넌지시 내비쳤다." }],
+      "synonyms": ["示唆する", "におわせる"], "antonyms": ["明言する"],
+      "collocations": ["辞任をほのめかす", "引退をほのめかす"],
+      "usage": "사람이 자기 생각이나 계획을 직접 말하지 않고 슬쩍 드러낼 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v037", "word": "損なう", "reading": "そこなう", "meaning": "해치다, 손상시키다", "pos": "verb",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "無理なダイエットは健康を損なう。", "ko": "무리한 다이어트는 건강을 해친다." }],
+      "synonyms": ["害する"], "antonyms": [],
+      "collocations": ["健康を損なう", "機嫌を損なう", "信頼を損なう"],
+      "usage": "건강, 기분, 신뢰처럼 좋은 상태를 나쁘게 만들 때 써요. 「동사 ます형＋損なう」는 '~하는 데 실패하다'(見損なう)라는 다른 뜻이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v038", "word": "阻む", "reading": "はばむ", "meaning": "막다, 저지하다", "pos": "verb",
+      "topic": "사회·경제", "level": 3,
+      "examples": [{ "ja": "厚い壁が行く手を阻んでいた。", "ko": "두꺼운 벽이 가는 길을 가로막고 있었다." }],
+      "synonyms": ["妨げる", "遮る"], "antonyms": [],
+      "collocations": ["行く手を阻む", "優勝を阻む"],
+      "usage": "앞으로 나아가거나 이루려는 것을 가로막을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v039", "word": "怠る", "reading": "おこたる", "meaning": "게을리하다, 소홀히 하다", "pos": "verb",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "確認を怠ったために、大きなミスが起きた。", "ko": "확인을 소홀히 했기 때문에 큰 실수가 생겼다." }],
+      "synonyms": ["怠ける"], "antonyms": [],
+      "collocations": ["注意を怠る", "努力を怠らない"],
+      "usage": "해야 할 일이나 주의를 소홀히 할 때 써요. 「怠ける」(게으름 피우다)와 차이는 '헷갈리는 단어'에서 확인하세요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v040", "word": "潔い", "reading": "いさぎよい", "meaning": "깨끗하다, 미련 없다", "pos": "i-adj",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "彼は潔く自分の負けを認めた。", "ko": "그는 깨끗하게 자신의 패배를 인정했다." }],
+      "synonyms": ["きっぱりした"], "antonyms": ["未練がましい"],
+      "collocations": ["潔く認める", "潔い態度"],
+      "usage": "미련을 두지 않고 깔끔하게 행동하는 태도를 칭찬할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v041", "word": "煩わしい", "reading": "わずらわしい", "meaning": "번거롭다, 귀찮다", "pos": "i-adj",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "煩わしい手続きを簡単にしてほしい。", "ko": "번거로운 절차를 간단하게 해 주었으면 한다." }],
+      "synonyms": ["面倒だ"], "antonyms": [],
+      "collocations": ["煩わしい手続き", "人間関係が煩わしい"],
+      "usage": "복잡하거나 손이 많이 가서 귀찮을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v042", "word": "心許ない", "reading": "こころもとない", "meaning": "불안하다, 미덥지 않다", "pos": "i-adj",
+      "topic": "생활·감정", "level": 3,
+      "examples": [{ "ja": "この人数で大会を運営するのは心許ない。", "ko": "이 인원으로 대회를 운영하는 것은 불안하다." }],
+      "synonyms": ["不安だ", "頼りない"], "antonyms": ["心強い"],
+      "collocations": ["心許ない返事", "〜では心許ない"],
+      "usage": "믿고 맡기기에 부족해서 마음이 놓이지 않을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v043", "word": "安易", "reading": "あんい", "meaning": "안이함, 손쉬움", "pos": "na-adj",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "安易な結論を出すべきではない。", "ko": "안이한 결론을 내려서는 안 된다." }],
+      "synonyms": ["軽率"], "antonyms": ["慎重"],
+      "collocations": ["安易な考え", "安易に決める"],
+      "usage": "깊이 생각하지 않고 쉽게 처리한다는 비판적인 뜻으로 많이 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v044", "word": "柔軟", "reading": "じゅうなん", "meaning": "유연함", "pos": "na-adj",
+      "topic": "업무·조직", "level": 1,
+      "examples": [{ "ja": "状況に応じて柔軟に考えることが必要だ。", "ko": "상황에 따라 유연하게 생각하는 것이 필요하다." }],
+      "synonyms": ["臨機応変"], "antonyms": ["硬直"],
+      "collocations": ["柔軟な対応", "柔軟な発想"],
+      "usage": "생각이나 태도가 상황에 맞게 바뀔 수 있을 때 써요. 몸이 부드럽다는 뜻으로도 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
     }
   ],
-  "questions": []
+  "confusables": [
+    {
+      "id": "c001", "title": "걱정을 나타내는 말",
+      "words": [
+        { "word": "懸念", "reading": "けねん", "meaning": "앞으로의 일을 걱정함", "example": { "ja": "情報漏えいの懸念がある。", "ko": "정보 유출의 우려가 있다." } },
+        { "word": "憂慮", "reading": "ゆうりょ", "meaning": "심각한 사태를 깊이 근심함", "example": { "ja": "憂慮すべき事態だ。", "ko": "우려할 만한 사태다." } },
+        { "word": "危惧", "reading": "きぐ", "meaning": "나쁜 결과가 생길까 두려워함", "example": { "ja": "絶滅が危惧される動物。", "ko": "멸종이 걱정되는 동물." } }
+      ],
+      "point": "셋 다 '걱정'이지만, 「憂慮」는 심각한 사태에, 「危惧」는 나쁜 결과에 대한 두려움에 초점이 있어요. 「懸念」은 가장 넓게 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "c002", "title": "같은 읽기 しゅうしゅう",
+      "words": [
+        { "word": "収拾", "reading": "しゅうしゅう", "meaning": "어지러운 상황을 수습함", "example": { "ja": "事態の収拾を図る。", "ko": "사태 수습을 꾀하다." } },
+        { "word": "収集", "reading": "しゅうしゅう", "meaning": "물건·정보를 모음", "example": { "ja": "データを収集する。", "ko": "데이터를 수집하다." } }
+      ],
+      "point": "혼란·사태와 함께 쓰면 「収拾」, 정보·물건과 함께 쓰면 「収集」예요. 「収拾がつかない」(수습이 안 되다)를 통째로 외워 두세요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "c003", "title": "게을리하다",
+      "words": [
+        { "word": "怠る", "reading": "おこたる", "meaning": "해야 할 일·주의를 소홀히 함", "example": { "ja": "安全確認を怠る。", "ko": "안전 확인을 소홀히 하다." } },
+        { "word": "怠ける", "reading": "なまける", "meaning": "일하기 싫어서 게으름을 피움", "example": { "ja": "仕事を怠けて遊んでいる。", "ko": "일을 게을리하고 놀고 있다." } }
+      ],
+      "point": "「怠る」는 '확인·주의·노력' 같은 의무를 빠뜨리는 것, 「怠ける」는 사람의 게으른 태도에 초점이 있어요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "c004", "title": "넌지시 알리다",
+      "words": [
+        { "word": "示唆", "reading": "しさ", "meaning": "자료·결과 등이 어떤 사실을 시사함", "example": { "ja": "データは変化を示唆している。", "ko": "데이터는 변화를 시사하고 있다." } },
+        { "word": "ほのめかす", "reading": "ほのめかす", "meaning": "사람이 의도를 슬쩍 내비침", "example": { "ja": "引退をほのめかす。", "ko": "은퇴를 넌지시 내비치다." } }
+      ],
+      "point": "「示唆」는 연구 결과나 자료가 주어인 글에서 자주 보여요. 「ほのめかす」는 사람이 자기 의도를 슬쩍 드러낼 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "c005", "title": "모두 같이",
+      "words": [
+        { "word": "一律", "reading": "いちりつ", "meaning": "모두 같은 기준으로", "example": { "ja": "料金を一律に引き上げる。", "ko": "요금을 일률적으로 인상하다." } },
+        { "word": "一斉", "reading": "いっせい", "meaning": "모두 동시에", "example": { "ja": "一斉に走り出した。", "ko": "일제히 달리기 시작했다." } }
+      ],
+      "point": "「一律」는 '같은 기준', 「一斉」는 '같은 시간'이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    }
+  ],
+  "questions": [
+    {
+      "id": "vq001", "kind": "한자 읽기", "word": "v001",
+      "prompt": "[[懸念]]の読み方として最もよいものを選びなさい。",
+      "options": ["けねん", "けんねん", "かねん", "けいねん"], "answer": 0,
+      "explanation": "「懸念」은 「けねん」이라고 읽어요. 「懸」을 「け」로 읽는 특별한 경우예요.",
+      "wrongReasons": ["", "「懸」은 보통 「けん」으로 읽지만, 「懸念」에서는 「け」로 읽어요.", "「か」로 읽는 경우는 없어요.", "「けい」로 읽는 경우는 없어요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq002", "kind": "한자 읽기", "word": "v009",
+      "prompt": "経験を[[培う]]。",
+      "options": ["つちかう", "やしなう", "はぐくむ", "つくろう"], "answer": 0,
+      "explanation": "「培う」는 「つちかう」라고 읽어요.",
+      "wrongReasons": ["", "「やしなう」는 「養う」의 읽기예요.", "「はぐくむ」는 「育む」의 읽기예요.", "「つくろう」는 「繕う」의 읽기예요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq003", "kind": "한자 읽기", "word": "v010",
+      "prompt": "支払いが[[滞って]]いる。",
+      "options": ["とどまって", "とどこおって", "おこたって", "さえぎって"], "answer": 1,
+      "explanation": "「滞る」는 「とどこおる」라고 읽어요.",
+      "wrongReasons": ["「とどまる」는 「留まる・止まる」의 읽기예요.", "", "「おこたる」는 「怠る」의 읽기예요.", "「さえぎる」는 「遮る」의 읽기예요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq004", "kind": "한자 읽기", "word": "v038",
+      "prompt": "行く手を[[阻む]]。",
+      "options": ["はばむ", "こばむ", "いどむ", "はげむ"], "answer": 0,
+      "explanation": "「阻む」는 「はばむ」라고 읽어요.",
+      "wrongReasons": ["", "「こばむ」는 「拒む」(거절하다)의 읽기예요.", "「いどむ」는 「挑む」(도전하다)의 읽기예요.", "「はげむ」는 「励む」(힘쓰다)의 읽기예요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq005", "kind": "문맥 규정", "word": "v018",
+      "prompt": "先方の意向を（　　）したところ、前向きな返事をもらった。",
+      "options": ["打診", "斡旋", "把握", "措置"], "answer": 0,
+      "explanation": "상대의 '의향'을 미리 알아보는 것은 「打診」이에요.",
+      "wrongReasons": ["", "「斡旋」은 일자리 등을 소개·중개하는 것이라 '의향'과 어울리지 않아요.", "「把握」은 상황을 이해하는 것이라, 뒤의 '긍정적인 답을 받았다'와 이어지지 않아요.", "「措置」는 문제에 대한 대응이라 '의향'과 어울리지 않아요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq006", "kind": "문맥 규정", "word": "v025",
+      "prompt": "事態の（　　）がつかなくなる前に、手を打つべきだ。",
+      "options": ["収集", "収拾", "推移", "根拠"], "answer": 1,
+      "explanation": "「収拾がつかない」는 '수습이 안 되다'라는 굳어진 표현이에요.",
+      "wrongReasons": ["「収集」는 '모으는 것'이라 사태와 어울리지 않아요. 읽기가 같아서 헷갈리기 쉬워요.", "", "「推移」는 '변화의 흐름'이라 「〜がつかない」와 함께 쓰지 않아요.", "「根拠」는 '근거'라 문장의 의미가 통하지 않아요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq007", "kind": "문맥 규정", "word": "v019",
+      "prompt": "政府は物価の高騰を受けて、緊急の（　　）を講じた。",
+      "options": ["打診", "抜粋", "措置", "寄与"], "answer": 2,
+      "explanation": "「措置を講じる」(조치를 취하다)는 함께 쓰는 짝이 정해진 표현이에요.",
+      "wrongReasons": ["「打診」은 의향을 떠보는 것이라 「講じる」와 함께 쓰지 않아요.", "「抜粋」은 글에서 일부를 뽑는 것이라 문맥에 맞지 않아요.", "", "「寄与」는 '기여'라 「講じる」와 함께 쓰지 않아요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq008", "kind": "문맥 규정", "word": "v031",
+      "prompt": "接客の仕事では、客の要望に（　　）に対応する力が求められる。",
+      "options": ["一律", "臨機応変", "安易", "頻繁"], "answer": 1,
+      "explanation": "손님의 요구에 그때그때 알맞게 대응하는 것이므로 「臨機応変」이 맞아요.",
+      "wrongReasons": ["「一律」는 '모두 같은 기준으로'라서 손님마다 다른 요구에 대응한다는 뜻과 맞지 않아요.", "", "「安易」는 '깊이 생각하지 않고 쉽게'라는 비판적인 뜻이라 '요구되는 능력'과 맞지 않아요.", "「頻繁に対応する」는 '자주 대응한다'는 뜻이라 능력을 설명하기에 어색해요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq009", "kind": "바꿔 말하기", "word": "v032",
+      "prompt": "計画は[[おおむね]]順調に進んでいる。",
+      "options": ["だいたい", "ようやく", "かろうじて", "ひとまず"], "answer": 0,
+      "explanation": "「おおむね」는 '대체로'라는 뜻이라 「だいたい」와 가장 가까워요.",
+      "wrongReasons": ["", "「ようやく」는 '겨우, 마침내'라는 뜻이에요.", "「かろうじて」는 '간신히'라는 뜻이에요.", "「ひとまず」는 '일단, 우선'이라는 뜻이에요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq010", "kind": "바꿔 말하기", "word": "v034",
+      "prompt": "彼の提案は[[ことごとく]]退けられた。",
+      "options": ["ほとんど", "すべて", "一部", "たちまち"], "answer": 1,
+      "explanation": "「ことごとく」는 '하나도 남김없이 모두'라는 뜻이라 「すべて」가 맞아요.",
+      "wrongReasons": ["「ほとんど」는 '거의'라서 남김없이 모두라는 뜻과 달라요.", "", "「一部」는 '일부'라서 반대되는 뜻이에요.", "「たちまち」는 '금세, 순식간에'라는 시간의 뜻이에요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq011", "kind": "바꿔 말하기", "word": "v042",
+      "prompt": "初めての土地を一人で旅するのは[[心許ない]]。",
+      "options": ["面倒だ", "恥ずかしい", "不安だ", "心強い"], "answer": 2,
+      "explanation": "「心許ない」는 '마음이 놓이지 않고 불안하다'라는 뜻이에요.",
+      "wrongReasons": ["「面倒だ」는 '귀찮다'라는 뜻이에요.", "「恥ずかしい」는 '부끄럽다'라는 뜻이에요.", "", "「心強い」는 '든든하다'라서 반대되는 뜻이에요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq012", "kind": "용법", "word": "v037",
+      "prompt": "「損なう」の使い方として最もよいものを選びなさい。",
+      "options": ["無理な食事制限は、健康を損なうおそれがある。", "道に迷って、一時間も時間を損なってしまった。", "彼は入学試験に損なって、もう一年勉強することにした。", "毎朝ジョギングをして、体力を損なっている。"], "answer": 0,
+      "explanation": "「健康を損なう」는 '건강을 해치다'라는 자연스러운 짝이에요.",
+      "wrongReasons": ["", "시간을 헛되이 쓴 것은 「時間を無駄にする」라고 해요.", "시험에 떨어진 것은 「試験に落ちる」라고 해요.", "조깅으로 체력을 기르는 것은 「体力を養う」라고 해요. 「損なう」를 쓰면 뜻이 반대가 돼요."],
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "vq013", "kind": "용법", "word": "v008",
+      "prompt": "「携わる」の使い方として最もよいものを選びなさい。",
+      "options": ["駅で偶然、昔の友人に携わった。", "重い荷物を両手に携わって歩いた。", "大雨のため、電車の運行が携わっている。", "彼は二十年以上、新薬の開発に携わってきた。"], "answer": 3,
+      "explanation": "「〜に携わる」는 '어떤 일에 종사하다'라는 뜻이에요.",
+      "wrongReasons": ["우연히 만난 것은 「出会う」라고 해요.", "짐을 손에 드는 것은 「携える」 또는 「持つ」라고 해요. 「携わる」와 모양이 비슷해서 헷갈리기 쉬워요.", "운행이 흐트러진 것은 「乱れる」라고 해요.", ""],
+      "source": { "type": "ai" }, "review": "needs-review"
+    }
+  ]
 }

@@ -248,3 +248,76 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; color: var
 footer p { margin: 0 0 6px; max-width: 70ch; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- 4단계: 어휘·문법 ---------- */
+/* 화면 안의 하위 메뉴 */
+.segmented {
+  display: flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 12px; overflow-x: auto; scrollbar-width: none;
+}
+.segmented::-webkit-scrollbar { display: none; }
+.seg {
+  flex: 1 0 auto; border: 0; background: transparent; border-radius: 8px; padding: 10px 14px;
+  min-height: 44px; color: var(--muted); font-weight: 600; white-space: nowrap;
+}
+.seg[aria-selected="true"] { background: var(--ink-soft); color: var(--ink); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.filters .field:not(.search) { flex: 1 1 140px; max-width: 220px; }
+.stack { display: grid; gap: 16px; min-width: 0; }
+.result-count { margin: 0; font-size: 13px; color: var(--muted); }
+
+/* 단어 카드 상세 */
+.rels { display: grid; gap: 4px; font-size: 13.5px; }
+.rel b { font-weight: 600; color: var(--muted); font-size: 12px; margin-right: 4px; }
+.usage { font-size: 13.5px; color: var(--muted); }
+.card-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 0 18px; }
+.card-foot { padding-top: 10px; }
+.foot-right { display: flex; gap: 6px; flex-wrap: wrap; }
+.mark.star { font-size: 16px; padding: 4px 10px; min-width: 40px; }
+.mark.star[aria-pressed="true"] { color: var(--warn); border-color: var(--warn); }
+.mark.unknown[aria-pressed="true"] { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+
+/* 플래시카드 */
+.flash {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+  padding: 40px 24px; display: grid; gap: 18px; justify-items: center; text-align: center; min-height: 260px;
+  align-content: center;
+}
+.flash-word { font-family: var(--font-jp); font-size: clamp(40px, 10vw, 60px); font-weight: 700; line-height: 1.15; }
+.flash-back { display: grid; gap: 6px; max-width: 46ch; }
+.flash-back .reading { font-size: 20px; }
+.flash-back .meaning { font-size: 18px; }
+.flash-back .ex { text-align: left; }
+.grades { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.grade {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 6px;
+  min-height: 56px; display: grid; gap: 2px; justify-items: center; font-weight: 600;
+}
+.grade small { font-weight: 400; color: var(--muted); font-size: 12px; }
+.grade-again { color: var(--bad); }
+.grade-good { color: var(--good); }
+.flash-done { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; display: grid; gap: 10px; justify-items: start; }
+.flash-done p { margin: 0; color: var(--muted); }
+
+/* 헷갈리는 단어 비교 */
+.compare-list { display: grid; gap: 16px; }
+.compare { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.compare-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.compare-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.compare-col { display: grid; gap: 4px; align-content: start; padding: 12px; border-radius: 10px; background: var(--bg); min-width: 0; }
+.word.sm { font-size: 26px; }
+.compare-point { margin: 0; font-size: 14.5px; }
+.compare-point b { color: var(--ink); margin-right: 6px; }
+
+/* 문법 상세 */
+.g-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.g-body { min-width: 0; }
+.g-more { margin-top: 10px; }
+.g-more summary { cursor: pointer; color: var(--ink); font-weight: 600; font-size: 14px; min-height: 36px; display: flex; align-items: center; }
+.g-more dl { margin: 8px 0 12px; display: grid; gap: 12px; }
+.g-more dt { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.g-more dd { margin: 2px 0 0; }
+.block { display: block; }
+.ko.block { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
+.hint { margin: 0; }
