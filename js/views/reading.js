@@ -102,6 +102,14 @@ function renderPassage(el, p) {
   el.querySelector("#reset").onclick = () => { results.clear(); mounted.forEach(m => m.reset()); score.textContent = ""; };
 }
 
+// 지문 본문만 그린다 (진단 테스트·모의고사에서 사용, 해석 없음)
+export function passageTextHTML(p) {
+  return '<article class="passage"><div class="passage-label"><span>' + esc(p.typeLabel) + '</span></div>' +
+    p.texts.map(t => (t.label ? '<h4 class="text-label">' + esc(t.label) + "</h4>" : "") +
+      t.paragraphs.map(par => '<p class="jp' + (p.type === "info" ? " info" : "") + '" lang="ja">' + multiline(par) + "</p>").join("")).join("") +
+    "</article>";
+}
+
 // 다른 화면(오답 노트 등)에서 특정 지문을 바로 열 때
 export function openPassage(id) { ui.type = "all"; ui.current = id; location.hash = "reading"; }
 

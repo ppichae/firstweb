@@ -3,7 +3,7 @@ import { DB } from "../data.js";
 import { store } from "../store.js";
 import { esc, badges } from "../util.js";
 import { mountQuestion } from "../quiz.js";
-import { getJaVoices, Player } from "../speech.js";
+import { getJaVoices, Player, stopAll } from "../speech.js";
 
 const ui = { type: "all", current: null, rate: 1 };
 let player = null;
@@ -45,49 +45,58 @@ function render(app) {
   else app.querySelector("#item").innerHTML = '<p class="empty">이 유형의 문제가 아직 없어요.</p>';
 }
 
-function renderItem(el, item) {
+// 청해 문제 하나를 그린다. 진단 테스트·모의고사에서도 쓴다
+// opts: { mode: 기록 종류, onAnswer(correct), hideTools: 스크립트·해석 버튼 숨김, number }
+export function renderItem(el, item, opts = {}) {
   const types = DB.listening.meta.types;
   const askAfter = !!item.askAfter;
   el.innerHTML =
     '<article class="listen">' +
       '<div class="q-top"><span class="q-num">' + esc(types[item.type]) + " · 난이도 " + levelDots(item.difficulty) + "</span>" + badges(item) + "</div>" +
       '<h3 lang="ja">' + esc(item.title) + "</h3>" +
-      '<div class="player" id="player"><p class="hint">음성을 준비하고 있어요…</p></div>' +
-      '<div class="listen-tools">' +
-        '<button type="button" class="link-btn" id="show-script" aria-expanded="false">스크립트 보기</button>' +
-        '<button type="button" class="link-btn" id="show-trans" aria-expanded="false">한국어 해석 보기</button>' +
+      '<div class="player"><p class="hint">음성을 준비하고 있어요…</p></div>' +
+      '<div class="listen-tools"' + (opts.hideTools ? " hidden" : "") + ">" +
+        '<button type="button" class="link-btn l-show-script" aria-expanded="false">스크립트 보기</button>' +
+        '<button type="button" class="link-btn l-show-trans" aria-expanded="false">한국어 해석 보기</button>' +
       "</div>" +
-      '<div class="script" id="script" hidden>' +
+      '<div class="script l-script" hidden>' +
         (item.situation ? '<p class="situation" lang="ja">' + esc(item.situation) + "</p>" : "") +
         item.script.map(l => '<p lang="ja"><b>' + esc(l.sp.replace(/\d/, "")) + "</b>" + esc(l.ja) + "</p>").join("") +
       "</div>" +
-      '<div class="script trans" id="trans" hidden>' + item.translation.map(t => "<p>" + esc(t) + "</p>").join("") + "</div>" +
-      (askAfter ? '<p class="hint" id="ask-note">개요 이해는 실제 시험처럼 질문이 음성 뒤에 나와요. 끝까지 들으면 문제가 보여요.</p>' : "") +
-      '<div class="quiz" id="lquiz"' + (askAfter ? " hidden" : "") + "></div>" +
-      (askAfter ? '<button type="button" class="link-btn" id="reveal-q">듣지 않고 문제 보기</button>' : "") +
+      '<div class="script trans l-trans" hidden>' + item.translation.map(t => "<p>" + esc(t) + "</p>").join("") + "</div>" +
+      (askAfter ? '<p class="hint l-ask-note">개요 이해는 실제 시험처럼 질문이 음성 뒤에 나와요. 끝까지 들으면 문제가 보여요.</p>' : "") +
+      '<div class="quiz l-quiz"' + (askAfter ? " hidden" : "") + "></div>" +
+      (askAfter ? '<button type="button" class="link-btn l-reveal-q">듣지 않고 문제 보기</button>' : "") +
     "</article>";
 
-  const quiz = el.querySelector("#lquiz");
+  const quiz = el.querySelector(".l-quiz");
   item.questions.forEach((q, i) => {
     const box = document.createElement("div");
     quiz.appendChild(box);
-    mountQuestion(box, Object.assign({ area: "listening" }, q), { number: i + 1, wide: true });
+    mountQuestion(box, Object.assign({ area: "listening" }, q), {
+      number: opts.number || i + 1, wide: true, mode: opts.mode, record: opts.record,
+      onAnswer: (ok, choice) => {
+        // 답을 고른 뒤에는 스크립트·해석을 볼 수 있게 한다
+        const tools = el.querySelector(".listen-tools"); if (tools) tools.hidden = false;
+        if (opts.onAnswer) opts.onAnswer(ok, choice, q);
+      },
+    });
   });
   const revealQ = () => {
     quiz.hidden = false;
-    const n = el.querySelector("#ask-note"); if (n) n.hidden = true;
-    const b = el.querySelector("#reveal-q"); if (b) b.hidden = true;
+    const n = el.querySelector(".l-ask-note"); if (n) n.hidden = true;
+    const b = el.querySelector(".l-reveal-q"); if (b) b.hidden = true;
   };
-  if (askAfter) el.querySelector("#reveal-q").onclick = revealQ;
+  if (askAfter) el.querySelector(".l-reveal-q").onclick = revealQ;
 
   const toggle = (btnId, boxId, on, off) => {
     const b = el.querySelector(btnId), box = el.querySelector(boxId);
     b.onclick = () => { box.hidden = !box.hidden; b.setAttribute("aria-expanded", !box.hidden); b.textContent = box.hidden ? on : off; };
   };
-  toggle("#show-script", "#script", "스크립트 보기", "스크립트 숨기기");
-  toggle("#show-trans", "#trans", "한국어 해석 보기", "해석 숨기기");
+  toggle(".l-show-script", ".l-script", "스크립트 보기", "스크립트 숨기기");
+  toggle(".l-show-trans", ".l-trans", "한국어 해석 보기", "해석 숨기기");
 
-  setupPlayer(el.querySelector("#player"), item, revealQ);
+  setupPlayer(el.querySelector(".player"), item, revealQ);
 }
 
 // 실제 시험처럼: 상황 설명 → 대화 → (질문)
@@ -117,7 +126,7 @@ async function setupPlayer(box, item, onEnded) {
     return;
   }
   const p = player = new Player(speechLines(item), voices, (state, info) => {
-    const play = box.querySelector("#p-play"), pause = box.querySelector("#p-pause"), st = box.querySelector("#p-state");
+    const play = box.querySelector("[data-p=play]"), pause = box.querySelector("[data-p=pause]"), st = box.querySelector("[data-p=state]");
     if (!play) return;
     play.textContent = { playing: "처음부터", paused: "처음부터", ended: "다시 듣기" }[state] || "재생";
     pause.disabled = !(state === "playing" || state === "paused");
@@ -133,20 +142,20 @@ async function setupPlayer(box, item, onEnded) {
   p.rate = ui.rate;
   box.innerHTML =
     '<div class="player-row">' +
-      '<button type="button" class="btn" id="p-play">재생</button>' +
-      '<button type="button" class="btn ghost" id="p-pause" disabled>일시 정지</button>' +
-      '<label class="rate">속도 <select id="p-rate">' + [0.8, 1, 1.2].map(r =>
+      '<button type="button" class="btn" data-p="play">재생</button>' +
+      '<button type="button" class="btn ghost" data-p="pause" disabled>일시 정지</button>' +
+      '<label class="rate">속도 <select data-p="rate">' + [0.8, 1, 1.2].map(r =>
         '<option value="' + r + '"' + (r === ui.rate ? " selected" : "") + ">" + r + "배</option>").join("") + "</select></label>" +
-      '<span class="p-state" id="p-state" role="status"></span>' +
+      '<span class="p-state" data-p="state" role="status"></span>' +
     "</div>" +
     '<p class="hint">브라우저 기계 음성 · 일본어 음성 ' + voices.length + "개 사용</p>";
-  box.querySelector("#p-play").onclick = () => p.play();
-  box.querySelector("#p-pause").onclick = () => (p.state === "paused" ? p.resume() : p.pause());
-  box.querySelector("#p-rate").onchange = e => { ui.rate = Number(e.target.value); p.rate = ui.rate; };
+  box.querySelector("[data-p=play]").onclick = () => p.play();
+  box.querySelector("[data-p=pause]").onclick = () => (p.state === "paused" ? p.resume() : p.pause());
+  box.querySelector("[data-p=rate]").onchange = e => { ui.rate = Number(e.target.value); p.rate = ui.rate; };
 }
 
 // 다른 화면으로 갈 때 음성을 멈춘다 (main.js가 화면을 바꾸기 전에 부른다)
-function leave() { if (player) { player.stop(); player = null; } }
+function leave() { stopAll(); player = null; }
 
 // 다른 화면(오답 노트 등)에서 특정 청해 문제를 바로 열 때
 export function openListening(id) { ui.type = "all"; ui.current = id; location.hash = "listening"; }

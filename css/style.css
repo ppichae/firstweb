@@ -433,3 +433,42 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
   .facts { grid-template-columns: 1fr; }
   .fact + .fact { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
 }
+
+/* ---------- 8단계: D-30 집중 모드 ---------- */
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.form-error { margin: 0; color: var(--bad); background: var(--bad-soft); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.phases-list { margin: 0; padding-left: 1.4em; display: grid; gap: 8px; }
+.phases-list .hint { display: block; font-size: 13px; }
+.diag-h { margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.diag-reading { display: grid; gap: 12px; }
+.sprint-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; }
+@media (max-width: 680px) { .sprint-head { grid-template-columns: 1fr; } }
+.goal-list { margin: 4px 0 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.goal-list small { color: var(--muted); }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.timeline li { border-top: 4px solid var(--line); padding-top: 8px; display: grid; gap: 2px; font-size: 13px; color: var(--muted); min-width: 0; }
+.timeline li b { font-size: 12px; font-variant-numeric: tabular-nums; }
+.timeline li.past { border-color: var(--ink-soft); }
+.timeline li.now { border-color: var(--ink); color: var(--fg); }
+.timeline li.now b { color: var(--ink); }
+@media (max-width: 520px) { .timeline span { display: none; } }
+.bar.wide { width: 100%; height: 6px; }
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; }
+.task { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; padding-block: 14px; border-top: 1px solid var(--line); align-items: start; }
+@media (max-width: 560px) { .task { grid-template-columns: 28px minmax(0, 1fr); } .task-actions { grid-column: 2; } }
+.task-check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 700; margin-top: 2px; }
+.task.complete .task-check { background: var(--good); border-color: var(--good); color: var(--surface); }
+.task.complete .task-title { color: var(--muted); }
+.task-body { display: grid; gap: 4px; min-width: 0; }
+.task-title { font-weight: 600; }
+.task-detail { font-size: 14px; color: var(--muted); }
+.task-meta { font-size: 13px; font-variant-numeric: tabular-nums; }
+.task-body .meter-track { display: block; height: 6px; }
+.task.complete .meter-track span { background: var(--good); }
+.task-actions { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.btn.sm { min-height: 40px; padding: 8px 14px; font-size: 14px; }
+.btn.danger { background: var(--bad); border-color: var(--bad); }
+.confirm { font-size: 14px; color: var(--bad); }
+.mini-notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 14px; }
+.mini-notes small { color: var(--muted); }
+.exam-day { justify-items: start; }

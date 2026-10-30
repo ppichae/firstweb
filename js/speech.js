@@ -24,6 +24,15 @@ export function getJaVoices() {
 // 말하는 사람마다 목소리 높낮이를 조금씩 다르게 해서 구별하기 쉽게 한다
 const SPEAKER = { "男": { v: 0, pitch: 0.85 }, "女": { v: 1, pitch: 1.15 }, "女2": { v: 2, pitch: 1.3 }, "男2": { v: 3, pitch: 0.75 }, "ナ": { v: 0, pitch: 1 } };
 
+let active = null;   // 지금 소리를 내는 플레이어 (한 번에 하나만)
+
+// 화면을 떠날 때 모든 음성을 멈춘다
+export function stopAll() {
+  if (active) active.stop();
+  active = null;
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+}
+
 export class Player {
   // lines: [{ sp, ja }], onState: 상태가 바뀔 때 부르는 함수("playing" | "paused" | "ended" | "idle")
   constructor(lines, voices, onState) {
@@ -32,6 +41,8 @@ export class Player {
   }
   set(state, info) { this.state = state; if (this.onState) this.onState(state, info); }
   play() {
+    if (active && active !== this) active.stop();
+    active = this;
     window.speechSynthesis.cancel();
     this.index = 0;
     this.token++;
