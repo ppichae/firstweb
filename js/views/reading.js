@@ -102,4 +102,7 @@ function renderPassage(el, p) {
   el.querySelector("#reset").onclick = () => { results.clear(); mounted.forEach(m => m.reset()); score.textContent = ""; };
 }
 
+// 다른 화면(오답 노트 등)에서 특정 지문을 바로 열 때
+export function openPassage(id) { ui.type = "all"; ui.current = id; location.hash = "reading"; }
+
 export default { id: "reading", label: "독해", jp: "読解", render, leave: () => clearInterval(timer) };

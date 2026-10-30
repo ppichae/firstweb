@@ -6,9 +6,10 @@ import vocab from "./views/vocab.js";
 import grammar from "./views/grammar.js";
 import reading from "./views/reading.js";
 import listening from "./views/listening.js";
+import notes from "./views/notes.js";
 
 // 메뉴 순서. 화면을 추가할 때는 views 폴더에 파일을 만들고 여기에 한 줄 넣는다
-const VIEWS = [vocab, grammar, reading, listening];
+const VIEWS = [vocab, grammar, reading, listening, notes];
 
 const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");

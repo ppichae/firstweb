@@ -148,4 +148,7 @@ async function setupPlayer(box, item, onEnded) {
 // 다른 화면으로 갈 때 음성을 멈춘다 (main.js가 화면을 바꾸기 전에 부른다)
 function leave() { if (player) { player.stop(); player = null; } }
 
+// 다른 화면(오답 노트 등)에서 특정 청해 문제를 바로 열 때
+export function openListening(id) { ui.type = "all"; ui.current = id; location.hash = "listening"; }
+
 export default { id: "listening", label: "청해", jp: "聴解", render, leave };
