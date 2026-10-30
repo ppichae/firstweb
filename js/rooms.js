@@ -22,9 +22,10 @@ import { createTogetherView } from "./views/together.js";
 import { createBackupView } from "./views/backup.js";
 import { summaryOf } from "./summary.js";
 import { createKanjiView } from "./views/kanji.js";
+import { createBadgesView } from "./badges.js";
 
 // N1 홈과 D-30은 PDF 목록 단어·문형까지 합친 숫자를 보여 주므로 그 자료를 먼저 불러온다
-home.needs = ["n1vocab", "n1grammar", "sources"];
+home.needs = ["n1vocab", "n1grammar", "sources", "kanji"];
 sprint.needs = ["n1vocab", "sources"];
 
 export const ROOMS = {
@@ -32,13 +33,13 @@ export const ROOMS = {
     id: "n1", name: "N1 공부방", st: store, docTitle: "JLPT N1 合格!",
     eyebrow: "日本語能力試験 · N1", title: 'JLPT N1 <span lang="ja">合格!</span>',
     lede: "단어, 문법, 독해, 청해를 매일 조금씩. 틀린 문제는 자동으로 모아 두고, 시험 한 달 전에는 D-30 집중 모드로 마무리해요.",
-    views: [home, vocab, grammar, createKanjiView("kanji", "n1"), reading, listening, notes, sprint, mock, createTogetherView("together", "n1"), backup],
+    views: [home, vocab, grammar, createKanjiView("kanji", "n1"), reading, listening, notes, sprint, mock, createTogetherView("together", "n1"), backup, createBadgesView("badges", "n1", "home")],
   },
   n3: {
     id: "n3", name: "N3 공부방", st: n3store, docTitle: "JLPT N3 合格!",
     eyebrow: "日本語能力試験 · N3", title: 'JLPT N3 <span lang="ja">合格!</span>',
     lede: "히라가나·가타카나와 N5·N4 기초부터 N3 단어·문법·한자, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
-    views: [n3home, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3")],
+    views: [n3home, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
   },
 };
 

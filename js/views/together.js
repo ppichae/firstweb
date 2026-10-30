@@ -1,7 +1,7 @@
 // 함께 보기(공동 대시보드): 두 사람의 학습 현황과 응원 메시지
 // 서버 없이 이 브라우저에 저장된 기록만 보여 준다. 다른 기기의 기록은 백업 파일을 불러와야 보인다.
 import { esc, fmtDate, dateKey } from "../util.js";
-import { PEOPLE, summaryOf, nameOf, otherOf, allCheers } from "../summary.js";
+import { PEOPLE, summaryOf, nameOf, otherOf, allCheers, badgesOf } from "../summary.js";
 
 const PRESETS = ["오늘도 수고했어! 👏", "조금만 더 힘내자 💪", "같이 합격하자!", "오늘 목표 달성 축하해 🎉", "어려운 부분은 내일 다시 보자", "너라면 할 수 있어!"];
 const ui = { editName: false, editGoal: false, msg: "" };
@@ -68,7 +68,7 @@ export function createTogetherView(id, roomId) {
   }
 
   function personCard(p, mine) {
-    const got = p.badges.filter(b => b.got);
+    const got = badgesOf(p.id).filter(b => b.got);
     return '<article class="card-box person' + (mine ? " is-me" : "") + '">' +
       '<div class="q-top"><h3>' + esc(p.name) + ' <span class="badge">' + esc(PEOPLE[p.id].room) + "</span>" + (mine ? ' <span class="badge ok">지금 방</span>' : "") + "</h3>" +
         (mine && !ui.editName ? '<button type="button" class="link-btn" id="name-edit">이름 바꾸기</button>' : "") + "</div>" +
@@ -94,7 +94,7 @@ export function createTogetherView(id, roomId) {
             : '<div class="toolbar"><button type="button" class="link-btn" id="goal-edit">' + (p.goalMin ? "목표 바꾸기" : "이번 주 목표 정하기") + "</button></div>")
         : "") +
       '<div class="badge-row" aria-label="학습 배지">' + (got.length
-        ? got.map(b => '<span class="medal" title="' + esc(b.desc) + '">' + esc(b.name) + "</span>").join("")
+        ? got.map(b => '<span class="medal" title="' + esc(b.desc) + '">' + b.emoji + " " + esc(b.name) + "</span>").join("")
         : '<span class="hint">아직 받은 배지가 없어요.</span>') + "</div>" +
     "</article>";
   }

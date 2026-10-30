@@ -5,6 +5,7 @@ import { areaStats, recentDays, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR
 import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal } from "./vocab.js";
 import { grammarStudied, grammarTotal } from "./grammar.js";
 import { ddayTileHTML, bindDday } from "../dday.js";
+import { growthCardHTML } from "../badges.js";
 import { EXAM_INFO } from "../exam.js";
 import { sprintSummary } from "./sprint.js";
 
@@ -37,6 +38,7 @@ function render(app) {
         tile("누적 문제 풀이", attempts.length, "문제") +
         tile("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "") +
       "</div>" +
+      growthCardHTML("n1", "#badges") +
 
       '<div class="home-grid">' +
         '<article class="card-box"><h3>영역별 정답률</h3><div class="meters">' +

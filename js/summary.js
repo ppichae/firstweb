@@ -7,6 +7,7 @@ import { grammarStudied, grammarTotal } from "./views/grammar.js";
 import { n3vocab, n3grammar } from "./views/n3/study.js";
 import { unitDone, coreUnits } from "./views/n3/basics.js";
 import { EXTRA } from "./data.js";
+import { badgeList } from "./badges.js";
 
 export const PEOPLE = {
   n1: { id: "n1", st: store, defaultName: "N1 학습자", room: "N1 공부방", home: "home" },
@@ -72,44 +73,12 @@ export function summaryOf(id) {
     progress: p, progressPct: p.total ? Math.round(p.done / p.total * 100) : 0,
     weekMin, goalMin: goal && goal.weeklyMinutes ? goal.weeklyMinutes : null,
     goalPct: goal && goal.weeklyMinutes ? Math.min(100, Math.round(weekMin / goal.weeklyMinutes * 100)) : null,
-    badges: badgesOf(id),
+
   };
 }
 
-// 학습 배지: 기록으로 조건을 확인한다 (날짜를 따로 저장하지 않음)
-export function badgesOf(id) {
-  const st = PEOPLE[id].st;
-  const attempts = st.get("attempts");
-  const right = attempts.filter(a => a.correct).length;
-  const streak = streakOf(st);
-  const p = progressOf(id);
-  const totalMin = Math.floor(Object.values(st.get("activity")).reduce((n, d) => n + (d.seconds || 0), 0) / 60);
-  const list = [
-    ["first", "첫걸음", "문제를 처음 풀었어요", attempts.length >= 1],
-    ["right50", "정답 50", "문제를 50개 맞혔어요", right >= 50],
-    ["right300", "정답 300", "문제를 300개 맞혔어요", right >= 300],
-    ["streak3", "3일 연속", "3일 연속 공부했어요", streak >= 3],
-    ["streak7", "7일 연속", "7일 연속 공부했어요", streak >= 7],
-    ["study100", "100개 학습", "단어·문법·단원을 100개 공부했어요", p.done >= 100],
-    ["hour5", "5시간", "누적 학습 시간이 5시간을 넘었어요", totalMin >= 300],
-  ];
-  if (id === "n3") {
-    const units = EXTRA.n3basics ? coreUnits(EXTRA.n3basics) : [];
-    // 예전 가나 퀴즈 기록(kana)과 7단계부터의 문자별 기록(kanaProgress)을 함께 센다
-    const kp = n3store.get("kanaProgress");
-    const kana = [n3store.get("kana"), kp.hira || {}, kp.kata || {}].reduce((n, o) => n + Object.values(o).reduce((m, k) => m + (k.right || 0), 0), 0);
-    const tests = n3store.get("tests");
-    list.push(
-      ["kana50", "가나 50", "가나 퀴즈를 50번 맞혔어요", kana >= 50],
-      ["basics", "기초 완주", "기초 단원을 모두 마쳤어요", units.length > 0 && units.every(u => unitDone(u.id))],
-      ["test80", "테스트 80점", "연습 테스트에서 80% 이상 맞혔어요", tests.some(t => t.correct / t.total >= 0.8)],
-    );
-  } else {
-    const mocks = store.get("mocks");
-    list.push(["mock1", "모의고사 1회", "실전 모의고사를 끝까지 풀었어요", mocks.length >= 1]);
-  }
-  return list.map(([key, name, desc, got]) => ({ key, name, desc, got: !!got }));
-}
+// 배지는 badges.js에서 계산한다 (예전 이름 badgesOf를 그대로 쓸 수 있게 이어 준다)
+export const badgesOf = id => badgeList(id);
 
 // 응원 메시지 (보낸 사람의 저장소에 남긴다)
 export function allCheers() {

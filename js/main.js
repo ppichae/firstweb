@@ -42,7 +42,7 @@ function drawRoom(room) {
   header.eyebrow.textContent = info.eyebrow;
   header.title.innerHTML = info.title;
   header.lede.textContent = info.lede;
-  tablist.innerHTML = (room ? room.views.map(v =>
+  tablist.innerHTML = (room ? room.views.filter(v => !v.hidden).map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
     "</a>").join("") : "");   // 메뉴는 한글만 표시한다
   roomSwitch.textContent = room ? "방 바꾸기" : "급수 선택";

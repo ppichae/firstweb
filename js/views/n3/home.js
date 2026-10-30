@@ -9,7 +9,7 @@ import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone, coreUnits, openBasics } from "./basics.js";
 import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
-import { badgesOf } from "../../summary.js";
+import { growthCardHTML } from "../../badges.js";
 import { roomKanjiList } from "../../kanji.js";
 
 const WEEKS = [
@@ -56,12 +56,10 @@ function render(app) {
         tile("학습한 단어", n3vocab.studiedCount(), "/ " + n3vocab.total() + "개") +
         tile("공부한 문법", n3grammar.studiedCount(), "/ " + n3grammar.total() + "개") +
         tile("누적 문제 풀이", attempts.length, attempts.length ? "정답률 " + pct(correct, attempts.length) + "%" : "문제") +
-        '<article class="tile"><span class="tile-label">레벨</span><span class="tile-value">Lv ' + lv.lv + ' <small class="xp">' + lv.xp + " XP</small></span>" +
-          '<div class="bar wide" aria-hidden="true"><span style="width:' + (lv.into / lv.need * 100) + '%"></span></div>' +
-          '<span class="tile-sub">연속 학습 <b>' + streak() + "일</b> · 오늘 " + todayCount() + "회</span></article>" +
+        tile("연속 학습", streak() + "일", "오늘 학습 " + todayCount() + "회") +
       "</div>" +
 
-      badgeCard() +
+      growthCardHTML("n3", "#n3/badges") +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정</h3><span class="badge">안내용</span></div>' +
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
@@ -89,7 +87,7 @@ function render(app) {
           ["실전 구성 모의고사", "콘텐츠 준비 중"],
         ]) +
       "</div>" +
-      '<p class="hint">경험치: 맞힌 문제 +' + XP_RULES.correct + ", 틀린 문제도 +" + XP_RULES.wrong + ", 플래시카드 +" + XP_RULES.card + ", 단원 처음 완료 +" + XP_RULES.unit + ". 학습 기록은 N1 방과 따로 이 브라우저에 저장돼요.</p>" +
+      '<p class="hint">학습 기록은 N1 방과 따로 이 브라우저에 저장돼요. 경험치 기준은 「전체 배지 보기」에서 볼 수 있어요.</p>' +
     "</section>";
 
   app.onclick = e => {
@@ -111,12 +109,3 @@ function course(letter, title, href, rows) {
 }
 
 export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources", "kanji", "kanjiN3"], render };
-
-function badgeCard() {
-  const list = badgesOf("n3");
-  const got = list.filter(b => b.got).length;
-  return '<article class="card-box"><div class="q-top"><h3>학습 배지</h3><span class="hint">' + got + " / " + list.length + " 받음</span></div>" +
-    '<ul class="medals">' + list.map(b =>
-      '<li class="medal-item' + (b.got ? " got" : "") + '"><b>' + esc(b.name) + "</b><small>" + esc(b.desc) + "</small>" +
-      '<span class="sr-only">' + (b.got ? "받음" : "아직 못 받음") + "</span></li>").join("") + "</ul></article>";
-}

@@ -24,7 +24,7 @@ export function shuffle(arr) {
 export const pct = (n, d) => (d ? Math.round((n / d) * 100) : null);
 export const pctText = v => (v === null ? "기록 없음" : v + "%");
 
-export const AREAS = { vocab: "어휘", grammar: "문법", reading: "독해", listening: "청해" };
+export const AREAS = { vocab: "어휘", grammar: "문법", reading: "독해", listening: "청해", kanji: "한자" };
 
 // 출처·검수 표시
 export function badges(item) {

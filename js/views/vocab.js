@@ -3,10 +3,12 @@
 import { DB } from "../data.js";
 import { store } from "../store.js";
 import { createVocabView } from "./study.js";
+import { award } from "../game.js";
 
 export { LIST_POS as POS } from "./listStudy.js";
 
-const v = createVocabView({ id: "vocab", roomId: "n1", st: store, core: () => DB.vocab, extraKey: "n1vocab", idPrefix: "gen" });
+const v = createVocabView({ id: "vocab", roomId: "n1", st: store, core: () => DB.vocab, extraKey: "n1vocab", idPrefix: "gen",
+  onEvent: kind => { if (kind === "card") award("n1", "card"); } });   // 문제 풀이 경험치는 store.onAttempt에서 준다
 
 export const needsReview = v.needsReview;
 export const reviewWordIds = v.reviewWordIds;

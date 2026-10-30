@@ -3,8 +3,10 @@
 import { DB } from "../data.js";
 import { store } from "../store.js";
 import { createGrammarView } from "./study.js";
+import { award } from "../game.js";
 
-const g = createGrammarView({ id: "grammar", roomId: "n1", st: store, core: () => DB.grammar, extraKey: "n1grammar", idPrefix: "gen" });
+const g = createGrammarView({ id: "grammar", roomId: "n1", st: store, core: () => DB.grammar, extraKey: "n1grammar", idPrefix: "gen",
+  onEvent: kind => { if (kind === "card") award("n1", "card"); } });
 
 export const grammarStudied = g.studiedCount;
 export const grammarTotal = g.total;

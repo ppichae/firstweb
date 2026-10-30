@@ -6,6 +6,7 @@ import { store, n3store } from "./store.js";
 import { esc, today } from "./util.js";
 import { mountStrokePlayer, stopStrokes } from "./strokes.js";
 import { mountWritePad } from "./writing.js";
+import { award } from "./game.js";
 
 const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
@@ -108,7 +109,7 @@ function ensureDialog() {
     if (e.target.closest("[data-open-write]")) {
       const info = kanjiInfo(current.ch), room = current.roomId, ch = current.ch;
       mountWritePad(dialog.querySelector("#kd-write"), info.strokeRef, {
-        onPractice: () => STORES[room].update("kanji", k => { const r = k[ch] || (k[ch] = {}); r.written = (r.written || 0) + 1; }),
+        onPractice: () => { STORES[room].update("kanji", k => { const r = k[ch] || (k[ch] = {}); r.written = (r.written || 0) + 1; }); award(room, "write"); },
       });
       return;
     }

@@ -20,6 +20,8 @@ const N1_DEFAULTS = {
   profile: null,   // { name: 화면에 보일 이름 }
   goal: null,      // { weeklyMinutes: 이번 주 목표 학습 시간(분) }
   cheers: [],      // 이 사람이 보낸 응원 메시지 { text, at }
+  game: null,      // 경험치 { xp } — 처음 열 때 기존 기록으로 한 번 환산(game.js)
+  badges: {},      // 배지 → 처음 받은 날
   kanji: {},       // 한자 → { seen: 처음 본 날, last, fav }
 };
 
@@ -63,6 +65,7 @@ export function createStore(PREFIX, APP_ID, DEFAULTS) {
         const rec = { qid: q.id, area: q.area, choice, correct: choice === q.answer, at: Date.now(), mode };
         if (q.generated) rec.snap = { kind: q.kind, prompt: q.prompt, options: q.options, answer: q.answer, explanation: q.explanation, wordId: q.wordId };
         list.push(rec);
+        if (this.onAttempt) this.onAttempt(rec);   // 경험치 등 (N1 방에서 game.js가 연결)
       });
     },
 
@@ -124,4 +127,5 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   kanji: {},
   kanaProgress: { hira: {}, kata: {} },  // 문자별 퀴즈 기록 { right, wrong } — 히라가나·가타카나 따로
   kanaWritten: { hira: {}, kata: {} },   // 문자별 쓰기 연습 횟수
+  badges: {},      // 배지 → 처음 받은 날
 });

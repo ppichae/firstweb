@@ -5,7 +5,7 @@ import { mountQuestion } from "../../quiz.js";
 import { noteEntries } from "../../stats.js";
 import { award } from "./game.js";
 
-const AREA = { basics: "기초", vocab: "어휘", grammar: "문형" };
+const AREA = { basics: "기초", vocab: "단어", grammar: "문법", kanji: "한자" };
 const ui = { area: "all", status: "open" };
 const retrying = new Set();
 
