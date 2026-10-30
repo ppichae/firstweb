@@ -1,10 +1,11 @@
 // 홈 대시보드: 실제 학습 기록으로만 계산한 현황
-import { DB } from "../data.js";
 import { store } from "../store.js";
-import { esc, AREAS, pct, pctText, fmtDate } from "../util.js";
-import { areaStats, recentDays, studiedWordCount, studiedGrammarCount, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW } from "../stats.js";
-import { reviewWordIds, openVocabMode } from "./vocab.js";
-import { EXAM_INFO, nextExam, daysUntil } from "../exam.js";
+import { esc, AREAS, pct, pctText } from "../util.js";
+import { areaStats, recentDays, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW } from "../stats.js";
+import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal } from "./vocab.js";
+import { grammarStudied, grammarTotal } from "./grammar.js";
+import { ddayTileHTML, bindDday } from "../dday.js";
+import { EXAM_INFO } from "../exam.js";
 import { sprintSummary } from "./sprint.js";
 
 function render(app) {
@@ -15,7 +16,6 @@ function render(app) {
   const weak = weakAreas();
   const dueWords = reviewWordIds().length;
   const openNotes = unresolvedNotes().length;
-  const exam = nextExam();
   const sprint = sprintSummary();
 
   app.innerHTML =
@@ -23,12 +23,7 @@ function render(app) {
       '<div class="panel-head"><div><h2>오늘의 학습</h2><p>모든 숫자는 이 브라우저에 저장된 실제 학습 기록으로 계산해요.</p></div></div>' +
 
       '<div class="home-top">' +
-        '<article class="tile exam-tile">' +
-          (exam
-            ? '<span class="tile-label">다음 시험 · ' + esc(exam.label) + '</span><span class="dday">D-' + daysUntil(exam.date) + "</span>" +
-              '<span class="tile-sub">' + fmtDate(exam.date) + ' · <a href="' + exam.source + '" target="_blank" rel="noopener">공식 일정</a></span>'
-            : '<span class="tile-label">다음 시험</span><span class="tile-sub">등록된 시험 날짜가 지났어요. <a href="https://www.jlpt.jp/" target="_blank" rel="noopener">공식 사이트</a>에서 다음 일정을 확인하세요.</span>') +
-        "</article>" +
+        ddayTileHTML(store) +
         '<article class="tile todo-tile"><span class="tile-label">지금 할 일</span><ul class="todo">' +
           '<li><a href="#vocab" data-goto="cards">복습할 단어</a><strong>' + dueWords + "개</strong></li>" +
           '<li><a href="#notes">다시 풀 오답</a><strong>' + openNotes + "개</strong></li>" +
@@ -37,8 +32,8 @@ function render(app) {
       "</div>" +
 
       '<div class="tiles">' +
-        tile("학습한 단어", studiedWordCount(), "/ " + DB.vocab.items.length + "개") +
-        tile("공부한 문법", studiedGrammarCount(), "/ " + DB.grammar.items.length + "개") +
+        tile("학습한 단어", vocabStudied(), "/ " + vocabTotal() + "개") +
+        tile("공부한 문법", grammarStudied(), "/ " + grammarTotal() + "개") +
         tile("누적 문제 풀이", attempts.length, "문제") +
         tile("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "") +
       "</div>" +
@@ -73,6 +68,7 @@ function render(app) {
     const g = e.target.closest("[data-goto]");
     if (g) { e.preventDefault(); openVocabMode(g.dataset.goto); }
   };
+  bindDday(app, store, () => render(app));
 }
 
 function tile(label, value, sub) {

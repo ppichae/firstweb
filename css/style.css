@@ -510,7 +510,16 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .tile-sub a, .hint a, .lede a, footer a { display: inline-block; padding-block: 9px; margin-block: -9px; }
 
 /* ---------- 3단계: 공부방(N1 · N3) ---------- */
-.tab.room-switch { margin-left: auto; color: var(--ink); border: 1px solid var(--line); }
+/* 메뉴 줄: 메뉴는 옆으로 밀어서 보고, '방 바꾸기'는 오른쪽에 항상 보이게 고정한다 */
+.nav-row { display: flex; align-items: center; gap: 8px; }
+.nav-row .tablist { flex: 1 1 auto; min-width: 0; }
+.room-switch {
+  flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 600; font-size: 14px;
+  text-decoration: none; white-space: nowrap;
+}
+.room-switch:hover { border-color: var(--ink); }
+.room-switch[aria-current] { background: var(--ink-soft); border-color: var(--ink-soft); }
 .rooms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 620px) { .rooms { grid-template-columns: 1fr; } }
 .room {
@@ -584,3 +593,21 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .course-rows dd { margin: 0; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 .meter.wide-name { grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 7.5em; }
 @media (max-width: 520px) { .meter.wide-name { grid-template-columns: minmax(0, 1fr) 7em; } .meter.wide-name .meter-track { grid-column: 1 / -1; grid-row: 2; } }
+
+/* ---------- 4-1단계: 화면 통일 ---------- */
+/* N3 홈의 일정·과정 링크는 밑줄 없이 글자색으로만 표시한다 */
+.weeks a, .course .q-top a { text-decoration: none; }
+.weeks a:hover, .course .q-top a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.flash-word.sm { font-size: clamp(28px, 7vw, 40px); }
+/* 시험일(D-Day) 칸 */
+.dday-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; margin-top: 4px; }
+.exam-tile .link-btn { color: var(--surface); opacity: .9; }
+.btn.on-ink { background: var(--surface); color: var(--ink); border-color: var(--surface); }
+.dday-edit input {
+  border: 1px solid var(--surface); background: var(--surface); color: var(--fg); border-radius: 10px;
+  padding: 8px 12px; min-height: 44px; max-width: 100%; margin-top: 6px;
+}
+.unit-nav { justify-content: space-between; }
+.unit-result { border-color: var(--ink); }
+.unit-result h3 { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.unit-result p { margin: 0; }

@@ -70,7 +70,7 @@ function renderUnit(el, app, data) {
   const u = data.units[idx];
   const next = data.units[idx + 1];
   el.innerHTML =
-    '<div class="toolbar"><button type="button" class="link-btn" id="back">← 단원 목록</button></div>' +
+    '<div class="toolbar unit-nav"><button type="button" class="link-btn" id="back">← 단원 목록</button><span class="progress">단원 <strong>' + (idx + 1) + '</strong> / ' + data.units.length + '</span></div>' +
     '<article class="card-box">' +
       '<div class="q-top"><h3>' + (idx + 1) + ". " + esc(u.title) + "</h3>" +
         '<span class="badges"><span class="badge ai">자체 제작 · AI 작성</span><span class="badge warn">검수 필요</span></span></div>' +
@@ -83,7 +83,7 @@ function renderUnit(el, app, data) {
     "</article>" +
     '<h4 class="step">③ 확인 퀴즈 <span class="score" id="u-score"></span></h4>' +
     '<div class="quiz" id="u-quiz"></div>' +
-    '<div class="toolbar" id="u-next"></div>';
+    '<div id="u-next"></div>';
 
   const results = new Map();
   const quiz = el.querySelector("#u-quiz");
@@ -110,15 +110,30 @@ function renderUnit(el, app, data) {
       b[u.id] = { done: r.done || today(), best: Math.max(r.best || 0, right) };
     });
     if (first) award("unit");
+    const wrong = [...results.entries()].filter(([, ok]) => !ok).map(([i]) => i);
+    const allDone = data.units.every(x => unitDone(x.id));
     el.querySelector("#u-next").innerHTML =
-      '<p class="toast" role="status">단원을 마쳤어요. ' + right + "/" + u.quiz.length + " 정답" + (first ? " · 경험치 +30" : "") + "</p>" +
-      (next ? '<button type="button" class="btn" data-unit="' + next.id + '">다음 단원: ' + esc(next.title) + "</button>" : "") +
-      '<button type="button" class="btn ghost" id="again">이 단원 다시 풀기</button>';
+      '<article class="card-box unit-result" role="status">' +
+        "<h3>결과 · " + right + " / " + u.quiz.length + " 정답" + (first ? " <small class=\"xp\">경험치 +30</small>" : "") + "</h3>" +
+        '<p class="hint">' + (wrong.length ? "틀린 문제 " + wrong.length + "개의 정답과 해설은 위 문제 아래에 펼쳐져 있어요." : "모두 맞혔어요. 해설은 각 문제 아래에서 다시 볼 수 있어요.") + "</p>" +
+        (next
+          ? '<p>다음 단원: <b>' + (idx + 2) + ". " + esc(next.title) + "</b></p>"
+          : "<p><b>" + (allDone ? "기초 과정의 모든 단원을 마쳤어요! " : "마지막 단원이에요. ") + "</b>" +
+            (allDone ? "이제 N3 단어와 문법으로 넘어가 보세요." : "아직 끝내지 않은 단원은 단원 목록에서 확인할 수 있어요.") + "</p>") +
+        '<div class="toolbar">' +
+          (next ? '<button type="button" class="btn" data-unit="' + next.id + '">다음 단원으로 이동 →</button>'
+            : allDone ? '<a class="btn" href="#n3/vocab">N3 단어로 가기 →</a>' : "") +
+          (wrong.length ? '<button type="button" class="btn ghost" id="see-wrong">틀린 문제 다시 보기</button>' : "") +
+          '<button type="button" class="btn ghost" id="again">이 단원 다시 풀기</button>' +
+          '<button type="button" class="link-btn" id="back2">단원 목록</button>' +
+        "</div></article>";
+    el.dataset.firstWrong = wrong.length ? wrong[0] : "";
   }
 
   el.onclick = async e => {
-    if (e.target.closest("#back")) { ui.unit = null; stopAll(); render(app); return; }
-    if (e.target.closest("#again")) { render(app); return; }
+    if (e.target.closest("#back") || e.target.closest("#back2")) { ui.unit = null; stopAll(); render(app); window.scrollTo(0, 0); return; }
+    if (e.target.closest("#see-wrong")) { const q = quiz.children[Number(el.dataset.firstWrong)]; if (q) q.scrollIntoView({ block: "start", behavior: "smooth" }); return; }
+    if (e.target.closest("#again")) { render(app); const qz = app.querySelector("#u-quiz"); if (qz) qz.scrollIntoView({ block: "start" }); return; }
     const n = e.target.closest("[data-unit]");
     if (n) { ui.unit = n.dataset.unit; stopAll(); render(app); window.scrollTo(0, 0); return; }
     const s = e.target.closest("[data-say]");
@@ -234,4 +249,4 @@ function renderPending(el, app, data) {
     '<article class="card-box pending"><h3>' + esc(p.title) + '</h3><p class="hint">' + esc(p.note) + "</p></article>").join("") + "</div>";
 }
 
-export default { id: "n3/basics", label: "기초 N5·N4", jp: "基礎", needs: ["n3basics"], render, leave: stopAll };
+export default { id: "n3/basics", label: "기초", jp: "基礎", needs: ["n3basics"], render, leave: stopAll };

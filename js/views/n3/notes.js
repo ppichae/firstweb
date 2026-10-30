@@ -70,4 +70,4 @@ function mountRetry(app, n) {
   });
 }
 
-export default { id: "n3/notes", label: "오답 노트", jp: "復習", render };
+export default { id: "n3/notes", label: "오답 노트", render };

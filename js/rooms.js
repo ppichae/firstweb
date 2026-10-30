@@ -1,5 +1,6 @@
 // 공부방(N1 · N3) 목록과 방 선택 화면
-// 방마다 메뉴와 학습 기록 저장소가 따로 있다. N1은 "n1lab:", N3는 "n3lab:"에 저장한다.
+// 두 방은 같은 메뉴 구조(홈 · 단어 · 문법 · 독해 · 청해 · 오답 노트 …)를 쓰고, 학습 기록 저장소만 따로 쓴다.
+// N1은 "n1lab:", N3는 "n3lab:"에 저장한다.
 import { store, n3store } from "./store.js";
 import { esc } from "./util.js";
 import vocab from "./views/vocab.js";
@@ -11,49 +12,29 @@ import home from "./views/home.js";
 import sprint from "./views/sprint.js";
 import mock from "./views/mock.js";
 import backup from "./views/backup.js";
-import { createListStudy } from "./views/listStudy.js";
 import n3home from "./views/n3/home.js";
 import n3basics from "./views/n3/basics.js";
 import n3practice from "./views/n3/practice.js";
 import n3notes from "./views/n3/notes.js";
-import n3more from "./views/n3/more.js";
-import { award } from "./views/n3/game.js";
+import { n3reading, n3listening } from "./views/n3/more.js";
+import { n3vocab, n3grammar } from "./views/n3/study.js";
 
-// N1 방에 추가한 PDF 목록 단어·문형 (기존 단어·문법 화면은 그대로 두고 메뉴를 하나 더한다)
-const n1lists = createListStudy({
-  id: "n1/lists", label: "PDF 단어·문형", jp: "単語帳", st: store, idPrefix: "n1pdf",
-  title: "PDF 단어 · 문형",
-  intro: "PDF 학습 목록에서 고른 N1 단어와 문형을 기존 단어 화면처럼 목록 · 플래시카드 · 퀴즈로 공부해요.",
-  sets: [
-    { key: "vocab", dataKey: "n1vocab", label: "어휘", area: "vocab" },
-    { key: "grammar", dataKey: "n1grammar", label: "문형", area: "grammar" },
-  ],
-});
-
-const n3onEvent = kind => award(kind);
-const n3vocab = createListStudy({
-  id: "n3/vocab", label: "N3 어휘", jp: "語彙", st: n3store, idPrefix: "n3", onEvent: n3onEvent,
-  title: "N3 어휘", intro: "N3 학습 목록의 단어를 목록 · 플래시카드 · 퀴즈로 공부해요.",
-  sets: [{ key: "vocab", dataKey: "n3vocab", label: "어휘", area: "vocab" }],
-});
-const n3grammar = createListStudy({
-  id: "n3/grammar", label: "N3 문형", jp: "文法", st: n3store, idPrefix: "n3", onEvent: n3onEvent,
-  title: "N3 문형", intro: "N3 학습 목록의 문형을 목록 · 플래시카드 · 퀴즈로 공부해요.",
-  sets: [{ key: "grammar", dataKey: "n3grammar", label: "문형", area: "grammar" }],
-});
+// N1 홈과 D-30은 PDF 목록 단어·문형까지 합친 숫자를 보여 주므로 그 자료를 먼저 불러온다
+home.needs = ["n1vocab", "n1grammar", "sources"];
+sprint.needs = ["n1vocab", "sources"];
 
 export const ROOMS = {
   n1: {
     id: "n1", name: "N1 공부방", docTitle: "JLPT N1 合格!",
     eyebrow: "日本語能力試験 · N1", title: 'JLPT N1 <span lang="ja">合格!</span>',
     lede: "단어, 문법, 독해, 청해를 매일 조금씩. 틀린 문제는 자동으로 모아 두고, 시험 한 달 전에는 D-30 집중 모드로 마무리해요.",
-    views: [home, vocab, grammar, n1lists, reading, listening, notes, sprint, mock, backup],
+    views: [home, vocab, grammar, reading, listening, notes, sprint, mock, backup],
   },
   n3: {
     id: "n3", name: "N3 공부방", docTitle: "JLPT N3 合格!",
     eyebrow: "日本語能力試験 · N3", title: 'JLPT N3 <span lang="ja">合格!</span>',
-    lede: "가나와 N5·N4 기초부터 N3 어휘·문형, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
-    views: [n3home, n3basics, n3vocab, n3grammar, n3more, n3practice, n3notes],
+    lede: "가나와 N5·N4 기초부터 N3 단어·문법, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
+    views: [n3home, n3basics, n3vocab.view, n3grammar.view, n3reading, n3listening, n3notes, n3practice],
   },
 };
 
@@ -79,9 +60,9 @@ function renderRooms(app) {
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>공부방 고르기</h2><p>방마다 메뉴와 학습 기록(진도, 오답, 단어장)이 완전히 따로 저장돼요.</p></div></div>' +
       '<div class="rooms">' +
-        roomCard("n1", "N1 공부방", "日本語能力試験 N1", "단어 · 문법 · 독해 · 청해 · D-30 · 모의고사 · PDF 단어·문형",
+        roomCard("n1", "N1 공부방", "日本語能力試験 N1", "단어 · 문법 · 독해 · 청해 · 오답 노트 · D-30 · 모의고사",
           "문제 풀이 " + n1Attempts + "건 · 단어 기록 " + n1Words + "개", last === "n1") +
-        roomCard("n3", "N3 공부방", "日本語能力試験 N3", "가나 · N5·N4 기초 · N3 어휘·문형 · 시험 대비 · 오답 노트",
+        roomCard("n3", "N3 공부방", "日本語能力試験 N3", "기초(가나·N5·N4) · 단어 · 문법 · 오답 노트 · 시험 대비",
           "문제 풀이 " + n3Attempts + "건 · " + n3xp + " XP", last === "n3") +
       "</div>" +
       '<p class="hint">학습 기록은 이 브라우저에만 저장돼요. 같은 기기에서 두 사람이 쓸 때는 자기 방을 골라서 공부하면 돼요.</p>' +

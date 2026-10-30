@@ -16,6 +16,7 @@ const N1_DEFAULTS = {
   mocks: [],       // 모의고사 결과
   activity: {},    // 날짜 → { cards: 플래시카드 복습 수 }
   lists: {},       // PDF 단어·문형 목록 id → { status, fav, srs, wrong } (3단계에서 추가)
+  examDate: null,  // 내가 정한 시험일 (없으면 공식 다음 시험일)
 };
 
 const clone = v => JSON.parse(JSON.stringify(v));
@@ -111,4 +112,5 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   activity: {},    // 날짜 → { cards, questions }
   tests: [],       // 시간 제한 연습 테스트 결과
   game: { xp: 0 }, // 경험치
+  examDate: null,  // 내가 정한 시험일
 });

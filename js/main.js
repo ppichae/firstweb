@@ -8,6 +8,7 @@ import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.
 
 const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");
+const roomSwitch = document.getElementById("room-switch");
 const header = {
   eyebrow: document.getElementById("site-eyebrow"),
   title: document.getElementById("site-title"),
@@ -18,8 +19,12 @@ let currentView = null;
 let currentRoom;     // 처음에는 undefined → 첫 route에서 메뉴를 그린다
 let routeToken = 0;
 
+// 예전 주소(3단계)를 지금 메뉴로 이어 준다
+const ALIASES = { "n1/lists": "vocab", "n3/more": "n3/reading" };
+
 // 주소에 맞는 방과 화면을 찾는다. 모르는 주소면 마지막으로 연 방(없으면 방 선택 화면)으로 간다
 function resolve(id) {
+  id = ALIASES[id] || id;
   if (id === "rooms") return { room: null, view: roomsView };
   for (const room of Object.values(ROOMS)) {
     const view = room.views.find(v => v.id === id);
@@ -38,8 +43,9 @@ function drawRoom(room) {
   header.lede.textContent = info.lede;
   tablist.innerHTML = (room ? room.views.map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
-    (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("") : "") +
-    '<a class="tab room-switch" href="#rooms" data-view="rooms">' + (room ? "방 바꾸기" : "공부방 고르기") + "</a>";
+    (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("") : "");
+  roomSwitch.textContent = room ? "방 바꾸기" : "공부방 고르기";
+  roomSwitch.toggleAttribute("aria-current", !room);
 }
 
 async function route() {
