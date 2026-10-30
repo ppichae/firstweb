@@ -504,3 +504,7 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .estimate .facts { margin-top: 4px; }
 .review-q summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-height: 32px; }
 .review-q[open] summary { margin-bottom: 4px; }
+
+/* ---------- 10단계: 터치 영역 ---------- */
+/* 글 속 링크는 모양은 그대로 두고 누를 수 있는 영역만 위아래로 넓힌다 */
+.tile-sub a, .hint a, .lede a, footer a { display: inline-block; padding-block: 9px; margin-block: -9px; }

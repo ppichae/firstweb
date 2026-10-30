@@ -190,7 +190,7 @@ function renderSetup(app, s) {
         '<div class="form-grid">' +
           '<div class="field"><label for="s-date">시험 날짜</label><input id="s-date" type="date" required value="' + esc(v.examDate) + '">' +
             (exam ? '<span class="hint">공식 일정: ' + esc(exam.label) + " " + fmtDate(exam.date) + "</span>" : "") + "</div>" +
-          '<div class="field"><label for="s-min">하루 공부 가능 시간</label><select id="s-min">' + MINUTES.map(m => '<option value="' + m + '"' + (m === v.minutes ? " selected" : "") + ">" + (m >= 60 ? m / 60 + "시간" + (m % 60 ? " " + m % 60 + "분" : "") : m + "분") + "</option>").join("") + "</select></div>" +
+          '<div class="field"><label for="s-min">하루 공부 가능 시간</label><select id="s-min">' + MINUTES.map(m => '<option value="' + m + '"' + (m === v.minutes ? " selected" : "") + ">" + (m >= 60 ? Math.floor(m / 60) + "시간" + (m % 60 ? " " + m % 60 + "분" : "") : m + "분") + "</option>").join("") + "</select></div>" +
           '<div class="field"><label for="s-level">현재 N1 실력</label><select id="s-level">' + opt(LEVELS, v.level) + "</select></div>" +
           '<div class="field"><label for="s-goal">목표 학습량</label><select id="s-goal">' + opt(GOALS, v.goal) + "</select></div>" +
           '<div class="field"><label for="s-strong">가장 자신 있는 영역</label><select id="s-strong">' + opt(AREAS, v.strong) + "</select></div>" +

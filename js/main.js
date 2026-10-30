@@ -10,9 +10,10 @@ import notes from "./views/notes.js";
 import home from "./views/home.js";
 import sprint from "./views/sprint.js";
 import mock from "./views/mock.js";
+import backup from "./views/backup.js";
 
 // 메뉴 순서. 맨 앞 화면이 첫 화면이다. 화면을 추가할 때는 views 폴더에 파일을 만들고 여기에 한 줄 넣는다
-const VIEWS = [home, vocab, grammar, reading, listening, notes, sprint, mock];
+const VIEWS = [home, vocab, grammar, reading, listening, notes, sprint, mock, backup];
 
 const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");
