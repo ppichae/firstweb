@@ -56,7 +56,7 @@ export function feedbackHTML(q, picked, saved = false) {
       (g.explanation ? "<br>" + multiline(g.explanation) : "")]);
   }
   return '<div class="fb" role="status">' +
-    '<div class="fb-verdict ' + (ok ? "good" : "bad") + '">' + (ok ? "정답이에요" : "오답이에요") +
+    '<div class="fb-verdict ' + (ok ? "good" : "bad") + '">' + (ok ? "정답이에요" : picked === null ? "답하지 않았어요" : "오답이에요") +
       (!ok && saved ? " · 오답 노트에 저장했어요" : "") + "</div>" +
     "<dl>" + rows.map(([t, d]) => "<div><dt>" + t + "</dt><dd>" + d + "</dd></div>").join("") + "</dl>" +
   "</div>";

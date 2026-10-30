@@ -109,7 +109,7 @@ function speechLines(item) {
   return lines.flatMap(l => l.ja.split(/(?<=。)/).map(s => ({ sp: l.sp, ja: s.trim() }))).filter(l => l.ja);
 }
 
-async function setupPlayer(box, item, onEnded) {
+export async function setupPlayer(box, item, onEnded = () => {}) {
   // 1) 음성 파일이 있으면 그 파일을 재생한다
   if (item.audio) {
     box.innerHTML = '<audio controls preload="none" src="' + esc(item.audio) + '"></audio><p class="hint">음성 파일: ' + esc(item.audio) + "</p>";
