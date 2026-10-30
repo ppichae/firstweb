@@ -16,6 +16,7 @@ const label = t => (KQ_TYPES.find(x => x[0] === t) || [t, t])[1];
 const toHira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
 const kunText = k => { const [a, b] = k.split("-"); return b ? a + "(" + b + ")" : a; };
 const koText = i => i.ko.hun + " " + i.ko.eum;
+const hasKo = i => !!(i.ko && i.ko.hun);   // 뜻(훈)까지 있는 한자만 뜻 문제로 낸다
 
 function infos(roomId) { return roomKanjiList(roomId).map(kanjiInfo).filter(Boolean); }
 function pickOthers(list, n, key, exclude) {
@@ -32,14 +33,14 @@ function choice(correct, others, extra = {}) {
 function build(roomId, type, info, all) {
   const base = { area: "kanji", generated: true, kind: "한자 · " + label(type), source: { type: "ai" }, review: "needs-review", wordId: info.char };
   if (type === "meaning") {
-    if (!info.ko) return null;
-    const o = pickOthers(all.filter(x => x.ko), 3, koText, [koText(info)]);
+    if (!hasKo(info)) return null;
+    const o = pickOthers(all.filter(hasKo), 3, koText, [koText(info)]);
     return o.length < 3 ? null : Object.assign(base, { id: "kq-meaning-" + info.char, prompt: "「" + info.char + "」의 한국 한자음과 뜻은?" },
       choice(koText(info), o, { explanation: "「" + info.char + "」는 '" + koText(info) + "'이고, 일본어에서는 주로 '" + info.meaning + "'라는 뜻으로 써요." }));
   }
   if (type === "reverse") {
-    if (!info.ko) return null;
-    const o = pickOthers(all.filter(x => x.ko && koText(x) !== koText(info)), 3, x => x.char, [info.char]);
+    if (!hasKo(info)) return null;
+    const o = pickOthers(all.filter(x => hasKo(x) && koText(x) !== koText(info)), 3, x => x.char, [info.char]);
     return o.length < 3 ? null : Object.assign(base, { id: "kq-reverse-" + info.char, prompt: "'" + koText(info) + "'에 맞는 한자는?" },
       choice(info.char, o, { explanation: "'" + koText(info) + "'은 「" + info.char + "」예요." }));
   }

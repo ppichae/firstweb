@@ -106,7 +106,7 @@ export function createKanjiView(id, roomId) {
       if (ui.filter === "unseen" && r.seen) return false;
       if (ui.filter === "fav" && !r.fav) return false;
       if (q) {
-        const hay = [k.char, k.ko ? k.ko.hun + " " + k.ko.eum : "", k.meaning, ...k.on, ...k.kun.map(x => x.replace("-", ""))].join(" ");
+        const hay = [k.char, k.ko ? (k.ko.hun || "") + " " + k.ko.eum : "", k.meaning, ...k.on, ...k.kun.map(x => x.replace("-", ""))].join(" ");
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -115,7 +115,7 @@ export function createKanjiView(id, roomId) {
       const r = rec[k.char] || {};
       return '<button type="button" class="kanji-tile' + (r.seen ? " seen" : "") + '" data-kanji="' + esc(k.char) + '">' +
         '<span class="kt-char" lang="ja">' + esc(k.char) + "</span>" +
-        '<span class="kt-ko">' + (k.ko ? esc(k.ko.hun) + " " + esc(k.ko.eum) : "국자") + (r.fav ? " ★" : "") + "</span>" +
+        '<span class="kt-ko">' + (k.ko ? (k.ko.hun ? esc(k.ko.hun) + " " : "") + esc(k.ko.eum) : "") + (r.fav ? " ★" : "") + "</span>" +
         '<span class="kt-n">' + wordsWith(k.char, roomId).length + "단어</span></button>";
     }).join("") : '<p class="empty">조건에 맞는 한자가 없어요.</p>';
   }

@@ -2,7 +2,7 @@
 import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
 import { esc, pct } from "../../util.js";
-import { daysUntil } from "../../exam.js";
+import { daysUntil, examCardHTML, EXAM_INFO_N3 } from "../../exam.js";
 import { noteEntries } from "../../stats.js";
 import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
@@ -10,6 +10,7 @@ import { unitDone, coreUnits, openBasics } from "./basics.js";
 import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { growthCardHTML } from "../../badges.js";
+import { weekCardHTML } from "../../weekchart.js";
 import { roomKanjiList } from "../../kanji.js";
 
 const WEEKS = [
@@ -60,6 +61,7 @@ function render(app) {
       "</div>" +
 
       growthCardHTML("n3", "#n3/badges") +
+      weekCardHTML(n3store) +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정</h3><span class="badge">안내용</span></div>' +
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
@@ -87,6 +89,7 @@ function render(app) {
           ["실전 구성 모의고사", "콘텐츠 준비 중"],
         ]) +
       "</div>" +
+      examCardHTML(EXAM_INFO_N3, "N3") +
       '<p class="hint">학습 기록은 N1 방과 따로 이 브라우저에 저장돼요. 경험치 기준은 「전체 배지 보기」에서 볼 수 있어요.</p>' +
     "</section>";
 

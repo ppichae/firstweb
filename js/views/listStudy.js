@@ -1,19 +1,27 @@
 // PDF 목록 단어·문형 도우미: 출처·검수 표시, 품사 이름, 4지선다 문제 만들기
 // 단어·문법 화면(study.js)과 N3 시험 대비 화면(n3/practice.js)이 함께 쓴다.
-import { sourceById } from "../data.js";
+import { sourceById, EXTRA } from "../data.js";
 import { esc, shuffle } from "../util.js";
 
 export const LIST_POS = {
   noun: "명사", "noun-suru": "명사 · する동사", verb: "동사", "i-adj": "い형용사", "na-adj": "な형용사",
   adverb: "부사", phrase: "표현", taru: "~と / ~とした", prefix: "접두어", suffix: "접미어", adnominal: "연체사",
 };
-const STATUS = { VERIFIED: "검수 완료", AI_GENERATED: "AI 작성", NEEDS_REVIEW: "검수 필요", SOURCE_PENDING: "출처 확인 필요" };
+// 화면에 보이는 검수 상태는 세 가지뿐이다: 검수 완료 / 검수 필요 / 자료 준비 중
+const STATUS = { VERIFIED: "검수 완료", AI_GENERATED: "검수 필요", NEEDS_REVIEW: "검수 필요", SOURCE_PENDING: "검수 필요" };
 const hasKanji = s => /[一-鿿々]/.test(s);
 
 // 단어는 word, 문형은 pattern에 표기가 들어 있다
 const head = it => it.word || it.pattern;
 
-// 출처·검수 표시: 어떤 PDF 목록에 있었는지, 뜻은 누가 썼는지, 검수했는지
+// 읽기를 사전(JMdict)과 대조해 일치한 단어인지 (data/review/checks.json)
+export function readingChecked(id) {
+  const c = EXTRA.checks && EXTRA.checks.vocab;
+  return !!c && Object.values(c).some(g => (g.readingMatched || []).includes(id));
+}
+export const checkedBadge = id => (readingChecked(id) ? '<span class="badge ok" title="표기와 읽기가 JMdict 사전 항목과 일치해요">읽기 확인됨</span>' : "");
+
+// 출처·검수 표시: 어떤 참고 목록에 있었는지, 뜻은 누가 썼는지, 검수했는지
 export function listBadges(it) {
   const out = [];
   const ids = [...new Set((it.sources || []).map(s => s.id))];
@@ -24,6 +32,7 @@ export function listBadges(it) {
     out.push('<span class="badge" title="' + esc((s ? s.title : id) + " — " + secs) + '">목록: ' + esc(name) + "</span>");
   });
   if (it.meaningOrigin === "AI_GENERATED") out.push('<span class="badge ai">뜻: AI 작성</span>');
+  if (readingChecked(it.id)) out.push(checkedBadge(it.id));
   if (it.status !== "VERIFIED") out.push('<span class="badge warn">' + esc(STATUS[it.status] || it.status) + "</span>");
   else out.push('<span class="badge ok">검수 완료</span>');
   return '<span class="badges">' + out.join("") + "</span>";

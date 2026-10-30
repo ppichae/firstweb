@@ -4,8 +4,8 @@
 import { EXTRA } from "../data.js";
 import { esc, badges, shuffle, today } from "../util.js";
 import { mountQuestion } from "../quiz.js";
-import { GRADES, schedule, preview, newCard } from "../srs.js";
-import { listBadges, LIST_POS, buildQuestion } from "./listStudy.js";
+import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
+import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
@@ -31,7 +31,7 @@ const samePattern = (a, b) => normPattern(a.pattern) === normPattern(b.pattern);
 function alsoBadge(e) {
   if (!e.also.length) return "";
   const ids = [...new Set(e.also.flatMap(x => (x.sources || []).map(s => s.id)))];
-  return '<span class="badge" title="' + esc(ids.join(", ")) + '">PDF 목록에도 있음</span>';
+  return '<span class="badge" title="' + esc(ids.join(", ")) + '">참고 목록에도 있음</span>';
 }
 
 function seg(ui, key, label) {
@@ -93,7 +93,7 @@ export function createVocabView(cfg) {
         '<div class="segmented" role="tablist" aria-label="단어 학습 방식">' +
           seg(ui, "list", "단어장") + seg(ui, "cards", "플래시카드") + seg(ui, "quiz", "퀴즈") + seg(ui, "compare", "헷갈리는 단어") +
         "</div>" +
-        (hasCore ? "" : '<p class="notice">PDF 학습 목록에서 일본어 표기와 읽기만 참고했어요. 한국어 뜻은 AI가 새로 쓴 것이라 <b>검수 필요</b> 상태이고, 예문은 준비 중이에요.</p>') +
+        (hasCore ? "" : '<p class="notice">단어의 일본어 표기와 읽기는 시험 대비 교재의 단어 목록을 참고했어요. 한국어 뜻은 AI가 새로 써서 <b>검수 필요</b> 상태이고, 예문은 <b>자료 준비 중</b>이에요.</p>') +
         '<div id="mode" class="stack"></div>' +
       "</section>";
     app.onclick = e => {
@@ -113,7 +113,7 @@ export function createVocabView(cfg) {
     root.querySelector("#due-count").textContent = reviewWordIds().length;
     root.querySelector("#known-bar").style.width = (known / all.length * 100) + "%";
     const subs = {
-      list: "카드를 누르면 읽는 법, 뜻, 예문이 보여요. 기본 단어장과 PDF 목록 단어를 한곳에 모았어요.",
+      list: coreData() ? "카드를 누르면 읽는 법, 뜻, 예문이 보여요. 기본 단어장과 참고 목록 단어를 한곳에 모았어요." : "카드를 누르면 읽는 법과 뜻이 보여요. 단어 아래 한자 버튼을 누르면 한자 설명이 열려요.",
       cards: "기억한 정도를 고르면, 다음 복습 날짜가 자동으로 정해져요.",
       quiz: "틀린 단어는 오답 노트에 저장되고, 오늘 복습할 단어로 들어가요.",
       compare: "뜻이 비슷하거나 읽기가 같은 단어를 나란히 비교해요.",
@@ -135,7 +135,7 @@ export function createVocabView(cfg) {
         (hasCore
           ? '<div class="field"><label for="v-src">자료</label><select id="v-src"><option value="">전체</option>' +
               '<option value="core"' + (ui.src === "core" ? " selected" : "") + ">기본 단어장</option>" +
-              '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">PDF 목록</option></select></div>" +
+              '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">참고 목록 단어</option></select></div>" +
             '<div class="field"><label for="v-topic">주제</label><select id="v-topic"><option value="">전체</option>' +
               topics.map(t => "<option" + (ui.topic === t ? " selected" : "") + ">" + esc(t) + "</option>").join("") + "</select></div>"
           : "") +
@@ -216,7 +216,7 @@ export function createVocabView(cfg) {
     const open = ui.showAll || revealed.has(v.id);
     const ex = v.examples && v.examples[0];
     const rel = (label, arr) => arr && arr.length ? '<span class="rel"><b>' + label + '</b> <span lang="ja">' + arr.map(esc).join("、") + "</span></span>" : "";
-    const meta = e.core ? esc(POS[v.pos] || v.pos) + " · " + esc(v.topic) + " · " + LEVEL[v.level] : esc(POS[v.pos] || v.pos) + " · PDF 목록 · " + esc(v.level);
+    const meta = e.core ? esc(POS[v.pos] || v.pos) + " · " + esc(v.topic) + " · " + LEVEL[v.level] : esc(POS[v.pos] || v.pos) + " · " + esc(v.level);
     return '<article class="card' + (s.status === "known" ? " is-known" : "") + '">' +
       (s.status === "known" ? '<span class="seal" aria-hidden="true" lang="ja">済</span>' : "") +
       '<button type="button" class="card-face" data-word="' + v.id + '" aria-expanded="' + open + '">' +
@@ -224,11 +224,11 @@ export function createVocabView(cfg) {
         (open
           ? (v.reading && v.reading !== v.word ? '<span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
             '<span class="meaning">' + esc(v.meaning) + "</span>" +
-            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : '<span class="ex">예문 준비 중</span>') +
+            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : '<span class="ex">예문: <span class="badge">자료 준비 중</span></span>') +
             (e.core
               ? '<span class="rels">' + rel("유의어", v.synonyms) + rel("반의어", v.antonyms) + rel("자주 쓰는 표현", v.collocations) + "</span>" +
                 (v.usage ? '<span class="usage">' + esc(v.usage) + "</span>" : "") +
-                badges(v).replace(/<\/span>$/, alsoBadge(e) + "</span>")
+                badges(v).replace(/<\/span>$/, checkedBadge(v.id) + alsoBadge(e) + "</span>")
               : listBadges(v))
           : '<span class="hint">눌러서 뜻 보기</span>') +
       "</button>" +
@@ -278,7 +278,7 @@ export function createVocabView(cfg) {
         "</div>" +
         (session.flipped
           ? '<div class="grades">' + GRADES.map(g =>
-              '<button type="button" class="grade grade-' + g.key + '" data-grade="' + g.key + '"><span>' + g.label + "</span><small>" + preview(card, g.key) + "</small></button>").join("") + "</div>"
+              '<button type="button" class="grade grade-' + g.key + '" data-grade="' + g.key + '"><span>' + g.label + "</span><small>" + preview(card, g.key) + "</small></button>").join("") + "</div>" + '<p class="hint srs-help">' + SRS_HELP + "</p>"
           : "");
       const flip = el.querySelector("#flip");
       if (flip) { flip.onclick = () => { session.flipped = true; draw(); }; flip.focus(); }
@@ -384,7 +384,7 @@ export function createVocabView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji"], render },
+    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks"], render },
     needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, total: () => items().length,
   };
 }
@@ -421,7 +421,7 @@ export function createGrammarView(cfg) {
       return;
     }
     const subs = {
-      learn: "문형을 펼치면 상세 설명과 예문이 나와요. 기본 문법과 PDF 목록 문형을 한곳에 모았어요.",
+      learn: coreData() ? "문형을 펼치면 상세 설명과 예문이 나와요. 기본 문법과 참고 목록 문형을 한곳에 모았어요." : "문형과 뜻을 보고, 공부한 문형에 표시해요. 설명·예문은 자료 준비 중이에요.",
       cards: "문형을 보고 뜻을 떠올린 뒤, 기억한 정도를 골라요.",
       quiz: "이 방의 문법 범위에서 문제를 풀어요. 틀린 문제는 오답 노트에 저장돼요.",
     };
@@ -433,7 +433,7 @@ export function createGrammarView(cfg) {
         '<div class="segmented" role="tablist" aria-label="문법 학습 방식">' +
           seg(ui, "learn", "문법 학습") + seg(ui, "cards", "플래시카드") + seg(ui, "quiz", "문법 퀴즈") +
         "</div>" +
-        (coreData() ? "" : '<p class="notice">PDF 학습 목록에서 문형 표기만 참고했어요. 뜻은 AI가 새로 쓴 것이라 <b>검수 필요</b> 상태이고, 접속 형태와 예문은 준비 중이에요.</p>') +
+        (coreData() ? "" : '<p class="notice">문형 표기는 시험 대비 교재의 문형 목록을 참고했어요. 뜻은 AI가 새로 써서 <b>검수 필요</b> 상태이고, 접속 형태와 예문은 <b>자료 준비 중</b>이에요.</p>') +
         '<div id="mode" class="stack"></div>' +
       "</section>";
     app.onclick = e => {
@@ -466,7 +466,7 @@ export function createGrammarView(cfg) {
         (coreData()
           ? '<div class="field"><label for="g-src">자료</label><select id="g-src"><option value="">전체</option>' +
               '<option value="core"' + (ui.src === "core" ? " selected" : "") + ">기본 문법</option>" +
-              '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">PDF 목록</option></select></div>"
+              '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">참고 목록 문형</option></select></div>"
           : "") +
       "</div>" +
       '<div class="toolbar">' + chipRow("gfilter", [["all", "전체"], ["todo", "아직 안 함"], ["studied", "공부함"], ["fav", "즐겨찾기"]], ui.filter) + "</div>" +
@@ -534,7 +534,7 @@ export function createGrammarView(cfg) {
           (g.caution ? "<div><dt>사용 시 주의사항</dt><dd>" + esc(g.caution) + "</dd></div>" : "") +
           (g.examPoint ? "<div><dt>시험에서 이렇게 물어볼 수 있어요</dt><dd>" + esc(g.examPoint) + "</dd></div>" : "") +
         "</dl>" + badges(g).replace(/<\/span>$/, alsoBadge(e) + "</span>")
-      : "<dl><div><dt>설명 · 접속 형태 · 예문</dt><dd>준비 중이에요.</dd></div>" +
+      : "<dl><div><dt>설명 · 접속 형태 · 예문</dt><dd><span class=\"badge\">자료 준비 중</span></dd></div>" +
           "<div><dt>실린 목록</dt><dd>" + listBadges(g) + "</dd></div></dl>";
     return '<div class="g-item" id="' + g.id + '">' +
       '<div><div class="g-pattern" lang="ja">' + esc(g.pattern) + "</div>" +
@@ -545,7 +545,7 @@ export function createGrammarView(cfg) {
           '<button type="button" class="mark" data-gact="studied" data-id="' + g.id + '" aria-pressed="' + !!s.studied + '">' + (s.studied ? "공부했어요 ✓" : "공부했어요") + "</button>" +
         "</div></div>" +
       '<div class="g-body"><div class="g-mean">' + esc(g.meaning) + "</div>" +
-        (e.core ? '<div class="g-conn">접속 · ' + esc(g.connection) + "</div>" : '<div class="g-conn">PDF 목록 · ' + esc(g.level) + "</div>") +
+        (e.core ? '<div class="g-conn">접속 · ' + esc(g.connection) + "</div>" : '<div class="g-conn">' + esc(g.level) + ' 문형' + "</div>") +
         (ex ? '<div class="g-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>" : "") +
         '<details class="g-more" data-owner="' + cfg.id + '" data-id="' + g.id + '"' + (ui.open.has(g.id) ? " open" : "") + "><summary>자세히 보기</summary>" + more + "</details>" +
       "</div></div>";
@@ -583,7 +583,7 @@ export function createGrammarView(cfg) {
         "</div>" +
         (session.flipped
           ? '<div class="grades">' + GRADES.map(gr =>
-              '<button type="button" class="grade grade-' + gr.key + '" data-grade="' + gr.key + '"><span>' + gr.label + "</span><small>" + preview(card, gr.key) + "</small></button>").join("") + "</div>"
+              '<button type="button" class="grade grade-' + gr.key + '" data-grade="' + gr.key + '"><span>' + gr.label + "</span><small>" + preview(card, gr.key) + "</small></button>").join("") + "</div>" + '<p class="hint srs-help">' + SRS_HELP + "</p>"
           : "");
       const flip = el.querySelector("#flip");
       if (flip) { flip.onclick = () => { session.flipped = true; draw(); }; flip.focus(); }
@@ -663,7 +663,7 @@ export function createGrammarView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji"], render },
+    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji", "checks"], render },
     studiedCount, total: () => items().length,
   };
 }

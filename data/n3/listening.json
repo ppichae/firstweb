@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "title": "N3 청해 자료",
+    "updated": "2026-10-31",
+    "status": "자료 준비 중",
+    "note": "아직 문제가 없어요. 아래 형식(itemExample)대로 items에 추가하면 N3 '청해' 화면에 바로 나타나요. audio.file에 녹음 파일(mp3)을 넣으면 그 파일을, 없으면 기기의 일본어 음성(TTS)으로 스크립트를 읽어요. 녹음 파일은 출처와 라이선스를 반드시 적어 주세요.",
+    "types": ["과제 이해", "포인트 이해", "개요 이해", "발화 표현", "즉시 응답"],
+    "typesSource": "N3 청해 문제 유형: JLPT 공식 문제 예시 안내(https://www.jlpt.jp/e/samples/sampleindex.html)",
+    "itemExample": {
+      "id": "n3l-001",
+      "level": "N3",
+      "type": "포인트 이해",
+      "title": "상황 제목",
+      "situation": "상황 설명(한국어)",
+      "script": [ { "sp": "男", "ja": "일본어 대사", "ko": "한국어 해석" }, { "sp": "女", "ja": "일본어 대사", "ko": "한국어 해석" } ],
+      "audio": { "file": null, "source": null, "license": null },
+      "questions": [
+        { "id": "n3l-001-1", "prompt": "질문(일본어)", "options": ["보기1", "보기2", "보기3", "보기4"], "answer": 0, "explanation": "정답 해설(한국어)" }
+      ],
+      "difficulty": "쉬움 | 보통 | 어려움 (자체 분류)",
+      "source": { "type": "ai | own | licensed", "label": "누가 썼는지", "url": null, "license": "이용 조건" },
+      "status": "검수 완료 | 검수 필요"
+    }
+  },
+  "items": []
+}

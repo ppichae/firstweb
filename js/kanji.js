@@ -152,7 +152,7 @@ function draw() {
     '<div class="kd-head"><div class="kd-char" lang="ja">' + esc(ch) + "</div>" +
       '<div class="kd-title">' +
         (info
-          ? '<div class="kd-ko">' + (info.ko ? esc(info.ko.hun) + " <b>" + esc(info.ko.eum) + "</b>" : "한국 한자음 없음") + "</div>" +
+          ? '<div class="kd-ko">' + (info.ko ? (info.ko.hun ? esc(info.ko.hun) + " " : "<small class=\"hint\">(뜻 미확인)</small> ") + "<b>" + esc(info.ko.eum) + "</b>" : "한국 한자음 없음") + "</div>" +
             '<div class="kd-mean">' + esc(info.meaning) + "</div>" +
             '<span class="badges"><span class="badge ai">AI 작성</span><span class="badge warn">검수 필요</span></span>'
           : '<div class="kd-ko">상세 정보 준비 중</div><p class="hint">아직 상세 자료가 없는 한자예요. 이 방 단어 목록에서 쓰인 단어만 보여 드려요.</p>') +
@@ -208,7 +208,7 @@ function draw() {
   const foot =
 
     '<p class="kd-foot">학습 수준: ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나와요. JLPT는 공식 한자 급수 목록을 공개하지 않아요." +
-      (info ? "<br>자료: AI 작성 · 검수 필요 · 획순 참조값 KanjiVG " + esc(info.strokeRef) : "") + "</p>";
+      (info ? "<br>검수 상태: <b>검수 필요</b> (AI 작성). 확인한 항목: " + [info.strokesCheck ? "획수(KanjiVG)" : "", info.readingsCheck ? "음독·훈독·한국 한자음(KANJIDIC2와 대조)" : ""].filter(Boolean).join(", ") + ". 아직 확인하지 않은 항목: 뜻(훈)·구성 요소·어원·연상 이야기." : "") + "</p>";
 
   const strokes = '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes">' + (info ? "" : '<p class="hint">획순 데이터 준비 중이에요.</p>') + "</div></section>";
   stopStrokes();

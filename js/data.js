@@ -50,6 +50,9 @@ const EXTRA_FILES = {
   kanji: "data/kanji/common.json",
   kanjiN1: "data/kanji/n1.json",
   kanjiN3: "data/kanji/n3.json",
+  n3reading: "data/n3/reading.json",
+  n3listening: "data/n3/listening.json",
+  checks: "data/review/checks.json",
 };
 export const EXTRA = {};
 const pending = {};
