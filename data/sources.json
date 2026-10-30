@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "title": "학습 데이터 출처 목록",
+    "updated": "2026-10-31",
+    "statusValues": {
+      "VERIFIED": "출처와 내용을 사람이 확인한 데이터",
+      "AI_GENERATED": "AI가 새로 작성한 데이터",
+      "NEEDS_REVIEW": "사람의 검수가 필요한 데이터",
+      "SOURCE_PENDING": "출처 확인이 필요한 데이터"
+    }
+  },
+  "policy": [
+    "아래 PDF는 '무엇을 공부할지' 정하는 학습 목록으로만 참고했습니다.",
+    "PDF에서 가져온 것은 일본어 표기와 읽기(후리가나)뿐입니다.",
+    "PDF의 한국어 뜻풀이, 예문, 해설, 연습문제와 문장은 옮기지 않았습니다. 한국어 뜻은 새로 작성했습니다.",
+    "PDF 파일 자체는 저장소에 올리지 않습니다.",
+    "PDF에 '기출'이라고 적힌 분류는 각 PDF의 표기를 그대로 기록한 것이며, JLPT 공식 자료로 확인한 것은 아닙니다."
+  ],
+  "sources": [
+    {
+      "id": "hackers-n1",
+      "title": "2021~2026년 JLPT N1 최신 기출 어휘·문형 PDF",
+      "publisher": "해커스일본어 (japan.Hackers.com 무료 학습자료)",
+      "level": "N1",
+      "pages": 18,
+      "sections": ["2021~2026 연도별 기출 어휘", "2021~2026 연도별 기출 문형", "연습문제 1~3회(사용하지 않음)"],
+      "notice": "모든 쪽에 '저작권자의 동의 없이 본 PDF의 내용의 복제·전송·배포 등의 행위를 금합니다'라는 문구가 있음",
+      "used": "어휘·문형 목록의 표기와 읽기만",
+      "notUsed": "한국어 뜻풀이, 연습문제와 정답",
+      "url": null,
+      "status": "SOURCE_PENDING"
+    },
+    {
+      "id": "hackers-n3",
+      "title": "2021~2026년 JLPT N3 최신 기출 어휘·문형 PDF",
+      "publisher": "해커스일본어 (japan.Hackers.com 무료 학습자료)",
+      "level": "N3",
+      "pages": 18,
+      "sections": ["2021~2026 연도별 기출 어휘", "2021~2026 연도별 기출 문형", "연습문제 1~3회(사용하지 않음)"],
+      "notice": "모든 쪽에 '저작권자의 동의 없이 본 PDF의 내용의 복제·전송·배포 등의 행위를 금합니다'라는 문구가 있음",
+      "used": "어휘·문형 목록의 표기와 읽기만",
+      "notUsed": "한국어 뜻풀이, 연습문제와 정답",
+      "url": null,
+      "status": "SOURCE_PENDING"
+    },
+    {
+      "id": "iltan-n1",
+      "title": "일단합격 JLPT 일본어능력시험 N1 완벽 대비 — 단어장(파이널 단어 체크북·파이널 문법 체크북)",
+      "publisher": "동양북스",
+      "level": "N1",
+      "pages": 64,
+      "sections": ["단어: 한자 읽기·문맥 규정·유의어·용법", "문법: 문법 형식 판단·문장 완성", "문맥 이해(사용하지 않음—문제 속 문장 조각이라 제외)"],
+      "notice": "출판사 교재",
+      "used": "단어·문형 목록의 표기와 읽기만",
+      "notUsed": "한국어 뜻풀이, 문맥 이해 표현 목록",
+      "url": null,
+      "status": "SOURCE_PENDING"
+    },
+    {
+      "id": "iltan-n3",
+      "title": "일단합격 JLPT 일본어능력시험 N3 완벽 대비 — 단어장(파이널 단어 체크북·파이널 문법 체크북·파이널 오답 체크북)",
+      "publisher": "동양북스",
+      "level": "N3",
+      "pages": 54,
+      "sections": ["단어: 한자 읽기·한자 표기·문맥 규정·유의어·용법", "문법: 문법 형식 판단·문장 완성", "문맥 이해(사용하지 않음)", "오답 체크북(빈 양식, 내용 없음)"],
+      "notice": "출판사 교재",
+      "used": "단어·문형 목록의 표기와 읽기만",
+      "notUsed": "한국어 뜻풀이, 문맥 이해 표현 목록",
+      "url": null,
+      "status": "SOURCE_PENDING"
+    }
+  ],
+  "files": {
+    "data/n1/vocab.json": "N1 어휘 (hackers-n1, iltan-n1 목록 참고)",
+    "data/n1/grammar.json": "N1 문형 (hackers-n1, iltan-n1 목록 참고)",
+    "data/n3/vocab.json": "N3 어휘 (hackers-n3, iltan-n3 목록 참고)",
+    "data/n3/grammar.json": "N3 문형 (hackers-n3, iltan-n3 목록 참고)"
+  }
+}

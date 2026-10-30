@@ -3,7 +3,7 @@ import { esc, multiline, badges, AREAS } from "./util.js";
 import { store } from "./store.js";
 import { grammarById } from "./data.js";
 
-// q: 문제 자료, opts: { number, record(기록 여부), mode, onAnswer(correct, choice), wide, label }
+// q: 문제 자료, opts: { number, record(기록 여부), mode, onAnswer(correct, choice), wide, label, store(기록할 방, 기본은 N1) }
 export function mountQuestion(el, q, opts = {}) {
   let picked = null;
 
@@ -31,7 +31,7 @@ export function mountQuestion(el, q, opts = {}) {
     const b = e.target.closest("[data-o]");
     if (!b || picked !== null) return;
     picked = Number(b.dataset.o);
-    if (opts.record !== false) store.recordAttempt(q, picked, opts.mode);
+    if (opts.record !== false) (opts.store || store).recordAttempt(q, picked, opts.mode);
     render();
     if (opts.onAnswer) opts.onAnswer(picked === q.answer, picked);
   };

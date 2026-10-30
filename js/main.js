@@ -1,43 +1,68 @@
-// 사이트의 시작점: 자료를 불러오고, 주소 끝(#vocab 등)에 맞는 화면을 보여 준다
-import { loadData, DB } from "./data.js";
+// 사이트의 시작점: 자료를 불러오고, 주소 끝(#vocab, #n3/basics 등)에 맞는 방과 화면을 보여 준다
+import { loadData, DB, ensureExtra } from "./data.js";
 import { store } from "./store.js";
 import { esc } from "./util.js";
-import vocab from "./views/vocab.js";
-import grammar from "./views/grammar.js";
-import reading from "./views/reading.js";
-import listening from "./views/listening.js";
-import notes from "./views/notes.js";
-import home from "./views/home.js";
-import sprint from "./views/sprint.js";
-import mock from "./views/mock.js";
-import backup from "./views/backup.js";
+import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
 
-// 메뉴 순서. 맨 앞 화면이 첫 화면이다. 화면을 추가할 때는 views 폴더에 파일을 만들고 여기에 한 줄 넣는다
-const VIEWS = [home, vocab, grammar, reading, listening, notes, sprint, mock, backup];
+// 메뉴 순서는 rooms.js의 각 방 views에 있다. 맨 앞 화면이 그 방의 첫 화면이다
 
 const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");
-
-tablist.innerHTML = VIEWS.map(v =>
-  '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
-  (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("");
+const header = {
+  eyebrow: document.getElementById("site-eyebrow"),
+  title: document.getElementById("site-title"),
+  lede: document.getElementById("site-lede"),
+};
 
 let currentView = null;
+let currentRoom;     // 처음에는 undefined → 첫 route에서 메뉴를 그린다
+let routeToken = 0;
 
-function route() {
-  const id = location.hash.slice(1);
-  const view = VIEWS.find(v => v.id === id) || VIEWS[0];
+// 주소에 맞는 방과 화면을 찾는다. 모르는 주소면 마지막으로 연 방(없으면 방 선택 화면)으로 간다
+function resolve(id) {
+  if (id === "rooms") return { room: null, view: roomsView };
+  for (const room of Object.values(ROOMS)) {
+    const view = room.views.find(v => v.id === id);
+    if (view) return { room, view };
+  }
+  const last = lastRoom() || (hasN1Records() ? "n1" : null);
+  if (last) return { room: ROOMS[last], view: ROOMS[last].views[0] };
+  return { room: null, view: roomsView };
+}
+
+function drawRoom(room) {
+  const info = room || roomsView;
+  document.title = info.docTitle;
+  header.eyebrow.textContent = info.eyebrow;
+  header.title.innerHTML = info.title;
+  header.lede.textContent = info.lede;
+  tablist.innerHTML = (room ? room.views.map(v =>
+    '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
+    (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("") : "") +
+    '<a class="tab room-switch" href="#rooms" data-view="rooms">' + (room ? "방 바꾸기" : "공부방 고르기") + "</a>";
+}
+
+async function route() {
+  const token = ++routeToken;
+  const { room, view } = resolve(location.hash.slice(1));
   // 이전 화면의 정리 작업(음성·타이머 멈추기)을 하고, 걸어 둔 클릭·입력 처리를 지운다
   if (currentView && currentView.leave) currentView.leave();
   currentView = view;
   app.onclick = app.oninput = app.onchange = app.onsubmit = null;
-  view.render(app);
+  if (room !== currentRoom) { drawRoom(room); currentRoom = room; }
+  if (room) rememberRoom(room.id);
   tablist.querySelectorAll(".tab").forEach(t => {
     if (t.dataset.view === view.id) {
       t.setAttribute("aria-current", "page");
       t.scrollIntoView({ block: "nearest", inline: "nearest" });
     } else t.removeAttribute("aria-current");
   });
+  if (view.needs) {
+    app.innerHTML = '<p class="loading">학습 자료를 불러오는 중이에요…</p>';
+    await ensureExtra(view.needs);
+    if (token !== routeToken) return;   // 기다리는 사이에 다른 화면으로 옮겨 갔다
+  }
+  view.render(app);
 }
 
 // 다른 화면에서 메뉴를 다시 그리라고 요청할 때 쓴다

@@ -38,3 +38,30 @@ function buildIndex() {
 
 export const grammarById = id => (DB.grammar.items || []).find(g => g.id === id);
 export const vocabById = id => (DB.vocab.items || []).find(v => v.id === id);
+
+// 3단계: 방마다 따로 쓰는 자료. 필요한 화면을 처음 열 때 불러온다 (N1 첫 화면이 느려지지 않게)
+const EXTRA_FILES = {
+  sources: "data/sources.json",
+  n1vocab: "data/n1/vocab.json",
+  n1grammar: "data/n1/grammar.json",
+  n3vocab: "data/n3/vocab.json",
+  n3grammar: "data/n3/grammar.json",
+  n3basics: "data/n3/basics.json",
+};
+export const EXTRA = {};
+const pending = {};
+
+// 파일이 없거나 읽지 못해도 사이트 전체를 멈추지 않는다. 그 영역만 '준비 중'으로 보여 준다
+export function ensureExtra(keys) {
+  return Promise.all(keys.map(key => {
+    if (!pending[key]) {
+      pending[key] = fetch(EXTRA_FILES[key], { cache: "no-cache" })
+        .then(res => (res.ok ? res.json() : null))
+        .catch(() => null)
+        .then(json => { EXTRA[key] = json; });
+    }
+    return pending[key];
+  }));
+}
+
+export const sourceById = id => ((EXTRA.sources && EXTRA.sources.sources) || []).find(s => s.id === id);

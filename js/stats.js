@@ -13,9 +13,9 @@ export function questionFor(qid, attempt) {
 }
 
 // 문제별 풀이 이력. 한 번이라도 틀린 문제만 오답 노트에 들어간다
-export function noteEntries() {
+export function noteEntries(st = store) {
   const byQ = new Map();
-  store.get("attempts").forEach(a => {
+  st.get("attempts").forEach(a => {
     if (!byQ.has(a.qid)) byQ.set(a.qid, []);
     byQ.get(a.qid).push(a);
   });
