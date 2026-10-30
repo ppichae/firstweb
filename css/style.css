@@ -596,8 +596,8 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 
 /* ---------- 4-1단계: 화면 통일 ---------- */
 /* N3 홈의 일정·과정 링크는 밑줄 없이 글자색으로만 표시한다 */
-.weeks a, .course .q-top a { text-decoration: none; }
-.weeks a:hover, .course .q-top a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+
 .flash-word.sm { font-size: clamp(28px, 7vw, 40px); }
 /* 시험일(D-Day) 칸 */
 .dday-actions { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; margin-top: 4px; }
@@ -700,3 +700,63 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .kd-box-label { font-size: 13px; font-weight: 700; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .kd-words, .kd-ex { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 14.5px; }
 .kd-foot { margin: 0; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+
+/* ---------- 6단계: 공통 UI 정리 ---------- */
+/* 메뉴: PC에서는 두 줄로 넘겨서 잘리지 않게, 좁은 화면에서는 옆으로 밀어서 보고 오른쪽 끝을 흐리게 */
+@media (min-width: 900px) {
+  .nav-row .tablist { flex-wrap: wrap; overflow: visible; row-gap: 2px; }
+}
+@media (max-width: 899px) {
+  .nav-row .tablist {
+    padding-right: 28px;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+}
+.tab { padding: 10px 12px; }
+
+/* 링크: 평소에는 밑줄 없이 쪽빛 굵은 글자, 마우스를 올리면 배경이 생긴다 */
+a { text-decoration: none; }
+a:not(.btn):not(.tab):not(.room):not(.room-switch) {
+  font-weight: 600; border-radius: 4px; transition: background-color .15s;
+}
+a:not(.btn):not(.tab):not(.room):not(.room-switch):hover { background: var(--ink-soft); }
+.exam-tile a:not(.btn):hover { background: rgba(255, 255, 255, .18); }
+.link-btn { text-decoration: none; border-radius: 6px; padding-inline: 6px; margin-inline: -6px; transition: background-color .15s; }
+.link-btn:hover { background: var(--ink-soft); }
+.exam-tile .link-btn:hover { background: rgba(255, 255, 255, .18); }
+
+/* N3 추천 일정: 누를 수 있는 카드처럼 보이게 */
+.weeks ul { list-style: none; padding: 0; gap: 6px; }
+.weeks ul li { padding: 0; }
+.weeks ul li a {
+  display: block; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg);
+  color: var(--fg); font-weight: 500; transition: transform .15s, box-shadow .15s, background-color .15s, border-color .15s;
+}
+.weeks ul li a::after { content: " →"; color: var(--ink); }
+.weeks ul li a:hover, .weeks ul li a:focus-visible {
+  background: var(--ink-soft); border-color: var(--ink); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+}
+.course .q-top a { padding: 6px 10px; border-radius: 8px; background: var(--ink-soft); }
+.course .q-top a:hover { background: var(--ink); color: var(--surface); }
+
+/* 획순 플레이어 */
+.stroke-player { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 520px) { .stroke-player { grid-template-columns: 1fr; justify-items: center; } .sp-side { width: 100%; } }
+.sp-stage { width: 100%; max-width: 220px; aspect-ratio: 1; }
+.stroke-svg { width: 100%; height: 100%; display: block; }
+.stroke-svg .grid rect { fill: var(--bg); stroke: var(--line); }
+.stroke-svg .grid line { stroke: var(--line); stroke-dasharray: 3 3; }
+.stroke-svg .guide path { fill: none; stroke: var(--line); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.stroke-svg .ink path { fill: none; stroke: var(--fg); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+.stroke-svg .ink path.now { stroke: var(--stamp); }
+.stroke-svg .nums text { font-size: 8px; fill: var(--ink); font-family: var(--font-body); display: none; }
+.stroke-svg.show-nums .nums text { display: inline; }
+.sp-side { display: grid; gap: 10px; min-width: 0; }
+.sp-count { font-size: 15px; font-variant-numeric: tabular-nums; }
+.sp-count b { font-size: 26px; color: var(--ink); }
+.sp-controls { display: flex; flex-wrap: wrap; gap: 6px; }
+.sp-options { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.sp-check { display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px; color: var(--muted); min-height: 40px; }
+.sp-check input { width: 18px; height: 18px; accent-color: var(--ink); }
+.sp-src { font-size: 12px; }

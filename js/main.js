@@ -44,8 +44,8 @@ function drawRoom(room) {
   header.lede.textContent = info.lede;
   tablist.innerHTML = (room ? room.views.map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
-    (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("") : "");
-  roomSwitch.textContent = room ? "방 바꾸기" : "프로필 고르기";
+    "</a>").join("") : "");   // 메뉴는 한글만 표시한다
+  roomSwitch.textContent = room ? "방 바꾸기" : "급수 선택";
   roomSwitch.toggleAttribute("aria-current", !room);
 }
 

@@ -53,33 +53,30 @@ export function hasN1Records() {
   try { return Object.keys(localStorage).some(k => k.startsWith(store.prefix)); } catch (e) { return false; }
 }
 
-/* ---------- 프로필(공부방) 선택 화면 ---------- */
+/* ---------- 급수 선택 화면 ---------- */
 function renderRooms(app) {
   const last = lastRoom();
-  const s1 = summaryOf("n1"), s3 = summaryOf("n3");
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>누가 공부하나요?</h2><p>자기 프로필을 고르면 그 사람의 공부방으로 들어가요. 진도, 오답, 단어장, 학습 시간이 사람마다 따로 저장돼요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>급수 선택</h2><p>공부할 급수를 골라 주세요. N1과 N3는 진도, 오답, 단어장, 학습 기록이 따로 저장돼요.</p></div></div>' +
       '<div class="rooms">' +
-        roomCard("n1", s1, "단어 · 문법 · 독해 · 청해 · 오답 노트 · D-30 · 모의고사", last === "n1") +
-        roomCard("n3", s3, "기초(가나·N5·N4) · 단어 · 문법 · 오답 노트 · 시험 대비", last === "n3") +
+        roomCard("n1", summaryOf("n1"), "고급 단어·문법·한자 · 독해 · 청해 · D-30 · 모의고사", last === "n1") +
+        roomCard("n3", summaryOf("n3"), "히라가나·가타카나부터 N5·N4 기초 · N3 단어·문법·한자 · 시험 대비", last === "n3") +
       "</div>" +
-      '<p class="hint">이름은 각 방의 \'함께 보기\'에서 바꿀 수 있어요. 학습 기록은 이 브라우저에만 저장돼요.</p>' +
     "</section>";
 }
 
 function roomCard(id, s, menu, isLast) {
   return '<a class="room" href="#' + ROOMS[id].views[0].id + '">' +
     '<span class="room-level" lang="ja">' + id.toUpperCase() + "</span>" +
-    '<span class="room-name">' + esc(s.name) + (isLast ? ' <span class="badge">마지막으로 연 방</span>' : "") + "</span>" +
-    '<span class="room-jp">' + esc(ROOMS[id].name) + ' · <span lang="ja">日本語能力試験 ' + id.toUpperCase() + "</span></span>" +
+    '<span class="room-name">' + esc(ROOMS[id].name) + (isLast ? ' <span class="badge">마지막으로 연 방</span>' : "") + "</span>" +
     '<span class="room-menu">' + esc(menu) + "</span>" +
     '<span class="room-stat">오늘 ' + s.todayMin + "분 · 연속 " + s.streak + "일 · 진도 " + s.progressPct + "%</span></a>";
 }
 
 export const roomsView = {
-  id: "rooms", label: "프로필 고르기", render: renderRooms,
+  id: "rooms", label: "급수 선택", render: renderRooms,
   needs: ["n1vocab", "n1grammar", "n3vocab", "n3grammar", "n3basics", "sources"],
   docTitle: "JLPT 合格!", eyebrow: "日本語能力試験", title: 'JLPT <span lang="ja">合格!</span>',
-  lede: "공부할 사람의 프로필을 골라 주세요. N1과 N3 학습 기록은 서로 섞이지 않아요.",
+  lede: "공부할 급수를 골라 주세요. N1과 N3 학습 기록은 서로 섞이지 않아요.",
 };

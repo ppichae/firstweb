@@ -4,6 +4,7 @@
 import { DB, EXTRA } from "./data.js";
 import { store, n3store } from "./store.js";
 import { esc, today } from "./util.js";
+import { mountStrokePlayer, stopStrokes } from "./strokes.js";
 
 const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
@@ -110,7 +111,7 @@ function ensureDialog() {
       window.dispatchEvent(new CustomEvent("kanji-changed"));
     }
   });
-  dialog.addEventListener("close", () => window.dispatchEvent(new CustomEvent("kanji-changed")));
+  dialog.addEventListener("close", () => { stopStrokes(); window.dispatchEvent(new CustomEvent("kanji-changed")); });
   return dialog;
 }
 
@@ -165,7 +166,7 @@ function draw() {
         (info.note ? '<p class="kd-note">' + esc(info.note) + "</p>" : "") + "</section>" +
       '<section class="kd-sec"><h4>모양</h4><dl class="kd-dl">' +
         '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" +
-        "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식)</small></dd></div>" +
+        "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식" + (info.strokesCheck ? " · KanjiVG 획순 데이터와 일치" : "") + ")</small></dd></div>" +
         "<div><dt>구성 요소</dt><dd>" + (info.components.length ? info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") : '<span class="hint">확인 필요</span>') + "</dd></div>" +
         "<div><dt>형성 원리</dt><dd>" + (info.formation ? esc(info.formation) : '<span class="hint">확인 필요</span>') + "</dd></div></dl></section>" +
       '<section class="kd-sec"><h4>어원과 연상</h4>' +
@@ -196,9 +197,12 @@ function draw() {
     : "";
 
   const foot =
-    '<section class="kd-sec"><h4>획순</h4><p class="hint">획순 데이터 준비 중이에요.</p></section>' +
+
     '<p class="kd-foot">학습 수준: ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나와요. JLPT는 공식 한자 급수 목록을 공개하지 않아요." +
       (info ? "<br>자료: AI 작성 · 검수 필요 · 획순 참조값 KanjiVG " + esc(info.strokeRef) : "") + "</p>";
 
-  dialog.innerHTML = '<div class="kd">' + head + wordBox + body + related + links + foot + "</div>";
+  const strokes = '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes">' + (info ? "" : '<p class="hint">획순 데이터 준비 중이에요.</p>') + "</div></section>";
+  stopStrokes();
+  dialog.innerHTML = '<div class="kd">' + head + wordBox + strokes + body + related + links + foot + "</div>";
+  if (info) mountStrokePlayer(dialog.querySelector("#kd-strokes"), info.strokeRef);
 }
