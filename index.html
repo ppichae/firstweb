@@ -1,0 +1,506 @@
+<title>N1 공부방</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* 레이아웃: 원고지처럼 정돈된 한 줄 기둥(최대 960px). 위에 시험 정보, 아래에 탭으로 나뉜 공부 공간 */
+  :root {
+    --bg: #F4F5F8;
+    --surface: #FFFFFF;
+    --fg: #1A1D29;
+    --muted: #646B82;
+    --line: #DCDFE8;
+    --ink: #2B3A8F;        /* 쪽빛(藍) */
+    --ink-soft: #E6E9F6;
+    --stamp: #C4342B;      /* 도장 인주색 */
+    --good: #1F7A4D;
+    --good-soft: #E2F2EA;
+    --bad: #B4322A;
+    --bad-soft: #FBE7E5;
+    --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --font-jp: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12141C; --surface: #1B1E29; --fg: #E8EAF2; --muted: #9AA0B6; --line: #2E3242;
+      --ink: #9DAEFF; --ink-soft: #262C4A; --stamp: #F0675D;
+      --good: #6FD3A0; --good-soft: #17352A; --bad: #F2847B; --bad-soft: #3A1E1D;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12141C; --surface: #1B1E29; --fg: #E8EAF2; --muted: #9AA0B6; --line: #2E3242;
+    --ink: #9DAEFF; --ink-soft: #262C4A; --stamp: #F0675D;
+    --good: #6FD3A0; --good-soft: #17352A; --bad: #F2847B; --bad-soft: #3A1E1D;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .jp { font-family: var(--font-jp); }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* 머리말 */
+  header { padding-block: 40px 24px; display: grid; gap: 20px; }
+  .eyebrow {
+    font-family: var(--font-jp); font-size: 13px; letter-spacing: 0.12em; color: var(--ink); font-weight: 500;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 6vw, 48px);
+    line-height: 1.15; margin: 4px 0 0; text-wrap: balance;
+  }
+  .lede { color: var(--muted); margin: 8px 0 0; max-width: 60ch; }
+  .facts {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .fact { padding-block: 12px; padding-right: 12px; min-width: 0; }
+  .fact + .fact { border-left: 1px solid var(--line); padding-left: 16px; }
+  .fact dt { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .fact dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  @media (max-width: 620px) {
+    .facts { grid-template-columns: 1fr; }
+    .fact + .fact { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+  }
+
+  /* 탭 */
+  nav.tabs {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line);
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    z-index: 10; background: var(--bg);
+  }
+  .tablist { display: flex; gap: 4px; }
+  .tab {
+    border: 0; background: transparent; padding: 8px 14px; border-radius: 8px;
+    display: flex; align-items: baseline; gap: 8px; color: var(--muted); font-weight: 500;
+  }
+  .tab .jp { font-size: 13px; }
+  .tab:hover { color: var(--fg); }
+  .tab[aria-selected="true"] { background: var(--ink-soft); color: var(--ink); }
+
+  main { padding-block: 28px 56px; }
+  section.panel { display: grid; gap: 24px; }
+  h2 { font-family: var(--font-display); font-size: 26px; margin: 0; font-weight: 700; }
+  h3 { font-size: 17px; margin: 0; }
+  .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
+  .panel-head p { margin: 4px 0 0; color: var(--muted); }
+
+  /* 공통 컨트롤 */
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip {
+    border: 1px solid var(--line); background: var(--surface); padding: 6px 12px; border-radius: 999px; font-size: 14px;
+  }
+  .chip[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); background: var(--ink-soft); }
+  .progress { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .progress strong { color: var(--fg); }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; width: 160px; }
+  .bar span { display: block; height: 100%; background: var(--stamp); transition: width .3s; }
+
+  /* 단어 카드 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    display: flex; flex-direction: column; position: relative; min-width: 0;
+  }
+  .card-face {
+    border: 0; background: transparent; text-align: left; padding: 18px 18px 12px;
+    display: grid; gap: 6px; flex: 1; border-radius: 12px 12px 0 0;
+  }
+  .word { font-family: var(--font-display); font-size: 34px; font-weight: 700; line-height: 1.2; }
+  .reading { font-family: var(--font-jp); color: var(--ink); font-weight: 500; }
+  .meaning { font-weight: 600; }
+  .ex { font-size: 13.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 4px; }
+  .ex .jp { color: var(--fg); display: block; }
+  .hint { font-size: 13px; color: var(--muted); }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 10px 18px 14px;
+  }
+  .pos { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  .mark {
+    border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 4px 10px; font-size: 13px;
+  }
+  .mark[aria-pressed="true"] { border-color: var(--stamp); color: var(--stamp); }
+  .seal {
+    position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; border-radius: 50%;
+    border: 2px solid var(--stamp); color: var(--stamp); display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 20px; transform: rotate(-12deg);
+    opacity: .85; pointer-events: none;
+  }
+  .empty { color: var(--muted); padding: 32px 0; }
+
+  /* 문법 */
+  .grammar-list { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .g-item {
+    display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 8px 24px;
+    padding-block: 18px; border-bottom: 1px solid var(--line);
+  }
+  .g-pattern { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+  .g-mean { font-weight: 600; }
+  .g-conn { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .g-ex { margin-top: 8px; }
+  .g-ex .jp { display: block; font-size: 16px; }
+  .g-ex .ko { color: var(--muted); font-size: 14px; }
+  @media (max-width: 620px) { .g-item { grid-template-columns: 1fr; } }
+
+  /* 퀴즈 */
+  .quiz { display: grid; gap: 16px; }
+  .q {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px;
+    display: grid; gap: 12px; min-width: 0;
+  }
+  .q-num { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .q-text { font-family: var(--font-jp); font-size: 17px; }
+  .opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .opts.wide { grid-template-columns: 1fr; }
+  @media (max-width: 520px) { .opts { grid-template-columns: 1fr; } }
+  .opt {
+    border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 10px 12px;
+    text-align: left; font-family: var(--font-jp); display: flex; gap: 10px; align-items: baseline;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--ink); }
+  .opt:disabled { cursor: default; }
+  .opt .n { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+  .feedback { font-size: 14px; padding: 10px 12px; border-radius: 8px; background: var(--ink-soft); }
+  .score { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .link-btn { border: 0; background: transparent; color: var(--ink); padding: 0; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* 독해 */
+  .reading-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 820px) { .reading-layout { grid-template-columns: 1fr; } }
+  .passage {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 24px;
+    min-width: 0;
+  }
+  .passage-label { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 12px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .passage p.jp { font-size: 17px; line-height: 2; margin: 0 0 1em; text-indent: 1em; }
+  .passage .trans { border-top: 1px dashed var(--line); margin-top: 8px; padding-top: 16px; color: var(--muted); }
+  .passage .trans p { margin: 0 0 .8em; }
+  u.mark-under { text-decoration-color: var(--ink); text-underline-offset: 5px; }
+
+  footer { border-top: 1px solid var(--line); padding-block: 20px 40px; color: var(--muted); font-size: 13px; }
+  footer p { margin: 0 0 6px; max-width: 70ch; }
+  footer a { color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">日本語能力試験 · N1</div>
+      <h1>N1 공부방</h1>
+      <p class="lede">단어, 문법, 독해를 하루에 조금씩. 카드를 넘기고, 퀴즈를 풀고, 외운 단어에는 도장을 찍어 두세요.</p>
+    </div>
+    <dl class="facts">
+      <div class="fact"><dt>언어지식(문자·어휘·문법)·독해</dt><dd>110분</dd></div>
+      <div class="fact"><dt>청해</dt><dd>55분</dd></div>
+      <div class="fact"><dt>합격 기준</dt><dd>180점 중 100점 · 과목별 19점 이상</dd></div>
+    </dl>
+  </header>
+</div>
+
+<nav class="tabs" aria-label="공부 영역">
+  <div class="wrap">
+    <div class="tablist" role="tablist">
+      <button class="tab" role="tab" id="tab-vocab" data-view="vocab" aria-selected="true">단어 <span class="jp">語彙</span></button>
+      <button class="tab" role="tab" id="tab-grammar" data-view="grammar" aria-selected="false">문법 <span class="jp">文法</span></button>
+      <button class="tab" role="tab" id="tab-reading" data-view="reading" aria-selected="false">독해 <span class="jp">読解</span></button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <!-- 단어 -->
+  <section class="panel" id="view-vocab" role="tabpanel" aria-labelledby="tab-vocab">
+    <div class="panel-head">
+      <div>
+        <h2>단어</h2>
+        <p>카드를 누르면 읽는 법과 뜻이 보여요.</p>
+      </div>
+      <div class="toolbar">
+        <div class="progress"><strong id="known-count">0</strong> / <span id="total-count">0</span> 외움</div>
+        <div class="bar" aria-hidden="true"><span id="known-bar" style="width:0%"></span></div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="chip" id="f-all" data-filter="all" aria-pressed="true">전체</button>
+      <button class="chip" id="f-todo" data-filter="todo" aria-pressed="false">아직 못 외움</button>
+      <button class="chip" id="f-done" data-filter="done" aria-pressed="false">외운 단어</button>
+      <button class="chip" id="toggle-all" aria-pressed="false">뜻 모두 보기</button>
+    </div>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- 문법 -->
+  <section class="panel" id="view-grammar" role="tabpanel" aria-labelledby="tab-grammar" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>문법</h2>
+        <p>문형, 뜻, 접속(앞에 오는 말의 형태), 예문 순서로 정리했어요.</p>
+      </div>
+    </div>
+    <div class="grammar-list" id="grammar-list"></div>
+    <div class="panel-head">
+      <div>
+        <h3>문법 퀴즈</h3>
+        <p>괄호에 들어갈 가장 알맞은 표현을 고르세요.</p>
+      </div>
+      <div class="toolbar">
+        <span class="score" id="gq-score"></span>
+        <button class="link-btn" id="gq-reset">다시 풀기</button>
+      </div>
+    </div>
+    <div class="quiz" id="grammar-quiz"></div>
+  </section>
+
+  <!-- 독해 -->
+  <section class="panel" id="view-reading" role="tabpanel" aria-labelledby="tab-reading" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>독해</h2>
+        <p>지문을 읽고 질문에 답하세요. 다 풀면 해석을 확인해 보세요.</p>
+      </div>
+      <div class="toolbar">
+        <span class="score" id="rq-score"></span>
+        <button class="link-btn" id="rq-reset">다시 풀기</button>
+      </div>
+    </div>
+    <div class="reading-layout">
+      <article class="passage">
+        <div class="passage-label"><span>내용 이해 (중문)</span><button class="link-btn" id="toggle-trans" aria-expanded="false">해석 보기</button></div>
+        <div id="passage-text"></div>
+        <div class="trans" id="passage-trans" hidden></div>
+      </article>
+      <div class="quiz" id="reading-quiz"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>JLPT는 공식 단어·문법 목록을 공개하지 않아요. 이 페이지의 단어와 문법은 N1 수준 교재에서 자주 다루는 항목을 예시로 골랐고, 독해 지문은 연습용으로 새로 쓴 글이에요.</p>
+  <p>시험 일정과 규정은 <a href="https://www.jlpt.jp/" target="_blank" rel="noopener">JLPT 공식 사이트</a>에서 확인하세요. 외운 단어 표시는 지금 쓰는 브라우저에만 저장돼요.</p>
+</footer>
+
+<script>
+  /* ---------- 데이터 ---------- */
+  const VOCAB = [
+    { w: "懸念", r: "けねん", pos: "명사 · する동사", m: "걱정, 우려", ex: "景気の先行きを懸念する声が高まっている。", ko: "경기 전망을 우려하는 목소리가 높아지고 있다." },
+    { w: "示唆", r: "しさ", pos: "명사 · する동사", m: "시사, 암시", ex: "調査結果は新たな可能性を示唆している。", ko: "조사 결과는 새로운 가능성을 시사하고 있다." },
+    { w: "是正", r: "ぜせい", pos: "명사 · する동사", m: "시정, 바로잡음", ex: "地域間の格差の是正が急務だ。", ko: "지역 간 격차를 바로잡는 것이 시급하다." },
+    { w: "網羅", r: "もうら", pos: "명사 · する동사", m: "망라, 빠짐없이 모음", ex: "この辞書は専門用語を網羅している。", ko: "이 사전은 전문 용어를 망라하고 있다." },
+    { w: "顕著", r: "けんちょ", pos: "な형용사", m: "현저함, 두드러짐", ex: "練習の効果が顕著に表れた。", ko: "연습의 효과가 두드러지게 나타났다." },
+    { w: "緻密", r: "ちみつ", pos: "な형용사", m: "치밀함", ex: "緻密な計画を立てる。", ko: "치밀한 계획을 세우다." },
+    { w: "漠然", r: "ばくぜん", pos: "~と / ~とした", m: "막연함", ex: "将来に漠然とした不安を抱いている。", ko: "장래에 막연한 불안을 품고 있다." },
+    { w: "携わる", r: "たずさわる", pos: "동사", m: "종사하다, 관여하다", ex: "長年、教育に携わってきた。", ko: "오랫동안 교육에 종사해 왔다." },
+    { w: "培う", r: "つちかう", pos: "동사", m: "기르다, 배양하다", ex: "海外生活で培った語学力を生かす。", ko: "해외 생활에서 길러 온 어학 실력을 살리다." },
+    { w: "滞る", r: "とどこおる", pos: "동사", m: "밀리다, 정체되다", ex: "家賃の支払いが滞っている。", ko: "집세 납부가 밀려 있다." },
+    { w: "覆す", r: "くつがえす", pos: "동사", m: "뒤집다, 뒤엎다", ex: "それは定説を覆す発見だった。", ko: "그것은 정설을 뒤집는 발견이었다." },
+    { w: "賄う", r: "まかなう", pos: "동사", m: "(비용 등을) 충당하다", ex: "生活費をアルバイトで賄う。", ko: "생활비를 아르바이트로 충당하다." },
+    { w: "踏襲", r: "とうしゅう", pos: "명사 · する동사", m: "답습, 그대로 이어받음", ex: "新社長は前任者の方針を踏襲した。", ko: "새 사장은 전임자의 방침을 그대로 이어받았다." },
+    { w: "妥協", r: "だきょう", pos: "명사 · する동사", m: "타협", ex: "品質には一切妥協しない。", ko: "품질에는 절대 타협하지 않는다." },
+  ];
+
+  const GRAMMAR = [
+    { p: "～をもって", m: "~로써, ~부로 (시점·수단)", c: "명사 + をもって", ex: "本日をもって受付を終了いたします。", ko: "오늘부로 접수를 마감합니다." },
+    { p: "～ともなると", m: "~쯤 되면, ~정도의 입장이 되면", c: "명사 / 동사 사전형 + ともなると", ex: "社長ともなると、自由な時間はほとんどない。", ko: "사장쯤 되면 자유 시간은 거의 없다." },
+    { p: "～ずくめ", m: "~일색, ~뿐", c: "명사 + ずくめ", ex: "今年はいいことずくめの一年だった。", ko: "올해는 좋은 일만 가득한 한 해였다." },
+    { p: "～まみれ", m: "~투성이 (더러운 것이 잔뜩 묻음)", c: "명사 + まみれ", ex: "子どもたちは泥まみれになって遊んでいた。", ko: "아이들은 진흙투성이가 되어 놀고 있었다." },
+    { p: "～きらいがある", m: "(좋지 않은) ~경향이 있다", c: "동사 사전형 / 명사 + の + きらいがある", ex: "彼は物事を悲観的に考えるきらいがある。", ko: "그는 일을 비관적으로 생각하는 경향이 있다." },
+    { p: "～を禁じ得ない", m: "~을 금할 수 없다", c: "명사 + を禁じ得ない", ex: "被害者の話を聞き、同情を禁じ得なかった。", ko: "피해자의 이야기를 듣고 동정을 금할 수 없었다." },
+    { p: "～てやまない", m: "진심으로 ~해 마지않다", c: "동사 て형 + やまない", ex: "皆様のご健康を願ってやみません。", ko: "여러분의 건강을 진심으로 기원합니다." },
+    { p: "～ばそれまでだ", m: "~하면 그것으로 끝이다", c: "동사 ば형 + それまでだ", ex: "どんなに準備しても、当日寝坊すればそれまでだ。", ko: "아무리 준비해도 당일 늦잠을 자면 그것으로 끝이다." },
+    { p: "～ながらも", m: "~이면서도, ~지만 (역접)", c: "동사 ます형 / い형용사 / 명사 + ながらも", ex: "狭いながらも楽しい我が家。", ko: "좁지만 즐거운 우리 집." },
+    { p: "～に至っては", m: "~에 이르러서는, ~의 경우는 (극단적인 예)", c: "명사 + に至っては", ex: "家族は皆反対した。弟に至っては口もきいてくれない。", ko: "가족은 모두 반대했다. 남동생은 아예 말도 걸지 않는다." },
+  ];
+
+  const GRAMMAR_QUIZ = [
+    { q: "本日（　　）営業を終了いたします。", o: ["をもって", "にあって", "をよそに", "ともなると"], a: 0, why: "「をもって」는 시점을 나타내 '오늘부로'라는 뜻이 돼요." },
+    { q: "彼は自分の意見ばかり主張する（　　）。", o: ["次第だ", "きらいがある", "までもない", "に足る"], a: 1, why: "좋지 않은 경향을 말할 때 「きらいがある」를 써요." },
+    { q: "一流選手（　　）、練習量も桁違いだ。", o: ["をもって", "ずくめで", "ともなると", "ながらも"], a: 2, why: "'일류 선수쯤 되면'이라는 뜻이라 「ともなると」가 맞아요." },
+    { q: "事故の知らせを聞き、驚き（　　）。", o: ["を禁じ得なかった", "に至った", "ずくめだった", "きらいがあった"], a: 0, why: "감정을 억누를 수 없다는 뜻의 「を禁じ得ない」가 맞아요." },
+  ];
+
+  const PASSAGE = [
+    "「わかりやすさ」は、現代社会においてほとんど無条件に良いものとされている。説明はわかりやすいほど歓迎され、難解な文章は不親切だと批判される。しかし、わかりやすさを追求するあまり、本来複雑である物事を単純化しすぎてはいないだろうか。",
+    "物事を短い言葉で言い切ると、確かに理解した気にはなれる。だが、<u class=\"mark-under\">その過程</u>で切り捨てられた細部にこそ、問題の本質が潜んでいることも少なくない。わかりやすい説明に慣れきってしまうと、私たちはすぐに答えが出ない問いに向き合う忍耐を失っていくおそれがある。",
+    "もちろん、わかりにくい説明が良いと言いたいわけではない。大切なのは、わかりやすさの裏で何が省かれたのかを意識することである。すぐにはわからないものを、わからないまま抱えておく力もまた、考えるという営みには欠かせないのではないだろうか。",
+  ];
+  const PASSAGE_KO = [
+    "'알기 쉬움'은 현대 사회에서 거의 무조건 좋은 것으로 여겨진다. 설명은 알기 쉬울수록 환영받고, 난해한 글은 불친절하다고 비판받는다. 그러나 알기 쉬움을 추구한 나머지, 본래 복잡한 일을 지나치게 단순화하고 있지는 않을까.",
+    "어떤 일을 짧은 말로 단언하면 확실히 이해한 기분은 들 수 있다. 하지만 그 과정에서 잘려 나간 세부에야말로 문제의 본질이 숨어 있는 경우도 적지 않다. 알기 쉬운 설명에 완전히 익숙해져 버리면, 우리는 곧바로 답이 나오지 않는 물음에 마주하는 인내를 잃어갈 우려가 있다.",
+    "물론 알기 어려운 설명이 좋다고 말하려는 것은 아니다. 중요한 것은 알기 쉬움의 이면에서 무엇이 생략되었는지를 의식하는 것이다. 바로 알 수 없는 것을 모르는 채로 품고 있는 힘 또한, 생각한다는 행위에는 빠뜨릴 수 없는 것이 아닐까.",
+  ];
+  const READING_QUIZ = [
+    { q: "「その過程」とは、何の過程か。", o: ["物事を短い言葉で言い切る過程", "難解な文章を批判する過程", "答えの出ない問いに向き合う過程", "わかりやすい説明に慣れていく過程"], a: 0, why: "바로 앞 문장의 '짧은 말로 단언하는 것'을 가리켜요." },
+    { q: "筆者によると、わかりやすい説明にはどのような問題があるか。", o: ["説明する人の負担が大きくなる。", "切り捨てられた細部にある本質が見落とされる。", "難解な文章より誤りが多くなる。", "読み手が説明を批判しなくなる。"], a: 1, why: "둘째 단락에서 '잘려 나간 세부에 본질이 숨어 있다'고 말해요." },
+    { q: "筆者が最も言いたいことは何か。", o: ["わかりにくい説明のほうが価値がある。", "物事はできるだけ単純に説明するべきだ。", "省かれたものを意識し、わからなさを抱える力も大切だ。", "現代人は難解な文章を読む機会を増やすべきだ。"], a: 2, why: "마지막 단락이 결론이에요. 1번은 筆者가 직접 아니라고 말했어요." },
+  ];
+
+  /* ---------- 저장 (이 브라우저에만) ---------- */
+  const KEY = "n1-known-words";
+  function loadKnown() {
+    try { return new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch (e) { return new Set(); }
+  }
+  function saveKnown() {
+    try { localStorage.setItem(KEY, JSON.stringify([...known])); } catch (e) {}
+  }
+  const known = loadKnown();
+
+  /* ---------- 단어 ---------- */
+  let filter = "all";
+  let showAll = false;
+  const revealed = new Set();
+  const cardsEl = document.getElementById("cards");
+
+  function renderVocab() {
+    const list = VOCAB.filter(v =>
+      filter === "all" ? true : filter === "done" ? known.has(v.w) : !known.has(v.w));
+    if (!list.length) {
+      cardsEl.innerHTML = '<p class="empty">' + (filter === "done" ? "아직 도장을 찍은 단어가 없어요. 카드 아래 '외웠어요'를 눌러 보세요." : "모든 단어를 외웠어요!") + "</p>";
+    } else {
+      cardsEl.innerHTML = list.map(v => {
+        const open = showAll || revealed.has(v.w);
+        const isKnown = known.has(v.w);
+        return '<article class="card">' +
+          (isKnown ? '<span class="seal" aria-hidden="true">済</span>' : "") +
+          '<button class="card-face" data-word="' + v.w + '" aria-expanded="' + open + '">' +
+            '<span class="word jp">' + v.w + "</span>" +
+            (open
+              ? '<span class="reading">' + v.r + '</span><span class="meaning">' + v.m + "</span>" +
+                '<span class="ex"><span class="jp">' + v.ex + "</span>" + v.ko + "</span>"
+              : '<span class="hint">눌러서 뜻 보기</span>') +
+          "</button>" +
+          '<div class="card-foot"><span class="pos">' + v.pos + "</span>" +
+            '<button class="mark" data-mark="' + v.w + '" aria-pressed="' + isKnown + '">' + (isKnown ? "외웠어요 ✓" : "외웠어요") + "</button></div>" +
+        "</article>";
+      }).join("");
+    }
+    document.getElementById("known-count").textContent = known.size;
+    document.getElementById("total-count").textContent = VOCAB.length;
+    document.getElementById("known-bar").style.width = (known.size / VOCAB.length * 100) + "%";
+  }
+
+  cardsEl.addEventListener("click", e => {
+    const face = e.target.closest("[data-word]");
+    const mark = e.target.closest("[data-mark]");
+    if (face) {
+      const w = face.dataset.word;
+      revealed.has(w) ? revealed.delete(w) : revealed.add(w);
+    } else if (mark) {
+      const w = mark.dataset.mark;
+      known.has(w) ? known.delete(w) : known.add(w);
+      saveKnown();
+    } else return;
+    renderVocab();
+  });
+
+  document.querySelectorAll("[data-filter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      filter = btn.dataset.filter;
+      document.querySelectorAll("[data-filter]").forEach(b => b.setAttribute("aria-pressed", b === btn));
+      renderVocab();
+    });
+  });
+  const toggleAll = document.getElementById("toggle-all");
+  toggleAll.addEventListener("click", () => {
+    showAll = !showAll;
+    revealed.clear();
+    toggleAll.setAttribute("aria-pressed", showAll);
+    toggleAll.textContent = showAll ? "뜻 모두 가리기" : "뜻 모두 보기";
+    renderVocab();
+  });
+
+  /* ---------- 문법 목록 ---------- */
+  document.getElementById("grammar-list").innerHTML = GRAMMAR.map(g =>
+    '<div class="g-item"><div class="g-pattern jp">' + g.p + "</div>" +
+    '<div><div class="g-mean">' + g.m + '</div><div class="g-conn">접속 · ' + g.c + "</div>" +
+    '<div class="g-ex"><span class="jp">' + g.ex + '</span><span class="ko">' + g.ko + "</span></div></div></div>"
+  ).join("");
+
+  /* ---------- 퀴즈 (문법·독해 공통) ---------- */
+  function makeQuiz(data, el, scoreEl, wide) {
+    const answers = new Array(data.length).fill(null);
+    function render() {
+      el.innerHTML = data.map((d, i) => {
+        const picked = answers[i];
+        const done = picked !== null;
+        return '<div class="q"><div class="q-num">問' + (i + 1) + '</div><div class="q-text">' + d.q + "</div>" +
+          '<div class="opts' + (wide ? " wide" : "") + '">' + d.o.map((o, j) => {
+            let cls = "opt";
+            if (done && j === d.a) cls += " correct";
+            else if (done && j === picked) cls += " wrong";
+            return '<button class="' + cls + '" data-q="' + i + '" data-o="' + j + '"' + (done ? " disabled" : "") + '><span class="n">' + (j + 1) + "</span><span>" + o + "</span></button>";
+          }).join("") + "</div>" +
+          (done ? '<div class="feedback">' + (picked === d.a ? "정답이에요. " : "아쉬워요. 정답은 " + (d.a + 1) + "번이에요. ") + d.why + "</div>" : "") +
+        "</div>";
+      }).join("");
+      const solved = answers.filter(a => a !== null).length;
+      const right = answers.filter((a, i) => a === data[i].a).length;
+      scoreEl.textContent = solved ? right + " / " + data.length + " 정답" : "";
+    }
+    el.addEventListener("click", e => {
+      const b = e.target.closest("[data-q]");
+      if (!b) return;
+      answers[+b.dataset.q] = +b.dataset.o;
+      render();
+    });
+    render();
+    return () => { answers.fill(null); render(); };
+  }
+
+  const resetG = makeQuiz(GRAMMAR_QUIZ, document.getElementById("grammar-quiz"), document.getElementById("gq-score"), false);
+  document.getElementById("gq-reset").addEventListener("click", resetG);
+
+  /* ---------- 독해 ---------- */
+  document.getElementById("passage-text").innerHTML = PASSAGE.map(p => '<p class="jp">' + p + "</p>").join("");
+  const transEl = document.getElementById("passage-trans");
+  transEl.innerHTML = PASSAGE_KO.map(p => "<p>" + p + "</p>").join("");
+  const transBtn = document.getElementById("toggle-trans");
+  transBtn.addEventListener("click", () => {
+    transEl.hidden = !transEl.hidden;
+    transBtn.setAttribute("aria-expanded", !transEl.hidden);
+    transBtn.textContent = transEl.hidden ? "해석 보기" : "해석 숨기기";
+  });
+  const resetR = makeQuiz(READING_QUIZ, document.getElementById("reading-quiz"), document.getElementById("rq-score"), true);
+  document.getElementById("rq-reset").addEventListener("click", resetR);
+
+  /* ---------- 탭 (주소 끝 #vocab / #grammar / #reading) ---------- */
+  const VIEWS = ["vocab", "grammar", "reading"];
+  function show(view) {
+    if (!VIEWS.includes(view)) view = "vocab";
+    VIEWS.forEach(v => {
+      document.getElementById("view-" + v).hidden = v !== view;
+      document.getElementById("tab-" + v).setAttribute("aria-selected", v === view);
+    });
+  }
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+    location.hash = t.dataset.view;
+    show(t.dataset.view);
+  }));
+  window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+  show(location.hash.slice(1));
+
+  renderVocab();
+</script>
