@@ -90,7 +90,7 @@ function renderUnit(el, app, data) {
   u.quiz.forEach((q, i) => {
     const box = document.createElement("div");
     quiz.appendChild(box);
-    const full = Object.assign({ id: "n3-basic-" + u.id + "-" + i, area: "basics", generated: true, kind: u.title, source: { type: "ai" }, review: "needs-review" }, q);
+    const full = Object.assign({ id: "n3-basic-" + u.id + "-" + i, area: "basics", generated: true, kind: q.prompt.includes("（　）") ? "빈칸 채우기" : u.title, source: { type: "ai" }, review: "needs-review" }, q);
     mountQuestion(box, full, {
       label: "확인 " + (i + 1), store: n3store, wide: true,
       onAnswer: ok => {

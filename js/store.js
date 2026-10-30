@@ -17,9 +17,13 @@ const N1_DEFAULTS = {
   activity: {},    // 날짜 → { cards: 플래시카드 복습 수 }
   lists: {},       // PDF 단어·문형 목록 id → { status, fav, srs, wrong } (3단계에서 추가)
   examDate: null,  // 내가 정한 시험일 (없으면 공식 다음 시험일)
+  profile: null,   // { name: 화면에 보일 이름 }
+  goal: null,      // { weeklyMinutes: 이번 주 목표 학습 시간(분) }
+  cheers: [],      // 이 사람이 보낸 응원 메시지 { text, at }
 };
 
-const clone = v => JSON.parse(JSON.stringify(v));
+// 정해 두지 않은 종류(예: N3 방의 "words")를 물으면 오류 없이 undefined를 돌려준다
+const clone = v => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
 
 export function createStore(PREFIX, APP_ID, DEFAULTS) {
   const KEYS = Object.keys(DEFAULTS);
@@ -113,4 +117,7 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   tests: [],       // 시간 제한 연습 테스트 결과
   game: { xp: 0 }, // 경험치
   examDate: null,  // 내가 정한 시험일
+  profile: null,
+  goal: null,
+  cheers: [],
 });

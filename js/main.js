@@ -3,6 +3,7 @@ import { loadData, DB, ensureExtra } from "./data.js";
 import { store } from "./store.js";
 import { esc } from "./util.js";
 import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
+import { trackRoom } from "./tracker.js";
 
 // 메뉴 순서는 rooms.js의 각 방 views에 있다. 맨 앞 화면이 그 방의 첫 화면이다
 
@@ -44,7 +45,7 @@ function drawRoom(room) {
   tablist.innerHTML = (room ? room.views.map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
     (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("") : "");
-  roomSwitch.textContent = room ? "방 바꾸기" : "공부방 고르기";
+  roomSwitch.textContent = room ? "방 바꾸기" : "프로필 고르기";
   roomSwitch.toggleAttribute("aria-current", !room);
 }
 
@@ -57,6 +58,7 @@ async function route() {
   app.onclick = app.oninput = app.onchange = app.onsubmit = null;
   if (room !== currentRoom) { drawRoom(room); currentRoom = room; }
   if (room) rememberRoom(room.id);
+  trackRoom(room ? room.st : null);
   tablist.querySelectorAll(".tab").forEach(t => {
     if (t.dataset.view === view.id) {
       t.setAttribute("aria-current", "page");

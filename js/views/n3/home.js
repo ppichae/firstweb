@@ -8,10 +8,11 @@ import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone } from "./basics.js";
 import { n3vocab, n3grammar } from "./study.js";
+import { badgesOf } from "../../summary.js";
 
 const WEEKS = [
-  { n: 1, title: "가나 + N5", items: [["#n3/basics", "가나 표 · 가나 퀴즈"], ["#n3/basics", "기초 단원 1~6 (발음 · です · 조사 · こそあど · 형용사 · ます형)"]] },
-  { n: 2, title: "N4 + N3 입문", items: [["#n3/basics", "기초 단원 7~8 (て형 · N4 핵심 문형)"], ["#n3/vocab", "N3 단어 플래시카드 시작"], ["#n3/grammar", "N3 문법 목록 훑어보기"]] },
+  { n: 1, title: "가나 + N5", items: [["#n3/basics", "가나 표 · 가나 퀴즈"], ["#n3/basics", "기초 단원 1~7 (발음 · 인사 · です · 조사 · こそあど · 형용사 · ます형)"]] },
+  { n: 2, title: "N4 + N3 입문", items: [["#n3/basics", "기초 단원 8~9 (て형 · N4 핵심 문형)"], ["#n3/vocab", "N3 단어 플래시카드 시작"], ["#n3/grammar", "N3 문법 목록 훑어보기"]] },
   { n: 3, title: "N3 집중", items: [["#n3/vocab", "N3 단어 플래시카드 · 퀴즈"], ["#n3/grammar", "N3 문법 퀴즈"], ["#n3/exam", "영역별 연습"]] },
   { n: 4, title: "모의 테스트 + 복습", items: [["#n3/exam", "시간 제한 연습 테스트"], ["#n3/notes", "오답 노트 다시 풀기"]] },
 ];
@@ -56,6 +57,7 @@ function render(app) {
           '<span class="tile-sub">연속 학습 <b>' + streak() + "일</b> · 오늘 " + todayCount() + "회</span></article>" +
       "</div>" +
 
+      badgeCard() +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정</h3><span class="badge">안내용</span></div>' +
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
@@ -101,3 +103,12 @@ function course(letter, title, href, rows) {
 }
 
 export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources"], render };
+
+function badgeCard() {
+  const list = badgesOf("n3");
+  const got = list.filter(b => b.got).length;
+  return '<article class="card-box"><div class="q-top"><h3>학습 배지</h3><span class="hint">' + got + " / " + list.length + " 받음</span></div>" +
+    '<ul class="medals">' + list.map(b =>
+      '<li class="medal-item' + (b.got ? " got" : "") + '"><b>' + esc(b.name) + "</b><small>" + esc(b.desc) + "</small>" +
+      '<span class="sr-only">' + (b.got ? "받음" : "아직 못 받음") + "</span></li>").join("") + "</ul></article>";
+}

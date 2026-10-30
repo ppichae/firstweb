@@ -290,6 +290,7 @@ export function createVocabView(cfg) {
         if (grade === "again") s.status = "unknown";
       });
       st.logActivity("cards");
+      st.logActivity("words");
       emit("card");
       if (grade === "again") session.queue.push(id);
       session.done++;
@@ -336,6 +337,7 @@ export function createVocabView(cfg) {
           onAnswer: ok => {
             results.set(q.id, ok);
             const wid = q.wordId || q.word;
+            st.logActivity("words");
             if (!ok && wid) { markWordWrong(wid); updateCounts(document); }
             emit(ok ? "correct" : "wrong");
             score.textContent = [...results.values()].filter(Boolean).length + " / " + qs.length + " 정답";
