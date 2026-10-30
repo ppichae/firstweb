@@ -6,14 +6,15 @@ import { daysUntil } from "../../exam.js";
 import { noteEntries } from "../../stats.js";
 import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
-import { unitDone } from "./basics.js";
+import { unitDone, coreUnits, openBasics } from "./basics.js";
+import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { badgesOf } from "../../summary.js";
 import { roomKanjiList } from "../../kanji.js";
 
 const WEEKS = [
-  { n: 1, title: "가나 + N5", items: [["#n3/basics", "가나 표 · 가나 퀴즈"], ["#n3/basics", "기초 단원 1~7 (발음 · 인사 · です · 조사 · こそあど · 형용사 · ます형)"]] },
-  { n: 2, title: "N4 + N3 입문", items: [["#n3/basics", "기초 단원 8~9 (て형 · N4 핵심 문형)"], ["#n3/vocab", "N3 단어 플래시카드 시작"], ["#n3/grammar", "N3 문법 목록 훑어보기"]] },
+  { n: 1, title: "문자 + N5", items: [["#n3/basics", "히라가나 (50음도·퀴즈·쓰기)", "hira"], ["#n3/basics", "가타카나 (50음도·퀴즈·쓰기)", "kata"], ["#n3/basics", "문자 통합 학습 (구별·혼합 퀴즈)", "mix"], ["#n3/basics", "핵심 단원 1~6 (인사 · です · 조사 · こそあど · 형용사 · ます형)", "units"]] },
+  { n: 2, title: "N4 + N3 입문", items: [["#n3/basics", "핵심 단원 7~8 (て형 · N4 핵심 문형)", "units"], ["#n3/vocab", "N3 단어 플래시카드 시작"], ["#n3/grammar", "N3 문법 목록 훑어보기"]] },
   { n: 3, title: "N3 집중", items: [["#n3/vocab", "N3 단어 플래시카드 · 퀴즈"], ["#n3/grammar", "N3 문법 퀴즈"], ["#n3/exam", "영역별 연습"]] },
   { n: 4, title: "모의 테스트 + 복습", items: [["#n3/exam", "시간 제한 연습 테스트"], ["#n3/notes", "오답 노트 다시 풀기"]] },
 ];
@@ -28,7 +29,8 @@ function render(app) {
   const target = examTarget(n3store);
   const week = suggestedWeek(target ? daysUntil(target.date) : null);
   const lv = level();
-  const units = EXTRA.n3basics ? EXTRA.n3basics.units : [];
+  const units = EXTRA.n3basics ? coreUnits(EXTRA.n3basics) : [];
+  const hp = EXTRA.n3basics ? scriptProgress(EXTRA.n3basics, "hira") : null, kp = EXTRA.n3basics ? scriptProgress(EXTRA.n3basics, "kata") : null;
   const unitsDone = units.filter(u => unitDone(u.id)).length;
   const nextUnit = units.find(u => !unitDone(u.id));
   const openNotes = noteEntries(n3store).filter(n => !n.resolved).length;
@@ -64,14 +66,15 @@ function render(app) {
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
           '<li class="' + (w.n === week ? "now" : "") + '"><b>' + w.n + "주차 · " + esc(w.title) + "</b>" +
-            "<ul>" + w.items.map(([h, t]) => '<li><a href="' + h + '">' + esc(t) + "</a></li>").join("") + "</ul></li>").join("") +
+            "<ul>" + w.items.map(([h, t, m]) => '<li><a href="' + h + '"' + (m ? ' data-basics="' + m + '"' : "") + '>' + esc(t) + "</a></li>").join("") + "</ul></li>").join("") +
         "</ol>" +
       "</article>" +
 
       '<div class="courses">' +
         course("A", "기초 과정 (N5·N4)", "#n3/basics", [
           ["핵심 단원", units.length ? unitsDone + " / " + units.length + " 완료" : "준비 중"],
-          ["가나 표 · 퀴즈", "있음"],
+          ["히라가나 기본 글자", hp ? hp.done + " / " + hp.total + " 익힘" : "준비 중"],
+          ["가타카나 기본 글자", kp ? kp.done + " / " + kp.total + " 익힘" : "준비 중"],
           ["N5·N4 단어 · 기초 한자", "콘텐츠 준비 중"],
         ]) +
         course("B", "N3 집중 과정", "#n3/vocab", [
@@ -90,6 +93,8 @@ function render(app) {
     "</section>";
 
   app.onclick = e => {
+    const b = e.target.closest("[data-basics]");
+    if (b) { e.preventDefault(); openBasics(b.dataset.basics); return; }
     const g = e.target.closest("[data-goto]");
     if (g) { e.preventDefault(); n3vocab.openMode(g.dataset.goto); }
   };

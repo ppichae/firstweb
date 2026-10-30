@@ -5,7 +5,7 @@ import { today, addDays, dateKey, diffDays } from "./util.js";
 import { vocabStudied, vocabTotal } from "./views/vocab.js";
 import { grammarStudied, grammarTotal } from "./views/grammar.js";
 import { n3vocab, n3grammar } from "./views/n3/study.js";
-import { unitDone } from "./views/n3/basics.js";
+import { unitDone, coreUnits } from "./views/n3/basics.js";
 import { EXTRA } from "./data.js";
 
 export const PEOPLE = {
@@ -47,7 +47,7 @@ function progressOf(id) {
     const done = vocabStudied() + grammarStudied(), total = vocabTotal() + grammarTotal();
     return { done, total };
   }
-  const units = EXTRA.n3basics ? EXTRA.n3basics.units : [];
+  const units = EXTRA.n3basics ? coreUnits(EXTRA.n3basics) : [];
   const done = n3vocab.studiedCount() + n3grammar.studiedCount() + units.filter(u => unitDone(u.id)).length;
   return { done, total: n3vocab.total() + n3grammar.total() + units.length };
 }
@@ -94,8 +94,10 @@ export function badgesOf(id) {
     ["hour5", "5시간", "누적 학습 시간이 5시간을 넘었어요", totalMin >= 300],
   ];
   if (id === "n3") {
-    const units = EXTRA.n3basics ? EXTRA.n3basics.units : [];
-    const kana = Object.values(n3store.get("kana")).reduce((n, k) => n + (k.right || 0), 0);
+    const units = EXTRA.n3basics ? coreUnits(EXTRA.n3basics) : [];
+    // 예전 가나 퀴즈 기록(kana)과 7단계부터의 문자별 기록(kanaProgress)을 함께 센다
+    const kp = n3store.get("kanaProgress");
+    const kana = [n3store.get("kana"), kp.hira || {}, kp.kata || {}].reduce((n, o) => n + Object.values(o).reduce((m, k) => m + (k.right || 0), 0), 0);
     const tests = n3store.get("tests");
     list.push(
       ["kana50", "가나 50", "가나 퀴즈를 50번 맞혔어요", kana >= 50],

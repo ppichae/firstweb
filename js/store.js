@@ -122,4 +122,6 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   goal: null,
   cheers: [],
   kanji: {},
+  kanaProgress: { hira: {}, kata: {} },  // 문자별 퀴즈 기록 { right, wrong } — 히라가나·가타카나 따로
+  kanaWritten: { hira: {}, kata: {} },   // 문자별 쓰기 연습 횟수
 });

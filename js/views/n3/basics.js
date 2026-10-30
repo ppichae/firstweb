@@ -1,19 +1,18 @@
-// N3 방 · 기초 과정(N5·N4): 가나 표 · 가나 퀴즈 · 핵심 단원(개념 → 예문 → 짧은 퀴즈)
+// N3 방 · 기초 과정: 히라가나 · 가타카나 · 문자 통합 학습 · 핵심 단원(개념 → 예문 → 짧은 퀴즈) · 단어·한자(준비 중)
+// 히라가나와 가타카나는 화면과 진도가 따로다(kana.js). 문자 규칙 수업(b01·k01)은 각 문자 화면의 '촉음·장음'에서 배운다.
 import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
-import { esc, shuffle, today } from "../../util.js";
+import { esc, today } from "../../util.js";
 import { mountQuestion } from "../../quiz.js";
-import { getJaVoices, stopAll } from "../../speech.js";
+import { stopAll } from "../../speech.js";
 import { award } from "./game.js";
+import { renderScript, renderMixed, speak, voiceText, scriptProgress } from "./kana.js";
 
-const ui = { mode: "units", unit: null, table: "basic", script: "hira", quizScript: "hira", quizSize: 10 };
-let voiceMsg = "";
-
-// 히라가나를 가타카나로 바꾼다 (유니코드에서 두 글자표는 0x60만큼 떨어져 있다)
-const toKata = s => s.replace(/[ぁ-ゖ]/g, c => String.fromCharCode(c.charCodeAt(0) + 0x60));
-const kanaOf = cell => (ui.script === "kata" ? toKata(cell[0]) : cell[0]);
+const ui = { mode: "hira", unit: null, sec: {}, quiz: {}, writeChar: {} };
 
 export const unitDone = id => !!(n3store.get("basics")[id] || {}).done;
+// 핵심 단원: 문자 규칙 수업(track 있음)을 뺀 문법·표현 단원
+export const coreUnits = data => data.units.filter(u => !u.track);
 
 function render(app) {
   const data = EXTRA.n3basics;
@@ -21,17 +20,18 @@ function render(app) {
     app.innerHTML = '<section class="panel"><h2>기초 과정</h2><p class="notice">콘텐츠 준비 중이에요. 기초 과정 자료 파일을 불러오지 못했어요.</p></section>';
     return;
   }
-  if (ui.unit && !data.units.some(u => u.id === ui.unit)) ui.unit = null;
-  const done = data.units.filter(u => unitDone(u.id)).length;
+  const units = coreUnits(data);
+  if (ui.unit && !units.some(u => u.id === ui.unit)) ui.unit = null;
+  const done = units.filter(u => unitDone(u.id)).length;
+  const h = scriptProgress(data, "hira"), k = scriptProgress(data, "kata");
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>기초 과정 <span class="jp" lang="ja">N5·N4</span></h2>' +
-        "<p>가나부터 기본 문장, 동사·형용사 활용까지 N3 공부에 꼭 필요한 바탕을 빠르게 훑어요.</p></div>" +
-        '<div class="toolbar"><div class="progress">단원 <strong>' + done + "</strong> / " + data.units.length + " 완료</div>" +
-        '<div class="bar" aria-hidden="true"><span style="width:' + (done / data.units.length * 100) + '%"></span></div></div></div>' +
+      '<div class="panel-head"><div><h2>기초 과정</h2>' +
+        "<p>히라가나·가타카나부터 기본 문장, 동사·형용사 활용까지 N3 공부에 꼭 필요한 바탕을 빠르게 익혀요.</p></div>" +
+        '<div class="progress">히라가나 <strong>' + h.done + "</strong>/" + h.total + " · 가타카나 <strong>" + k.done + "</strong>/" + k.total + " · 단원 <strong>" + done + "</strong>/" + units.length + "</div></div>" +
       '<p class="notice"><b>자체 제작 학습 자료</b> · AI가 새로 쓴 설명과 연습 문제예요. 공식 JLPT 자료가 아니고, 아직 <b>검수 필요</b> 상태예요.</p>' +
       '<div class="segmented" role="tablist" aria-label="기초 과정">' +
-        seg("units", "핵심 단원") + seg("kana", "가나 표") + seg("kanaquiz", "가나 퀴즈") + seg("pending", "단어·한자") +
+        seg("hira", "히라가나") + seg("kata", "가타카나") + seg("mix", "문자 통합 학습") + seg("units", "핵심 단원") + seg("pending", "단어·한자") +
       "</div>" +
       '<div id="mode" class="stack"></div>' +
     "</section>";
@@ -40,16 +40,27 @@ function render(app) {
     if (s) { ui.mode = s.dataset.mode; ui.unit = null; stopAll(); render(app); }
   };
   const el = app.querySelector("#mode");
-  ({ units: ui.unit ? renderUnit : renderUnits, kana: renderKana, kanaquiz: renderKanaQuiz, pending: renderPending })[ui.mode](el, app, data);
+  if (ui.mode === "hira" || ui.mode === "kata") renderScript(el, app, data, ui.mode, ui);
+  else if (ui.mode === "mix") renderMixed(el, app, data, ui);
+  else if (ui.mode === "units") (ui.unit ? renderUnit : renderUnits)(el, app, data);
+  else renderPending(el, app, data);
+}
+
+// 다른 화면(홈 일정 등)에서 특정 학습 칸으로 바로 열 때
+export function openBasics(mode) {
+  ui.mode = mode; ui.unit = null;
+  if (location.hash === "#n3/basics") window.dispatchEvent(new HashChangeEvent("hashchange"));
+  else location.hash = "n3/basics";
 }
 
 function seg(key, label) {
   return '<button type="button" role="tab" class="seg" data-mode="' + key + '" aria-selected="' + (ui.mode === key) + '">' + label + "</button>";
 }
 
+
 /* ---------- 단원 목록 ---------- */
 function renderUnits(el, app, data) {
-  el.innerHTML = '<ol class="units">' + data.units.map((u, i) => {
+  el.innerHTML = '<ol class="units">' + coreUnits(data).map((u, i) => {
     const rec = n3store.get("basics")[u.id] || {};
     return '<li><button type="button" class="unit' + (rec.done ? " is-done" : "") + '" data-unit="' + u.id + '">' +
       '<span class="unit-no">' + (i + 1) + "</span>" +
@@ -66,11 +77,11 @@ function renderUnits(el, app, data) {
 
 /* ---------- 단원 하나: 개념 → 예문 → 퀴즈 ---------- */
 function renderUnit(el, app, data) {
-  const idx = data.units.findIndex(u => u.id === ui.unit);
-  const u = data.units[idx];
-  const next = data.units[idx + 1];
+  const idx = coreUnits(data).findIndex(u => u.id === ui.unit);
+  const u = coreUnits(data)[idx];
+  const next = coreUnits(data)[idx + 1];
   el.innerHTML =
-    '<div class="toolbar unit-nav"><button type="button" class="link-btn" id="back">← 단원 목록</button><span class="progress">단원 <strong>' + (idx + 1) + '</strong> / ' + data.units.length + '</span></div>' +
+    '<div class="toolbar unit-nav"><button type="button" class="link-btn" id="back">← 단원 목록</button><span class="progress">단원 <strong>' + (idx + 1) + '</strong> / ' + coreUnits(data).length + '</span></div>' +
     '<article class="card-box">' +
       '<div class="q-top"><h3>' + (idx + 1) + ". " + esc(u.title) + "</h3>" +
         '<span class="badges"><span class="badge ai">자체 제작 · AI 작성</span><span class="badge warn">검수 필요</span></span></div>' +
@@ -79,7 +90,7 @@ function renderUnit(el, app, data) {
       '<h4 class="step">② 예문</h4><ul class="examples">' + u.examples.map((x, i) =>
         '<li><button type="button" class="say" data-say="' + i + '" aria-label="듣기">▶</button>' +
         '<span><span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></span></li>").join("") + "</ul>" +
-      '<p class="p-state" id="voice-msg" role="status">' + esc(voiceMsg) + "</p>" +
+      '<p class="p-state" id="voice-msg" role="status">' + esc(voiceText()) + "</p>" +
     "</article>" +
     '<h4 class="step">③ 확인 퀴즈 <span class="score" id="u-score"></span></h4>' +
     '<div class="quiz" id="u-quiz"></div>' +
@@ -111,7 +122,7 @@ function renderUnit(el, app, data) {
     });
     if (first) award("unit");
     const wrong = [...results.entries()].filter(([, ok]) => !ok).map(([i]) => i);
-    const allDone = data.units.every(x => unitDone(x.id));
+    const allDone = coreUnits(data).every(x => unitDone(x.id));
     el.querySelector("#u-next").innerHTML =
       '<article class="card-box unit-result" role="status">' +
         "<h3>결과 · " + right + " / " + u.quiz.length + " 정답" + (first ? " <small class=\"xp\">경험치 +30</small>" : "") + "</h3>" +
@@ -139,108 +150,6 @@ function renderUnit(el, app, data) {
     const s = e.target.closest("[data-say]");
     if (s) speak(u.examples[Number(s.dataset.say)].ja, el.querySelector("#voice-msg"));
   };
-}
-
-/* ---------- 듣기 (기기에 일본어 음성이 있을 때만) ---------- */
-async function speak(text, msgEl) {
-  const voices = await getJaVoices();
-  if (!voices.length) {
-    voiceMsg = "음성 준비 필요: 이 기기에서 일본어 음성을 찾지 못했어요.";
-    if (msgEl) msgEl.textContent = voiceMsg;
-    return;
-  }
-  stopAll();
-  const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, ""));
-  u.lang = "ja-JP"; u.voice = voices[0]; u.rate = 0.9;
-  u.onerror = ev => { if (msgEl && ev.error !== "interrupted" && ev.error !== "canceled") msgEl.textContent = "음성을 재생하지 못했어요 (" + ev.error + ")"; };
-  window.speechSynthesis.speak(u);
-}
-
-/* ---------- 가나 표 ---------- */
-function renderKana(el, app, data) {
-  const tables = [["basic", "기본 글자"], ["dakuon", "탁음 · 반탁음"], ["yoon", "요음"]];
-  const rows = data.kana[ui.table];
-  el.innerHTML =
-    '<div class="toolbar">' +
-      [["hira", "히라가나"], ["kata", "가타카나"]].map(([k, l]) =>
-        '<button type="button" class="chip" data-script="' + k + '" aria-pressed="' + (ui.script === k) + '">' + l + "</button>").join("") +
-      '<span class="sep" aria-hidden="true"></span>' +
-      tables.map(([k, l]) => '<button type="button" class="chip" data-table="' + k + '" aria-pressed="' + (ui.table === k) + '">' + l + "</button>").join("") +
-    "</div>" +
-    '<p class="hint">글자를 누르면 소리를 들을 수 있어요(기기에 일본어 음성이 있을 때). 한글 표기는 대략적인 소리예요.</p>' +
-    '<p class="p-state" id="voice-msg" role="status"></p>' +
-    '<div class="kana-grid cols-' + rows[0].length + '">' + rows.map(r => r.map(c => c
-      ? '<button type="button" class="kana" data-kana="' + esc(kanaOf(c)) + '"><span class="k" lang="ja">' + esc(kanaOf(c)) + '</span><span class="r">' + esc(c[1]) + " · " + esc(c[2]) + "</span></button>"
-      : '<span class="kana empty" aria-hidden="true"></span>').join("")).join("") +
-    "</div>";
-  el.onclick = e => {
-    const sc = e.target.closest("[data-script]"), tb = e.target.closest("[data-table]"), k = e.target.closest("[data-kana]");
-    if (sc) { ui.script = sc.dataset.script; renderKana(el, app, data); }
-    else if (tb) { ui.table = tb.dataset.table; renderKana(el, app, data); }
-    else if (k) speak(k.dataset.kana, el.querySelector("#voice-msg"));
-  };
-}
-
-/* ---------- 가나 퀴즈: 글자를 보고 소리(로마자) 고르기 ---------- */
-function allKana(data) {
-  const cells = [];
-  ["basic", "dakuon", "yoon"].forEach(t => data.kana[t].forEach(r => r.forEach(c => { if (c) cells.push(c); })));
-  return cells;
-}
-
-function renderKanaQuiz(el, app, data) {
-  const stats = n3store.get("kana");
-  const cells = allKana(data);
-  const weak = cells.filter(c => { const s = stats[c[0]]; return !!s && s.wrong > s.right; });
-  el.innerHTML =
-    '<div class="toolbar">' +
-      [["hira", "히라가나"], ["kata", "가타카나"], ["mix", "섞어서"]].map(([k, l]) =>
-        '<button type="button" class="chip" data-qs="' + k + '" aria-pressed="' + (ui.quizScript === k) + '">' + l + "</button>").join("") +
-      '<span class="score" id="k-score"></span><button type="button" class="link-btn" id="k-new">새 문제</button>' +
-    "</div>" +
-    '<p class="hint">무작위 10글자를 보고 소리를 골라요. 틀린 글자는 다음 문제에 더 자주 나와요.' + (weak.length ? " (자주 틀린 글자 " + weak.length + "개)" : "") + "</p>" +
-    '<div class="quiz" id="k-quiz"></div>';
-
-  const start = () => {
-    const pickScript = () => ui.quizScript === "mix" ? (Math.random() < 0.5 ? "hira" : "kata") : ui.quizScript;
-    const pool = [...shuffle(weak).slice(0, 4), ...shuffle(cells)];
-    const chosen = [];
-    pool.forEach(c => { if (chosen.length < ui.quizSize && !chosen.includes(c)) chosen.push(c); });
-    const quiz = el.querySelector("#k-quiz");
-    const score = el.querySelector("#k-score");
-    const results = new Map();
-    quiz.innerHTML = ""; score.textContent = "";
-    shuffle(chosen).forEach((c, i) => {
-      const script = pickScript();
-      const shown = script === "kata" ? toKata(c[0]) : c[0];
-      const others = [];
-      shuffle(cells).forEach(o => { if (others.length < 3 && o[1] !== c[1] && !others.some(x => x[1] === o[1])) others.push(o); });
-      const opts = shuffle([c, ...others]);
-      const q = {
-        id: "n3-kana-" + script + "-" + c[0], area: "basics", generated: true, kind: "가나 읽기",
-        prompt: shown, options: opts.map(o => o[1]), answer: opts.indexOf(c),
-        explanation: "「" + shown + "」는 " + c[1] + "(" + c[2] + ")로 읽어요.", source: { type: "ai" }, review: "needs-review",
-      };
-      const box = document.createElement("div");
-      box.className = "kana-q";
-      quiz.appendChild(box);
-      mountQuestion(box, q, {
-        label: "가나 " + (i + 1), store: n3store,
-        onAnswer: ok => {
-          n3store.update("kana", k => { const r = k[c[0]] || (k[c[0]] = { right: 0, wrong: 0 }); ok ? r.right++ : r.wrong++; });
-          award(ok ? "kana" : "wrong");
-          results.set(i, ok);
-          score.textContent = [...results.values()].filter(Boolean).length + " / " + chosen.length + " 정답";
-        },
-      });
-    });
-  };
-  el.onclick = e => {
-    const t = e.target.closest("[data-qs]");
-    if (t) { ui.quizScript = t.dataset.qs; renderKanaQuiz(el, app, data); }
-    else if (e.target.closest("#k-new")) start();
-  };
-  start();
 }
 
 /* ---------- 아직 자료가 없는 영역 ---------- */

@@ -5,6 +5,7 @@ import { DB, EXTRA } from "./data.js";
 import { store, n3store } from "./store.js";
 import { esc, today } from "./util.js";
 import { mountStrokePlayer, stopStrokes } from "./strokes.js";
+import { mountWritePad } from "./writing.js";
 
 const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
@@ -104,6 +105,13 @@ function ensureDialog() {
     if (e.target === dialog || e.target.closest("[data-close]")) { dialog.close(); return; }
     const go = e.target.closest("[data-goto-kanji]");
     if (go) { openKanji(go.dataset.gotoKanji, { roomId: current.roomId }); return; }
+    if (e.target.closest("[data-open-write]")) {
+      const info = kanjiInfo(current.ch), room = current.roomId, ch = current.ch;
+      mountWritePad(dialog.querySelector("#kd-write"), info.strokeRef, {
+        onPractice: () => STORES[room].update("kanji", k => { const r = k[ch] || (k[ch] = {}); r.written = (r.written || 0) + 1; }),
+      });
+      return;
+    }
     const fav = e.target.closest("[data-kfav]");
     if (fav) {
       STORES[current.roomId].update("kanji", k => { const r = k[current.ch] || (k[current.ch] = {}); r.fav = !r.fav; });
@@ -203,6 +211,7 @@ function draw() {
 
   const strokes = '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes">' + (info ? "" : '<p class="hint">획순 데이터 준비 중이에요.</p>') + "</div></section>";
   stopStrokes();
-  dialog.innerHTML = '<div class="kd">' + head + wordBox + strokes + body + related + links + foot + "</div>";
+  const write = info ? '<section class="kd-sec"><h4>직접 써 보기 <small class="hint">연습 ' + (rec.written || 0) + '회</small></h4><div id="kd-write"><button type="button" class="btn ghost sm" data-open-write>쓰기 판 열기</button></div></section>' : "";
+  dialog.innerHTML = '<div class="kd">' + head + wordBox + strokes + write + body + related + links + foot + "</div>";
   if (info) mountStrokePlayer(dialog.querySelector("#kd-strokes"), info.strokeRef);
 }
