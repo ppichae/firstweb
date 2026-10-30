@@ -321,3 +321,41 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .block { display: block; }
 .ko.block { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
 .hint { margin: 0; }
+
+/* ---------- 5단계: 독해·청해 ---------- */
+.notice { margin: 0; font-size: 13.5px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.pick {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px;
+  text-align: left; display: grid; gap: 2px; min-height: 48px; min-width: 0;
+}
+.pick:hover { border-color: var(--ink); }
+.pick[aria-pressed="true"] { border-color: var(--ink); background: var(--ink-soft); }
+.pick-type { font-size: 12px; color: var(--ink); font-weight: 600; }
+.pick-title { font-weight: 600; overflow-wrap: anywhere; }
+.pick-meta { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.timer { font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.timer.done { color: var(--good); font-weight: 600; }
+.text-label { margin: 16px 0 8px; font-size: 15px; color: var(--ink); }
+.text-label:first-of-type { margin-top: 0; }
+.passage p.jp.info { text-indent: 0; line-height: 1.8; border-bottom: 1px dashed var(--line); padding-bottom: .8em; }
+.passage .trans h4 { margin: 8px 0 4px; }
+
+.listen { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+@media (max-width: 520px) { .listen { padding: 16px; } }
+.player { background: var(--bg); border-radius: 10px; padding: 14px; display: grid; gap: 8px; }
+.player audio { width: 100%; }
+.player-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.rate { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--muted); }
+.rate select { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px; min-height: 40px; }
+.p-state { font-size: 13.5px; color: var(--ink); font-weight: 600; }
+.audio-missing { display: grid; gap: 6px; padding: 4px; }
+.audio-missing strong { color: var(--warn); }
+.audio-missing p { margin: 0; }
+.listen-tools { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.script { border-left: 3px solid var(--line); padding-left: 14px; display: grid; gap: 6px; }
+.script p { margin: 0; overflow-wrap: anywhere; }
+.script b { display: inline-block; min-width: 2.2em; color: var(--ink); font-weight: 600; }
+.script .situation { color: var(--muted); }
+.script.trans { color: var(--muted); }
+.p-state.err { color: var(--bad); font-weight: 500; }

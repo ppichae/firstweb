@@ -5,9 +5,10 @@ import { esc } from "./util.js";
 import vocab from "./views/vocab.js";
 import grammar from "./views/grammar.js";
 import reading from "./views/reading.js";
+import listening from "./views/listening.js";
 
 // 메뉴 순서. 화면을 추가할 때는 views 폴더에 파일을 만들고 여기에 한 줄 넣는다
-const VIEWS = [vocab, grammar, reading];
+const VIEWS = [vocab, grammar, reading, listening];
 
 const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");
@@ -16,10 +17,14 @@ tablist.innerHTML = VIEWS.map(v =>
   '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
   (v.jp ? ' <span class="jp" lang="ja">' + esc(v.jp) + "</span>" : "") + "</a>").join("");
 
+let currentView = null;
+
 function route() {
   const id = location.hash.slice(1);
   const view = VIEWS.find(v => v.id === id) || VIEWS[0];
-  // 이전 화면이 걸어 둔 클릭·입력 처리를 지운다
+  // 이전 화면의 정리 작업(음성·타이머 멈추기)을 하고, 걸어 둔 클릭·입력 처리를 지운다
+  if (currentView && currentView.leave) currentView.leave();
+  currentView = view;
   app.onclick = app.oninput = app.onchange = app.onsubmit = null;
   view.render(app);
   tablist.querySelectorAll(".tab").forEach(t => {
