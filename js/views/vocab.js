@@ -315,4 +315,12 @@ function renderCompare(el) {
     "</article>").join("") + "</div>";
 }
 
+// 다른 화면에서 특정 학습 방식(예: 플래시카드)으로 바로 열 때
+export function openVocabMode(mode) {
+  ui.mode = mode;
+  if (mode === "cards") session = null;   // 최신 복습 목록으로 다시 만든다
+  if (location.hash === "#vocab") window.dispatchEvent(new HashChangeEvent("hashchange"));
+  else location.hash = "vocab";
+}
+
 export default { id: "vocab", label: "단어", jp: "語彙", render };

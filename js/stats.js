@@ -74,9 +74,10 @@ export function studiedWordCount() {
 }
 export const studiedGrammarCount = () => DB.grammar.items.filter(g => (store.get("grammar")[g.id] || {}).studied).length;
 
-// 약점 영역: 5문제 이상 푼 영역 중 정답률이 낮은 순서
+// 약점 영역: 5문제 이상 푼 영역 중 정답률이 80% 미만인 영역 (낮은 순서)
 export const MIN_FOR_WEAKNESS = 5;
+export const WEAK_BELOW = 80;
+export const judgedAreas = () => Object.entries(areaStats()).filter(([, r]) => r.total >= MIN_FOR_WEAKNESS);
 export function weakAreas() {
-  const s = areaStats();
-  return Object.entries(s).filter(([, r]) => r.total >= MIN_FOR_WEAKNESS).sort((a, b) => a[1].rate - b[1].rate);
+  return judgedAreas().filter(([, r]) => r.rate < WEAK_BELOW).sort((a, b) => a[1].rate - b[1].rate);
 }
