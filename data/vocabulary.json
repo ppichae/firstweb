@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "title": "N1 어휘",
+    "updated": "2026-10-30",
+    "note": "JLPT는 공식 어휘 목록을 공개하지 않습니다. 아래 단어는 N1 수준 교재에서 자주 다루는 단어를 예시로 고른 것이며, 뜻·예문·해설은 AI가 작성했습니다(검수 필요).",
+    "fields": {
+      "id": "고유 번호 (v + 숫자)",
+      "word": "일본어 표기",
+      "reading": "히라가나 읽기",
+      "meaning": "한국어 뜻",
+      "pos": "품사: noun-suru, noun, na-adj, i-adj, verb, taru, adverb, expression",
+      "topic": "주제",
+      "level": "학습 난이도 1(기본)~3(심화)",
+      "examples": "예문 [{ja, ko}]",
+      "synonyms": "유의어",
+      "antonyms": "반의어",
+      "collocations": "자주 쓰이는 표현",
+      "usage": "사용 맥락",
+      "source": "출처 {type: ai | official | pdf, label, url}",
+      "review": "검수 상태: needs-review | verified"
+    }
+  },
+  "items": [
+    {
+      "id": "v001", "word": "懸念", "reading": "けねん", "meaning": "걱정, 우려", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "景気の先行きを懸念する声が高まっている。", "ko": "경기 전망을 우려하는 목소리가 높아지고 있다." }],
+      "synonyms": ["心配", "危惧"], "antonyms": ["安心"],
+      "collocations": ["懸念を抱く", "懸念を示す", "懸念が残る"],
+      "usage": "뉴스·보고서처럼 격식 있는 글에서 많이 써요. 일상 대화에서는 「心配」가 더 자연스러워요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v002", "word": "示唆", "reading": "しさ", "meaning": "시사, 암시", "pos": "noun-suru",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "調査結果は新たな可能性を示唆している。", "ko": "조사 결과는 새로운 가능성을 시사하고 있다." }],
+      "synonyms": ["暗示"], "antonyms": [],
+      "collocations": ["示唆に富む", "示唆を与える", "可能性を示唆する"],
+      "usage": "직접 말하지 않고 넌지시 알려 줄 때 써요. 「示唆に富む」는 '시사하는 바가 많다'라는 뜻이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v003", "word": "是正", "reading": "ぜせい", "meaning": "시정, 바로잡음", "pos": "noun-suru",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "地域間の格差の是正が急務だ。", "ko": "지역 간 격차를 바로잡는 것이 시급하다." }],
+      "synonyms": ["修正", "改善"], "antonyms": [],
+      "collocations": ["格差を是正する", "是正を求める", "是正措置"],
+      "usage": "잘못되거나 불공평한 상태를 바로잡을 때 써요. 제도, 격차, 관행 같은 말과 잘 어울려요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v004", "word": "網羅", "reading": "もうら", "meaning": "망라, 빠짐없이 모음", "pos": "noun-suru",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "この辞書は専門用語を網羅している。", "ko": "이 사전은 전문 용어를 망라하고 있다." }],
+      "synonyms": ["包括"], "antonyms": [],
+      "collocations": ["網羅的な", "〜を網羅する"],
+      "usage": "관련된 것을 하나도 빠뜨리지 않고 모두 담을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v005", "word": "顕著", "reading": "けんちょ", "meaning": "현저함, 두드러짐", "pos": "na-adj",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "練習の効果が顕著に表れた。", "ko": "연습의 효과가 두드러지게 나타났다." }],
+      "synonyms": ["著しい", "目立つ"], "antonyms": [],
+      "collocations": ["顕著な傾向", "顕著に表れる", "顕著な差"],
+      "usage": "변화, 차이, 경향이 눈에 띄게 드러날 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v006", "word": "緻密", "reading": "ちみつ", "meaning": "치밀함", "pos": "na-adj",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "緻密な計画を立てる。", "ko": "치밀한 계획을 세우다." }],
+      "synonyms": ["綿密", "精密"], "antonyms": ["粗雑", "大雑把"],
+      "collocations": ["緻密な計画", "緻密な分析", "緻密に計算する"],
+      "usage": "계획, 분석, 작업이 꼼꼼하고 빈틈없을 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v007", "word": "漠然", "reading": "ばくぜん", "meaning": "막연함", "pos": "taru",
+      "topic": "생활·감정", "level": 2,
+      "examples": [{ "ja": "将来に漠然とした不安を抱いている。", "ko": "장래에 막연한 불안을 품고 있다." }],
+      "synonyms": ["曖昧"], "antonyms": ["明確"],
+      "collocations": ["漠然とした不安", "漠然と考える"],
+      "usage": "생각이나 감정이 뚜렷하지 않고 흐릿할 때 써요. 「漠然とした＋명사」, 「漠然と＋동사」 형태로 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v008", "word": "携わる", "reading": "たずさわる", "meaning": "종사하다, 관여하다", "pos": "verb",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "長年、教育に携わってきた。", "ko": "오랫동안 교육에 종사해 왔다." }],
+      "synonyms": ["従事する", "関わる"], "antonyms": [],
+      "collocations": ["〜に携わる", "開発に携わる", "医療に携わる"],
+      "usage": "「〜に携わる」 형태로 어떤 일이나 분야에 관여해 일할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v009", "word": "培う", "reading": "つちかう", "meaning": "기르다, 배양하다", "pos": "verb",
+      "topic": "교육·성장", "level": 2,
+      "examples": [{ "ja": "海外生活で培った語学力を生かす。", "ko": "해외 생활에서 길러 온 어학 실력을 살리다." }],
+      "synonyms": ["養う", "育む"], "antonyms": [],
+      "collocations": ["経験を培う", "培った技術", "信頼関係を培う"],
+      "usage": "능력, 관계, 정신 같은 것을 오랜 시간에 걸쳐 길러 낼 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v010", "word": "滞る", "reading": "とどこおる", "meaning": "밀리다, 정체되다", "pos": "verb",
+      "topic": "업무·조직", "level": 2,
+      "examples": [{ "ja": "家賃の支払いが滞っている。", "ko": "집세 납부가 밀려 있다." }],
+      "synonyms": ["停滞する", "遅れる"], "antonyms": [],
+      "collocations": ["支払いが滞る", "業務が滞る", "作業が滞る"],
+      "usage": "일이나 돈의 흐름이 제때 진행되지 않고 막힐 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v011", "word": "覆す", "reading": "くつがえす", "meaning": "뒤집다, 뒤엎다", "pos": "verb",
+      "topic": "학술·사고", "level": 2,
+      "examples": [{ "ja": "それは定説を覆す発見だった。", "ko": "그것은 정설을 뒤집는 발견이었다." }],
+      "synonyms": ["ひっくり返す"], "antonyms": [],
+      "collocations": ["定説を覆す", "判決を覆す", "予想を覆す"],
+      "usage": "이미 정해진 생각, 결정, 예상을 완전히 바꿀 때 자주 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v012", "word": "賄う", "reading": "まかなう", "meaning": "(비용 등을) 충당하다", "pos": "verb",
+      "topic": "사회·경제", "level": 2,
+      "examples": [{ "ja": "生活費をアルバイトで賄う。", "ko": "생활비를 아르바이트로 충당하다." }],
+      "synonyms": ["充てる"], "antonyms": [],
+      "collocations": ["費用を賄う", "AをBで賄う"],
+      "usage": "「AをBで賄う」 형태로, 필요한 돈이나 물건을 어떤 수단으로 마련할 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v013", "word": "踏襲", "reading": "とうしゅう", "meaning": "답습, 그대로 이어받음", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 3,
+      "examples": [{ "ja": "新社長は前任者の方針を踏襲した。", "ko": "새 사장은 전임자의 방침을 그대로 이어받았다." }],
+      "synonyms": ["継承"], "antonyms": ["刷新"],
+      "collocations": ["方針を踏襲する", "前例を踏襲する"],
+      "usage": "앞사람의 방식이나 방침을 바꾸지 않고 그대로 따를 때 써요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    },
+    {
+      "id": "v014", "word": "妥協", "reading": "だきょう", "meaning": "타협", "pos": "noun-suru",
+      "topic": "업무·조직", "level": 1,
+      "examples": [{ "ja": "品質には一切妥協しない。", "ko": "품질에는 절대 타협하지 않는다." }],
+      "synonyms": ["譲歩"], "antonyms": [],
+      "collocations": ["妥協点を探る", "妥協を許さない"],
+      "usage": "서로 양보해서 의견을 맞출 때 써요. 「妥協しない」는 '양보하지 않고 끝까지 고집한다'라는 뜻이에요.",
+      "source": { "type": "ai" }, "review": "needs-review"
+    }
+  ],
+  "questions": []
+}
