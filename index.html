@@ -1,8 +1,13 @@
-<title>N1 공부방</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JLPT N1 合格!</title>
+<!-- Pretendard 공식 배포(orioncactus/pretendard v1.3.9, SIL OFL). 쓰는 글자만 내려받는 동적 서브셋 -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp-dynamic-subset.min.css">
 <style>
   /* 레이아웃: 원고지처럼 정돈된 한 줄 기둥(최대 960px). 위에 시험 정보, 아래에 탭으로 나뉜 공부 공간 */
   :root {
@@ -18,10 +23,12 @@
     --good-soft: #E2F2EA;
     --bad: #B4322A;
     --bad-soft: #FBE7E5;
-    --font-display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
-    --font-jp: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
-    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+    /* 모든 글자는 Pretendard 계열. 한국어 문장 속 한자·가나는 Pretendard JP가 채운다 */
+    --font-fallback: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+    --font-body: "Pretendard Variable", "Pretendard", "Pretendard JP Variable", "Pretendard JP", var(--font-fallback);
+    --font-jp: "Pretendard JP Variable", "Pretendard JP", "Pretendard Variable", "Pretendard", var(--font-fallback);
+    --font-display: var(--font-body);
+    --font-mono: var(--font-body);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -39,7 +46,10 @@
   }
 
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  img { max-width: 100%; }
   body {
+    margin: 0;
     background: var(--bg);
     color: var(--fg);
     font-family: var(--font-body);
@@ -53,7 +63,9 @@
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
   .jp { font-family: var(--font-jp); }
-  button { font: inherit; color: inherit; cursor: pointer; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :lang(ja) { font-family: var(--font-jp); }
   button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
   /* 머리말 */
@@ -205,12 +217,14 @@
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
     <div>
       <div class="eyebrow">日本語能力試験 · N1</div>
-      <h1>N1 공부방</h1>
+      <h1>JLPT N1 <span lang="ja">合格!</span></h1>
       <p class="lede">단어, 문법, 독해를 하루에 조금씩. 카드를 넘기고, 퀴즈를 풀고, 외운 단어에는 도장을 찍어 두세요.</p>
     </div>
     <dl class="facts">
@@ -504,3 +518,5 @@
 
   renderVocab();
 </script>
+</body>
+</html>
