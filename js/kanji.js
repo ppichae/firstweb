@@ -7,6 +7,7 @@ import { esc, today } from "./util.js";
 import { mountStrokePlayer, stopStrokes } from "./strokes.js";
 import { mountWritePad } from "./writing.js";
 import { award } from "./game.js";
+import { examplesWithChar, plainOf, exampleHTML, EXAMPLE_KEYS } from "./examples.js";
 
 const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
@@ -80,10 +81,12 @@ function roomWords(roomId) {
 export const wordsWith = (ch, roomId) => roomWords(roomId).filter(v => (v.word || "").includes(ch));
 
 export function examplesWith(ch, roomId) {
-  if (roomId !== "n1") return [];
   const out = [];
-  [...((DB.vocab && DB.vocab.items) || []), ...((DB.grammar && DB.grammar.items) || [])].forEach(it =>
+  if (roomId === "n1") [...((DB.vocab && DB.vocab.items) || []), ...((DB.grammar && DB.grammar.items) || [])].forEach(it =>
     (it.examples || []).forEach(x => { if (x.ja.includes(ch) && out.length < 3) out.push(x); }));
+  // 자체 제작 예문(이 방의 것)도 함께: own에 원본을 담아 두면 화면에서 읽기(루비)와 함께 보여 준다
+  const keys = roomId === "n1" ? [EXAMPLE_KEYS.n1vocab, EXAMPLE_KEYS.n1grammar] : [EXAMPLE_KEYS.n3vocab, EXAMPLE_KEYS.n3grammar];
+  examplesWithChar(ch, keys).forEach(e => { if (out.length < 3) out.push({ ja: plainOf(e.ja), ko: e.ko, own: e }); });
   return out;
 }
 
@@ -195,7 +198,7 @@ function draw() {
           (words.length > 12 ? '<p class="hint">나머지 ' + (words.length - 12) + "개는 단어 화면에서 이 한자로 검색해 보세요.</p>" : "")
         : '<p class="hint">이 방 단어 목록에는 이 한자가 쓰인 단어가 없어요.</p>') +
     "</section>" +
-    (exs.length ? '<section class="kd-sec"><h4>예문</h4><ul class="kd-ex">' + exs.map(x => '<li><span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></li>").join("") + "</ul></section>" : "");
+    (exs.length ? '<section class="kd-sec"><h4>예문</h4><ul class="kd-ex">' + exs.map(x => x.own ? "<li>" + exampleHTML(x.own, false) + "</li>" : '<li><span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></li>").join("") + "</ul></section>" : "");
 
   const links = info && (info.similar.length || sameRad.length)
     ? '<section class="kd-sec"><h4>함께 보면 좋은 한자</h4><dl class="kd-dl">' +

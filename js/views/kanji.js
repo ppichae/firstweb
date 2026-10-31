@@ -120,5 +120,5 @@ export function createKanjiView(id, roomId) {
     }).join("") : '<p class="empty">조건에 맞는 한자가 없어요.</p>';
   }
 
-  return { id, label: "한자", jp: "漢字", needs: ["kanji", roomId === "n1" ? "kanjiN1" : "kanjiN3", roomId === "n1" ? "n1vocab" : "n3vocab", "sources"], render };
+  return { id, label: "한자", jp: "漢字", needs: ["kanji", roomId === "n1" ? "kanjiN1" : "kanjiN3", roomId === "n1" ? "n1vocab" : "n3vocab", "sources", ...(roomId === "n1" ? ["exN1V", "exN1G"] : ["exN3V", "exN3G"])], render };
 }

@@ -6,6 +6,7 @@ import { esc, shuffle, today, pct } from "./util.js";
 import { mountQuestion } from "./quiz.js";
 import { kanjiInfo, roomKanjiList, wordsWith, splitReading, examplesWith } from "./kanji.js";
 import { runQuiz } from "./quizRunner.js";
+import { exampleHTML } from "./examples.js";
 import { loadStrokes } from "./strokes.js";
 import { award } from "./game.js";
 
@@ -136,7 +137,7 @@ export function kanjiExtra(info, roomId) {
     '<div class="lb-row"><span class="lb-label">훈독</span><span lang="ja">' + (info.kun.map(k => { const [a, b] = k.split("-"); return esc(a) + (b ? '<span class="okuri">' + esc(b) + "</span>" : ""); }).join("・") || "—") + "</span></div>" +
     withSplit.map(({ v, s }) => '<div class="lb-row"><span class="lb-label">대표 단어</span><span><b lang="ja">' + esc(v.word) + '</b> <span class="reading" lang="ja">' + esc(v.reading) + "</span> " + esc(v.meaning) +
       (s ? ' <small class="hint">(' + esc(info.char) + " = " + esc(s.find(p => p[0] === info.char)[1]) + ")</small>" : "") + "</span></div>").join("") +
-    (ex ? '<div class="lb-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>" : "") +
+    (ex ? '<div class="lb-ex">' + (ex.own ? exampleHTML(ex.own, true) : '<span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span>") + "</div>" : "") +
     (info.mnemonic ? '<div class="lb-row lb-story"><span class="lb-label">연상 이야기</span><span>' + esc(info.mnemonic) + "</span></div>" : "") +
     "</div>";
 }

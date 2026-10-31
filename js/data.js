@@ -53,6 +53,10 @@ const EXTRA_FILES = {
   n3reading: "data/n3/reading.json",
   n3listening: "data/n3/listening.json",
   checks: "data/review/checks.json",
+  exN3V: "data/examples/n3-vocab.json",
+  exN3G: "data/examples/n3-grammar.json",
+  exN1V: "data/examples/n1-vocab.json",
+  exN1G: "data/examples/n1-grammar.json",
 };
 export const EXTRA = {};
 const pending = {};

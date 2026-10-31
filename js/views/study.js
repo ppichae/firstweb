@@ -8,6 +8,7 @@ import { runQuiz } from "../quizRunner.js";
 import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
 import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
+import { examplesFor, exampleHTML, EXAMPLE_KEYS } from "../examples.js";
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
@@ -226,7 +227,7 @@ export function createVocabView(cfg) {
         (open
           ? (v.reading && v.reading !== v.word ? '<span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
             '<span class="meaning">' + esc(v.meaning) + "</span>" +
-            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : "") +
+            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : (examplesFor(v.id)[0] ? '<span class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</span>" : "")) +
             (e.core
               ? '<span class="rels">' + rel("유의어", v.synonyms) + rel("반의어", v.antonyms) + rel("자주 쓰는 표현", v.collocations) + "</span>" +
                 (v.usage ? '<span class="usage">' + esc(v.usage) + "</span>" : "") +
@@ -275,7 +276,7 @@ export function createVocabView(cfg) {
           (session.flipped
             ? '<div class="flash-back">' + (v.reading && v.reading !== v.word ? '<div class="reading" lang="ja">' + esc(v.reading) + "</div>" : "") +
               '<div class="meaning">' + esc(v.meaning) + "</div>" +
-              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : "") + kanjiRowHTML(v.word, v.reading) + "</div>"
+              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : (examplesFor(v.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</div>" : "")) + kanjiRowHTML(v.word, v.reading) + "</div>"
             : '<button type="button" class="btn" id="flip">답 보기</button>') +
         "</div>" +
         (session.flipped
@@ -365,6 +366,7 @@ export function createVocabView(cfg) {
     const v = all.find(x => x.id === q.wordId) || all.find(x => x.id === q.word);
     if (!v) return "";
     const exs = (v.examples || []).slice(0, 2);
+    const own = exs.length ? [] : examplesFor(v.id).slice(0, 1);   // 기본 자료에 예문이 없으면 자체 제작 예문(읽기·쓰임 설명 포함)
     const rel = (label, arr) => (arr && arr.length ? '<div class="lb-row"><span class="lb-label">' + label + '</span><span lang="ja">' + arr.map(esc).join("、") + "</span></div>" : "");
     let wrongPart = "";
     if (picked !== null && picked !== undefined && picked !== q.answer) {
@@ -373,6 +375,7 @@ export function createVocabView(cfg) {
     }
     return '<div class="learn-box"><div class="lb-title">학습 정보</div>' + wordLine(v) +
       exs.map(x => '<div class="lb-ex"><span class="jp" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></div>").join("") +
+      own.map(e => '<div class="lb-ex">' + exampleHTML(e, true) + "</div>").join("") +
       rel("유의어", v.synonyms) + rel("자주 쓰는 표현", v.collocations) + wrongPart + "</div>";
   }
 
@@ -400,7 +403,7 @@ export function createVocabView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks"], render },
+    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks", EXAMPLE_KEYS[cfg.extraKey]], render },
     needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, total: () => items().length,
   };
 }
@@ -561,7 +564,8 @@ export function createGrammarView(cfg) {
         "</div></div>" +
       '<div class="g-body"><div class="g-mean">' + esc(g.meaning) + "</div>" +
         (e.core ? '<div class="g-conn">접속 · ' + esc(g.connection) + "</div>" : '<div class="g-conn">' + esc(g.level) + ' 문형' + "</div>") +
-        (ex ? '<div class="g-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>" : "") +
+        (ex ? '<div class="g-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>"
+          : (examplesFor(g.id)[0] ? '<div class="g-ex">' + exampleHTML(examplesFor(g.id)[0], true) + "</div>" : "")) +
         '<details class="g-more" data-owner="' + cfg.id + '" data-id="' + g.id + '"' + (ui.open.has(g.id) ? " open" : "") + "><summary>자세히 보기</summary>" + more + "</details>" +
       "</div></div>";
   }
@@ -584,7 +588,8 @@ export function createGrammarView(cfg) {
     }
     return '<div class="learn-box"><div class="lb-title">학습 정보</div>' + patternLine(g) +
       (g.connection ? '<div class="lb-row"><span class="lb-label">접속</span><span>' + esc(g.connection) + "</span></div>" : "") +
-      (ex ? '<div class="lb-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>" : "") +
+      (ex ? '<div class="lb-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>"
+        : (examplesFor(g.id)[0] ? '<div class="lb-ex">' + exampleHTML(examplesFor(g.id)[0], true) + "</div>" : "")) +
       wrongPart + "</div>";
   }
 
@@ -688,7 +693,7 @@ export function createGrammarView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji", "checks"], render },
+    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji", "checks", EXAMPLE_KEYS[cfg.extraKey]], render },
     studiedCount, total: () => items().length,
   };
 }
