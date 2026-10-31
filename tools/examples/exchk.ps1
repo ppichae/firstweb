@@ -56,6 +56,7 @@ foreach ($it in $doc.items) {
   $okRuns = 0
   foreach ($m in $runs) {
     $k = $m.Groups[1].Value; $r = $m.Groups[2].Value
+    if ($k -notmatch $isKanji) { $flags += "가나에 읽기를 붙임: " + $k; continue }   # 히라가나·가타카나에는 읽기를 붙이지 않는다
     # 사전에 표제어로 있는 한자 묶음이면 사전 읽기와 정확히 같아야 하고, 없을 때만 한자별 읽기로 맞춰 본다
     # 바로 뒤에 붙은 오쿠리가나(가나)까지 합쳐서 사전 표제어와 맞춰 본다 (예: {手洗|てあら}い = 手洗 てあらい)
     $after = $it.ja.Substring($m.Index + $m.Length); $tail = ([regex]::Match($after, '^[\u3041-\u3096]{1,4}')).Value
