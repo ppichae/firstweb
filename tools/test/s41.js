@@ -8,6 +8,9 @@
   const tabs = () => [...document.querySelectorAll("#tablist .tab")].map(t => t.textContent.trim());
   const sw = () => document.getElementById("room-switch");
   const swVisible = () => { const r = sw().getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= document.documentElement.clientWidth; };
+  // 시험일은 오늘 날짜에서 계산한다 (날짜가 바뀌어도 테스트가 맞게)
+  const plus = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const PLUS30 = plus(30), PLUS31 = plus(31);
   try {
     // 예전 기록이 있는 상태로 첫 화면 → N1 홈
     check("첫 화면 N1 홈", $("h2").textContent === "오늘의 학습" && document.title.includes("N1"), document.title);
@@ -19,7 +22,7 @@
     // D-Day
     check("D-Day 표시", /D-\d+/.test($(".dday-tile").textContent), $(".dday-tile .dday").textContent);
     $("#dd-edit").click(); await wait(100);
-    $("#dd-date").value = "2026-11-30"; $("#dd-save").click(); await wait(100);
+    $("#dd-date").value = PLUS30; $("#dd-save").click(); await wait(100);
     check("N1 시험일 변경", $(".dday-tile").textContent.includes("내가 정한 시험일") && $(".dday-tile .dday").textContent === "D-30", $(".dday-tile .dday").textContent);
     $("#dd-edit").click(); await wait(50); $("#dd-date").value = "2020-01-01"; $("#dd-save").click(); await wait(50);
     check("지난 날짜 거부", $("#dd-msg") && $("#dd-msg").textContent.includes("오늘 이후"));
@@ -85,8 +88,8 @@
     check("방 바꾸기 보임(N3)", swVisible());
     check("N3 홈 구조(D-Day·할 일·칸 4개)", !!$(".dday-tile") && !!$(".todo-tile") && $$(".tiles .tile").length === 4);
     check("N3 D-Day는 N1 설정과 별개", $(".dday-tile").textContent.includes("2026년") , $(".dday-tile .tile-label").textContent);
-    $("#dd-edit").click(); await wait(50); $("#dd-date").value = "2026-12-01"; $("#dd-save").click(); await wait(100);
-    check("N3 시험일 설정", $(".dday-tile .dday").textContent === "D-31" && localStorage.getItem("n3lab:examDate") === '"2026-12-01"' && localStorage.getItem("n1lab:examDate") === '"2026-11-30"', $(".dday-tile .dday").textContent);
+    $("#dd-edit").click(); await wait(50); $("#dd-date").value = PLUS31; $("#dd-save").click(); await wait(100);
+    check("N3 시험일 설정", $(".dday-tile .dday").textContent === "D-31" && localStorage.getItem("n3lab:examDate") === JSON.stringify(PLUS31) && localStorage.getItem("n1lab:examDate") === JSON.stringify(PLUS30), $(".dday-tile .dday").textContent);
     check("N3 단어 칸(기존 기록)", $$(".tiles .tile")[0].textContent.includes("1"), $$(".tiles .tile")[0].textContent);
     const linkDeco = getComputedStyle($(".weeks a")).textDecorationLine;
     check("N3 링크 밑줄 없음", linkDeco === "none", linkDeco + " / 열기: " + getComputedStyle($(".course .q-top a")).textDecorationLine);
