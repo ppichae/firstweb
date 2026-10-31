@@ -1,6 +1,6 @@
 // 로그인 화면: Google 계정으로 로그인한다
 // Supabase가 아직 연결되지 않았으면 버튼을 누를 수 없게 두고 '준비 중'이라고 솔직하게 알린다 (로그인된 것처럼 꾸미지 않는다)
-import { authConfigured, authPreview, signedIn, signInWithGoogle, peekNext, takeLoginError } from "../auth.js";
+import { authConfigured, authPreview, signedIn, signInWithGoogle, peekNext, peekLoginError, clearLoginError } from "../auth.js";
 
 // Google 로고 (Google 로그인 버튼 안내에 맞춘 G 모양)
 const G_LOGO = '<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
@@ -31,7 +31,7 @@ function render(app) {
       "</div>" +
     "</section>";
   const btn = app.querySelector("#google-login");
-  const returned = ready ? takeLoginError() : "";
+  const returned = ready ? peekLoginError() : "";   // 다시 로그인 버튼을 누를 때까지 남겨 둔다
   if (returned) {   // Google 화면에서 취소했거나 로그인이 거절되고 돌아온 경우
     const box = app.querySelector("#login-error");
     box.textContent = "로그인을 마치지 못했어요. 다시 시도해 주세요. 등록된 Google 계정만 로그인할 수 있어요. (" + returned + ")";
@@ -39,6 +39,7 @@ function render(app) {
   }
   if (ready) btn.onclick = async () => {
     btn.disabled = true;
+    clearLoginError();
     try { await signInWithGoogle(); }   // 성공하면 Google 화면으로 넘어갔다가 돌아온다
     catch (e) {
       btn.disabled = false;

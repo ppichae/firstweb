@@ -16,7 +16,8 @@ let client = null;
 let session = null;
 let loginError = "";   // Google에서 로그인을 취소하거나 실패하고 돌아왔을 때의 안내
 
-export const takeLoginError = () => { const e = loginError; loginError = ""; return e; };
+export const peekLoginError = () => loginError;
+export const clearLoginError = () => { loginError = ""; };
 
 // 사이트를 열 때 한 번 부른다. 연결 전에는 아무 일도 하지 않는다
 export async function initAuth(onChange) {
@@ -25,16 +26,27 @@ export async function initAuth(onChange) {
   client = createClient(AUTH_CONFIG.supabaseUrl, AUTH_CONFIG.publishableKey, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" },
   });
+  // 처음 연결할 때 Supabase 도구가 주소의 일회용 코드(?code=…)를 로그인 상태로 바꾼다. 실패하면 그 이유를 받아 둔다
+  const init = await client.auth.initialize();
   const { data } = await client.auth.getSession();
   session = data.session;
-  // Google에서 돌아올 때 주소에 붙은 일회용 코드(?code=…)를 처리한 뒤 주소창에서 지운다
   const q = new URLSearchParams(location.search);
+  if (q.has("code") && !session) {
+    console.error("로그인 코드 처리 실패", init && init.error);
+    loginError = (init && init.error && init.error.message) || "로그인 정보를 확인하지 못했어요";
+  }
+  // Google에서 돌아올 때 주소에 붙은 일회용 코드를 처리한 뒤 주소창에서 지운다
   if (q.has("code") || q.has("error")) {
     if (q.has("error")) loginError = q.get("error_description") || q.get("error");
     ["code", "error", "error_code", "error_description", "state"].forEach(k => q.delete(k));
     history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash);
   }
-  client.auth.onAuthStateChange((_event, s) => { session = s; if (onChange) onChange(); });
+  // 로그인·로그아웃처럼 상태가 실제로 바뀔 때만 화면을 다시 그린다 (연결 직후 보내는 '현재 상태' 알림에는 다시 그리지 않는다)
+  client.auth.onAuthStateChange((_event, s) => {
+    const before = session ? session.user.id : null, after = s ? s.user.id : null;
+    session = s;
+    if (before !== after && onChange) onChange();
+  });
 }
 
 export const signedIn = () => !!session;
