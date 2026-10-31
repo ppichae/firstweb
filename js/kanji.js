@@ -8,6 +8,7 @@ import { mountStrokePlayer, stopStrokes } from "./strokes.js";
 import { mountWritePad } from "./writing.js";
 import { award } from "./game.js";
 import { examplesWithChar, plainOf, exampleHTML, EXAMPLE_KEYS } from "./examples.js";
+import { sayBtn } from "./speech.js";
 
 const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
@@ -219,7 +220,7 @@ function draw() {
   const related =
     '<section class="kd-sec"><h4>' + roomLabel + " 단어 목록에서 이 한자가 쓰인 단어 <small class=\"hint\">" + words.length + "개</small></h4>" +
       (words.length
-        ? '<ul class="kd-words">' + words.slice(0, 12).map(v => '<li><b lang="ja">' + esc(v.word) + '</b> <span lang="ja">' + esc(v.reading || "") + "</span> <span class=\"hint\">" + esc(v.meaning) + "</span></li>").join("") + "</ul>" +
+        ? '<ul class="kd-words">' + words.slice(0, 12).map(v => '<li><b lang="ja">' + esc(v.word) + '</b> <span lang="ja">' + esc(v.reading || "") + "</span>" + sayBtn(v.reading || v.word, "단어 발음 듣기") + " <span class=\"hint\">" + esc(v.meaning) + "</span></li>").join("") + "</ul>" +
           (words.length > 12 ? '<p class="hint">나머지 ' + (words.length - 12) + "개는 단어 화면에서 이 한자로 검색해 보세요.</p>" : "")
         : '<p class="hint">이 방 단어 목록에는 이 한자가 쓰인 단어가 없어요.</p>') +
     "</section>" +

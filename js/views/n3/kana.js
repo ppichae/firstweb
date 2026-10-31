@@ -3,7 +3,7 @@
 import { n3store } from "../../store.js";
 import { esc, shuffle, today } from "../../util.js";
 import { mountQuestion } from "../../quiz.js";
-import { getJaVoices, stopAll } from "../../speech.js";
+import { getJaVoices, say, stopAll, VOICE_HELP } from "../../speech.js";
 import { strokeRefOf } from "../../strokes.js";
 import { mountWritePad } from "../../writing.js";
 import { award } from "./game.js";
@@ -20,15 +20,11 @@ let voiceMsg = "";
 export async function speak(text, msgEl) {
   const voices = await getJaVoices();
   if (!voices.length) {
-    voiceMsg = "음성 준비 필요: 이 기기에서 일본어 음성을 찾지 못했어요.";
+    voiceMsg = "이 기기에서 일본어 음성을 찾지 못했어요. " + VOICE_HELP;
     if (msgEl) msgEl.textContent = voiceMsg;
     return;
   }
-  stopAll();
-  const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, ""));
-  u.lang = "ja-JP"; u.voice = voices[0]; u.rate = 0.9;
-  u.onerror = ev => { if (msgEl && ev.error !== "interrupted" && ev.error !== "canceled") msgEl.textContent = "음성을 재생하지 못했어요 (" + ev.error + ")"; };
-  window.speechSynthesis.speak(u);
+  say(text);   // 고른 음성·속도로 읽는다 (speech.js)
 }
 export const voiceText = () => voiceMsg;
 

@@ -19,10 +19,10 @@
     for (let k = 0; k < 40 && !found; k++) {
       if (k % 10 === 0 && k) { $("[data-qr=restart]").click(); await wait(200); }
       const q = $(".qr-q"); q.querySelector(".opt").click(); await wait(60);
-      if (q.querySelector(".learn-box .ex-reading")) found = q.querySelector(".learn-box");
+      if (q.querySelector(".learn-box .ex-note")) found = q.querySelector(".learn-box");
       const b = $(".qr-next"); if (!b) break; b.click(); await wait(100);
     }
-    check("퀴즈 학습 정보에 예문·히라가나 읽기·설명", !!found && (!!found.querySelector(".ex-reading") && !!found.querySelector(".ex-note")), found ? found.querySelector(".ex-reading").textContent : "이번 무작위 10문제에 1~40번 단어가 안 나옴");
+    check("퀴즈 학습 정보에 예문(후리가나)·설명, 히라가나 중복 줄 없음", !!found && (!found.querySelector(".ex-reading") && !!found.querySelector(".ex-own ruby") && !!found.querySelector(".ex-note")), found ? found.querySelector(".ex-own").textContent.slice(0, 30) : "이번 무작위 10문제에 1~40번 단어가 안 나옴");
     // 한자 창 예문
     await go("n3/kanji");
     $('[data-kanji="合"]').click(); await wait(600);

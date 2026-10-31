@@ -29,7 +29,7 @@
       const lb = q.querySelector(".learn-box"); if (lb && lb.querySelector(".ex-own ruby")) found = lb;
       const b = $(".qr-next"); if (!b) break; b.click(); await wait(100);
     }
-    check("N1 퀴즈 학습 정보에 읽기 붙은 예문·히라가나 읽기·설명", !!found && !!found.querySelector(".ex-reading") && !!found.querySelector(".ex-note"), found ? found.querySelector(".ex-reading").textContent : "무작위 문제에 핵심 단어가 안 나옴");
+    check("N1 퀴즈 학습 정보에 읽기 붙은 예문·설명, 히라가나 중복 줄 없음", !!found && !found.querySelector(".ex-reading") && !!found.querySelector(".ex-own ruby") && !!found.querySelector(".ex-note"), found ? found.querySelector(".ex-own").textContent.slice(0, 30) : "무작위 문제에 핵심 단어가 안 나옴");
     check("학습 정보에 같은 예문이 두 번 나오지 않음", !found || found.querySelectorAll(".lb-ex").length === 1, found && found.querySelectorAll(".lb-ex").length);
     // 한자 창
     await go("kanji");

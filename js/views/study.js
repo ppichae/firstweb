@@ -9,6 +9,7 @@ import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
 import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
 import { examplesFor, exampleHTML, plainOf, EXAMPLE_KEYS } from "../examples.js";
+import { sayBtn } from "../speech.js";
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
@@ -225,9 +226,9 @@ export function createVocabView(cfg) {
       '<button type="button" class="card-face" data-word="' + v.id + '" aria-expanded="' + open + '">' +
         '<span class="word" lang="ja">' + esc(v.word) + "</span>" +
         (open
-          ? (v.reading && v.reading !== v.word ? '<span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
+          ? sayBtn(v.reading || v.word, "단어 발음 듣기") + (v.reading && v.reading !== v.word ? '<span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
             '<span class="meaning">' + esc(v.meaning) + "</span>" +
-            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : (examplesFor(v.id)[0] ? '<span class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</span>" : "")) +
+            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + sayBtn(ex.ja, "예문 듣기") + esc(ex.ko) + "</span>" : (examplesFor(v.id)[0] ? '<span class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</span>" : "")) +
             (e.core
               ? '<span class="rels">' + rel("유의어", v.synonyms) + rel("반의어", v.antonyms) + rel("자주 쓰는 표현", v.collocations) + "</span>" +
                 (v.usage ? '<span class="usage">' + esc(v.usage) + "</span>" : "") +
@@ -274,9 +275,9 @@ export function createVocabView(cfg) {
         '<div class="flash">' +
           '<div class="flash-word" lang="ja">' + esc(v.word) + "</div>" +
           (session.flipped
-            ? '<div class="flash-back">' + (v.reading && v.reading !== v.word ? '<div class="reading" lang="ja">' + esc(v.reading) + "</div>" : "") +
+            ? '<div class="flash-back">' + (v.reading && v.reading !== v.word ? '<div class="reading" lang="ja">' + esc(v.reading) + " " + sayBtn(v.reading, "단어 발음 듣기") + "</div>" : '<div>' + sayBtn(v.word, "단어 발음 듣기") + "</div>") +
               '<div class="meaning">' + esc(v.meaning) + "</div>" +
-              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : (examplesFor(v.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</div>" : "")) + kanjiRowHTML(v.word, v.reading) + "</div>"
+              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + sayBtn(ex.ja, "예문 듣기") + esc(ex.ko) + "</div>" : (examplesFor(v.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(v.id)[0], false) + "</div>" : "")) + kanjiRowHTML(v.word, v.reading) + "</div>"
             : '<button type="button" class="btn" id="flip">답 보기</button>') +
         "</div>" +
         (session.flipped
@@ -354,7 +355,7 @@ export function createVocabView(cfg) {
   }
 
   /* ---------- 답한 뒤 보여 주는 단어 학습 정보 ---------- */
-  const wordLine = v => '<div class="lb-word"><b lang="ja">' + esc(v.word) + "</b>" +
+  const wordLine = v => '<div class="lb-word"><b lang="ja">' + esc(v.word) + "</b>" + sayBtn(v.reading || v.word, "단어 발음 듣기") +
     (v.reading && v.reading !== v.word ? ' <span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
     ' <span class="lb-mean">' + esc(v.meaning) + '</span> <small class="hint">' + esc(POS[v.pos] || v.pos || "") + "</small></div>";
 
@@ -623,7 +624,7 @@ export function createGrammarView(cfg) {
           (session.flipped
             ? '<div class="flash-back"><div class="meaning">' + esc(g.meaning) + "</div>" +
               (g.connection ? '<div class="g-conn">접속 · ' + esc(g.connection) + "</div>" : "") +
-              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : (examplesFor(g.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(g.id)[0], false) + "</div>" : "")) + "</div>"
+              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + sayBtn(ex.ja, "예문 듣기") + esc(ex.ko) + "</div>" : (examplesFor(g.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(g.id)[0], false) + "</div>" : "")) + "</div>"
             : '<button type="button" class="btn" id="flip">답 보기</button>') +
         "</div>" +
         (session.flipped

@@ -29,9 +29,9 @@
     check("N3 7일 그래프", $$(".week-val").length === 7);
     check("N3 시험 구성(공식)", app().textContent.includes("N3 시험 구성") && app().textContent.includes("95점") && app().textContent.includes("30분") && app().textContent.includes("70분") && app().textContent.includes("40분"));
     await go("n3/reading");
-    check("N3 독해 자료 준비 중", app().textContent.includes("자료 준비 중") && app().textContent.includes("data/n3/reading.json"));
+    check("N3 독해 지문 표시", app().querySelectorAll(".pick").length >= 12 && !app().textContent.includes("자료 준비 중"));
     await go("n3/listening");
-    check("N3 청해 자료 준비 중", app().textContent.includes("자료 준비 중"));
+    check("N3 청해 문항 표시", app().querySelectorAll(".pick").length >= 12 && !app().textContent.includes("자료 준비 중"));
     await go("kanji");
     $('[data-klv="all"]').click(); await wait(300); const ib = $('.k-row[data-kanji="込"]');
     check("込 타일 한국음 입", ib && ib.textContent.includes("입"), ib && ib.textContent);

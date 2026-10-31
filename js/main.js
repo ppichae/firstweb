@@ -12,6 +12,8 @@ import { createPartnerView } from "./views/partner.js";
 import { createRecordsView, backupDue } from "./views/records.js";
 import { startSync, stopSync, onSyncStatus, syncStatus } from "./sync.js";
 import { currentUser } from "./auth.js";
+import { installSayButtons } from "./speech.js";
+import { installFuriToggle } from "./examples.js";
 import { loadProfile, myProfile, resetAccount } from "./account.js";
 
 const partnerView = createPartnerView();
@@ -171,6 +173,8 @@ async function flushBeforeLeave() {
 export const rerender = route;
 
 async function start() {
+  installSayButtons();   // 🔊 발음 버튼은 어느 화면에서나 이 한 곳에서 처리한다
+  installFuriToggle();   // 후리가나 보이기·숨기기 (이 기기에 기억)
   try {
     await loadData();
   } catch (e) {

@@ -1011,3 +1011,22 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 }
 .sync-chip.warn { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
 .rc-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+
+/* 발음 버튼 (🔊) · 음성 설정 · 후리가나 숨기기 · 독해 밑줄 · 핵심 단어 */
+.say-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin: 0 2px; vertical-align: middle;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--fg); font-size: 15px; line-height: 1; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.say-btn:hover, .say-btn:focus-visible { border-color: var(--ink); }
+.say-btn.on { border-color: var(--ink); background: var(--ink-soft); }
+.voice-box { margin-top: 8px; font-size: 14px; }
+.voice-box summary { cursor: pointer; color: var(--muted); }
+.voice-set { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; }
+.voice-set select { max-width: 100%; min-height: 40px; }
+.voice-set label { display: inline-flex; gap: 6px; align-items: center; max-width: 100%; }
+.hide-furi rt { visibility: hidden; }
+u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.aid { margin-top: 12px; }
+.aid-list { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.aid-list li { line-height: 1.7; }
