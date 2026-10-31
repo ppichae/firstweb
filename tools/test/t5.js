@@ -1,0 +1,51 @@
+(async () => {
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const log = [];
+  const check = (name, ok, extra) => log.push((ok ? "PASS " : "FAIL ") + name + (extra !== undefined ? " → " + extra : ""));
+
+  location.hash = "reading"; await wait(300);
+  check("탭 9개", $$(".tab").length === 9, $$(".tab").map(t => t.textContent).join("|"));
+  check("지문 7개", $$(".pick").length === 7, $$(".pick").length);
+  check("글자 수 표시", $(".pick-meta").textContent.includes("자"), $(".pick-meta").textContent);
+  check("해석 기본 숨김", $("#trans").hidden === true);
+  $('[data-rtype="integrated"]').click(); await wait(100);
+  check("유형 필터(통합)", $$(".pick").length === 1 && $$(".text-label").length === 2, $$(".text-label").map(x => x.textContent).join(","));
+  $('[data-rtype="info"]').click(); await wait(100);
+  check("정보 검색 지문", $$(".passage p.info").length === 6);
+  $$(".q")[1].querySelector('[data-o="1"]').click(); await wait(50);
+  const fb = $$(".q")[1].querySelector(".fb");
+  check("오답 해설+근거", fb.textContent.includes("내가 고른 답이 틀린 이유") && fb.textContent.includes("근거가 되는 부분"));
+  $$(".q")[0].querySelector('[data-o="2"]').click(); await wait(50);
+  check("모두 풀면 타이머 멈춤", $("#timer").classList.contains("done"), $("#timer").textContent);
+  check("점수", $("#score").textContent === "1 / 2 정답", $("#score").textContent);
+  $('[data-rtype="all"]').click(); await wait(100);
+  check("풂 표시 갱신", $$(".pick-meta").some(m => m.textContent.includes("2/2 풂")));
+
+  location.hash = "listening"; await wait(300);
+  check("청해 7문제", $$(".pick").length === 7, $$(".pick").length);
+  check("유형 칩 6개(전체+5)", $$("[data-ltype]").length === 6);
+  await wait(2500);
+  const playerText = $(".player").textContent;
+  const hasVoice = !!$("[data-p=play]");
+  check("플레이어 또는 음성 준비 필요 표시", hasVoice || playerText.includes("음성 준비 필요"), hasVoice ? "음성 있음" : "음성 없음 → 준비 필요 표시");
+  check("재생 버튼 없음(음성 없을 때)", hasVoice || !$(".player button"));
+  check("스크립트 기본 숨김", $(".l-script").hidden === true);
+  $(".l-show-script").click(); await wait(50);
+  check("스크립트 보기", $(".l-script").hidden === false && $$(".l-script p").length >= 9);
+  $(".l-show-trans").click(); await wait(50);
+  check("해석 보기", $(".l-trans").hidden === false);
+  $(".q").querySelector('[data-o="1"]').click(); await wait(50);
+  check("청해 정답", $(".fb-verdict.good") !== null);
+  $('[data-ltype="summary"]').click(); await wait(300);
+  check("개요 이해: 문제 처음엔 숨김", $(".l-quiz").hidden === true);
+  $(".l-reveal-q").click(); await wait(50);
+  check("듣지 않고 문제 보기", $(".l-quiz").hidden === false);
+  $('[data-ltype="response"]').click(); await wait(300);
+  check("즉시 응답 3문제", $$(".pick").length === 3);
+  const at = JSON.parse(localStorage.getItem("n1lab:attempts"));
+  check("영역별 기록", at.some(a => a.area === "reading") && at.some(a => a.area === "listening"), at.map(a => a.area).join(","));
+  check("가로 스크롤 없음", document.documentElement.scrollWidth <= window.innerWidth, document.documentElement.scrollWidth + "/" + window.innerWidth);
+  return log.join("\n");
+})()

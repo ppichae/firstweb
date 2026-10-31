@@ -1,0 +1,733 @@
+1	n3-v0001	計算	けいさん	noun-suru	계산	core
+2	n3-v0002	浅い	あさい	i-adj	얕다	core
+3	n3-v0003	広告	こうこく	noun-suru	광고	core
+4	n3-v0004	種類	しゅるい	noun	종류	core
+5	n3-v0005	勝つ	かつ	verb	이기다	core
+6	n3-v0006	悲しい	かなしい	i-adj	슬프다	core
+7	n3-v0007	整理	せいり	noun-suru	정리	core
+8	n3-v0008	平均	へいきん	noun-suru	평균	core
+9	n3-v0009	油	あぶら	noun	기름	core
+10	n3-v0010	流す	ながす	verb	흘리다	core
+11	n3-v0011	区別	くべつ	noun-suru	구별	core
+12	n3-v0012	包む	つつむ	verb	싸다, 포장하다	core
+13	n3-v0013	命令	めいれい	noun-suru	명령	core
+14	n3-v0014	右折	うせつ	noun-suru	우회전	core
+15	n3-v0015	うがい	うがい	noun-suru	입을 헹굼, 가글	core
+16	n3-v0016	空席	くうせき	noun	빈자리	core
+17	n3-v0017	調子	ちょうし	noun	상태, 컨디션	core
+18	n3-v0018	タイトル	タイトル	noun	제목	core
+19	n3-v0019	暗記	あんき	noun-suru	암기	core
+20	n3-v0020	まぶしい	まぶしい	i-adj	눈부시다	core
+21	n3-v0021	しっかり	しっかり	adverb	단단히, 제대로	core
+22	n3-v0022	尊敬	そんけい	noun-suru	존경	core
+23	n3-v0023	ふらふら	ふらふら	adverb	비틀비틀	core
+24	n3-v0024	抑える	おさえる	verb	억누르다, 억제하다	core
+25	n3-v0025	人工的	じんこうてき	na-adj	인공적	core
+26	n3-v0026	楽	らく	na-adj	편함, 수월함	core
+27	n3-v0027	簡単	かんたん	na-adj	간단함	core
+28	n3-v0028	しゃべる	しゃべる	verb	말하다, 수다 떨다	core
+29	n3-v0029	話す	はなす	verb	이야기하다	core
+30	n3-v0030	サイズ	サイズ	noun	크기	core
+31	n3-v0031	大きさ	おおきさ	noun	크기	core
+32	n3-v0032	多少	たしょう	adverb	다소, 조금	core
+33	n3-v0033	ちょっと	ちょっと	adverb	조금	core
+34	n3-v0034	交換	こうかん	noun-suru	교환	core
+35	n3-v0035	取り替える	とりかえる	verb	바꾸다	core
+36	n3-v0036	看板	かんばん	noun	간판	core
+37	n3-v0037	募集	ぼしゅう	noun-suru	모집	core
+38	n3-v0038	消費	しょうひ	noun-suru	소비	core
+39	n3-v0039	知り合う	しりあう	verb	서로 알게 되다	core
+40	n3-v0040	内側	うちがわ	noun	안쪽	core
+41	n3-v0041	涙	なみだ	noun	눈물	core
+42	n3-v0042	地面	じめん	noun	땅바닥	core
+43	n3-v0043	移す	うつす	verb	옮기다	core
+44	n3-v0044	呼吸	こきゅう	noun-suru	호흡	core
+45	n3-v0045	身長	しんちょう	noun	키	core
+46	n3-v0046	困る	こまる	verb	곤란하다	core
+47	n3-v0047	育てる	そだてる	verb	기르다	core
+48	n3-v0048	煙	けむり	noun	연기	core
+49	n3-v0049	森林	しんりん	noun	숲, 삼림	core
+50	n3-v0050	浴びる	あびる	verb	(물·빛을) 뒤집어쓰다, 쬐다	core
+51	n3-v0051	送信	そうしん	noun-suru	송신	core
+52	n3-v0052	中古	ちゅうこ	noun	중고	core
+53	n3-v0053	リスト	リスト	noun	목록	core
+54	n3-v0054	悔しい	くやしい	i-adj	분하다, 억울하다	core
+55	n3-v0055	距離	きょり	noun	거리	core
+56	n3-v0056	吹く	ふく	verb	(바람이) 불다	core
+57	n3-v0057	文句	もんく	noun	불평	core
+58	n3-v0058	思いつく	おもいつく	verb	생각이 떠오르다	core
+59	n3-v0059	坂道	さかみち	noun	언덕길	core
+60	n3-v0060	列	れつ	noun	줄	core
+61	n3-v0061	記録	きろく	noun-suru	기록	core
+62	n3-v0062	そっと	そっと	adverb	살짝, 조용히	core
+63	n3-v0063	静か	しずか	na-adj	조용함	core
+64	n3-v0064	早退	そうたい	noun-suru	조퇴	core
+65	n3-v0065	早く帰る	はやくかえる	phrase	일찍 돌아가다	core
+66	n3-v0066	経つ	たつ	verb	(시간이) 지나다	core
+67	n3-v0067	過ぎる	すぎる	verb	지나다	core
+68	n3-v0068	さまざま	さまざま	na-adj	여러 가지임	core
+69	n3-v0069	いろいろ	いろいろ	na-adj	여러 가지임	core
+70	n3-v0070	減少	げんしょう	noun-suru	감소	core
+71	n3-v0071	重大	じゅうだい	na-adj	중대함	core
+72	n3-v0072	ばらばら	ばらばら	adverb	뿔뿔이	core
+73	n3-v0073	皮	かわ	noun	껍질, 가죽	core
+74	n3-v0074	オーダー	オーダー	noun-suru	주문	core
+75	n3-v0075	西洋	せいよう	noun	서양	core
+76	n3-v0076	腹痛	ふくつう	noun	복통	core
+77	n3-v0077	終点	しゅうてん	noun	종점	core
+78	n3-v0078	帯	おび	noun	띠	core
+79	n3-v0079	郵便	ゆうびん	noun	우편	core
+80	n3-v0080	辺り	あたり	noun	근처	core
+81	n3-v0081	図	ず	noun	그림, 도표	core
+82	n3-v0082	減る	へる	verb	줄다	core
+83	n3-v0083	歩道	ほどう	noun	인도	core
+84	n3-v0084	打つ	うつ	verb	치다	core
+85	n3-v0085	性格	せいかく	noun	성격	core
+86	n3-v0086	時差	じさ	noun	시차	core
+87	n3-v0087	しかたない	しかたない	i-adj	어쩔 수 없다	core
+88	n3-v0088	決心	けっしん	noun-suru	결심	core
+89	n3-v0089	冗談	じょうだん	noun	농담	core
+90	n3-v0090	与える	あたえる	verb	주다	core
+91	n3-v0091	アナウンス	アナウンス	noun-suru	안내 방송	core
+92	n3-v0092	案外	あんがい	adverb	의외로	core
+93	n3-v0093	努力	どりょく	noun-suru	노력	core
+94	n3-v0094	ぺこぺこ	ぺこぺこ	adverb	배가 몹시 고픈 모양	core
+95	n3-v0095	正常	せいじょう	na-adj	정상	core
+96	n3-v0096	取り付ける	とりつける	verb	설치하다	core
+97	n3-v0097	きれい	きれい	na-adj	깨끗함, 예쁨	core
+98	n3-v0098	清潔	せいけつ	na-adj	청결함	core
+99	n3-v0099	キッチン	キッチン	noun	부엌	core
+100	n3-v0100	台所	だいどころ	noun	부엌	core
+101	n3-v0101	指導	しどう	noun-suru	지도	core
+102	n3-v0102	教える	おしえる	verb	가르치다	core
+103	n3-v0103	しまいにする	しまいにする	phrase	끝내다	core
+104	n3-v0104	終わりにする	おわりにする	phrase	끝내다	core
+105	n3-v0105	握る	にぎる	verb	쥐다	core
+106	n3-v0106	修理	しゅうり	noun-suru	수리	core
+107	n3-v0107	目的	もくてき	noun	목적	core
+108	n3-v0108	懐かしい	なつかしい	i-adj	그립다	core
+109	n3-v0109	変化	へんか	noun-suru	변화	core
+110	n3-v0110	割る	わる	verb	깨다, 나누다	core
+111	n3-v0111	基本	きほん	noun	기본	core
+112	n3-v0112	横	よこ	noun	옆, 가로	core
+113	n3-v0113	最初	さいしょ	noun	처음	core
+114	n3-v0114	返す	かえす	verb	돌려주다	core
+115	n3-v0115	包丁	ほうちょう	noun	식칼	core
+116	n3-v0116	適当	てきとう	na-adj	적당함	core
+117	n3-v0117	家具	かぐ	noun	가구	core
+118	n3-v0118	解く	とく	verb	풀다	core
+119	n3-v0119	腰	こし	noun	허리	core
+120	n3-v0120	翌週	よくしゅう	noun	다음 주	core
+121	n3-v0121	低い	ひくい	i-adj	낮다	core
+122	n3-v0122	方向	ほうこう	noun	방향	core
+123	n3-v0123	規則	きそく	noun	규칙	core
+124	n3-v0124	影響	えいきょう	noun-suru	영향	core
+125	n3-v0125	うらやましい	うらやましい	i-adj	부럽다	core
+126	n3-v0126	我慢	がまん	noun-suru	참음	core
+127	n3-v0127	消極的	しょうきょくてき	na-adj	소극적	core
+128	n3-v0128	経由	けいゆ	noun-suru	경유	core
+129	n3-v0129	仲	なか	noun	사이	core
+130	n3-v0130	取り出す	とりだす	verb	꺼내다	core
+131	n3-v0131	一度に	いちどに	adverb	한꺼번에	core
+132	n3-v0132	アクセス	アクセス	noun-suru	접근, 교통편	core
+133	n3-v0133	諦める	あきらめる	verb	포기하다	core
+134	n3-v0134	うろうろ	うろうろ	adverb	서성서성	core
+135	n3-v0135	売り切れる	うりきれる	verb	다 팔리다	core
+136	n3-v0136	全部売れる	ぜんぶうれる	phrase	전부 팔리다	core
+137	n3-v0137	カーブ	カーブ	noun-suru	커브, 굽은 길	core
+138	n3-v0138	曲がる	まがる	verb	돌다, 굽다	core
+139	n3-v0139	退屈	たいくつ	na-adj	지루함	core
+140	n3-v0140	つまらない	つまらない	i-adj	재미없다	core
+141	n3-v0141	さっそく	さっそく	adverb	즉시	core
+142	n3-v0142	すぐに	すぐに	adverb	곧바로	core
+143	n3-v0143	緩い	ゆるい	i-adj	헐렁하다, 느슨하다	core
+144	n3-v0144	大きい	おおきい	i-adj	크다	core
+145	n3-v0145	知識	ちしき	noun	지식	core
+146	n3-v0146	響く	ひびく	verb	울리다	core
+147	n3-v0147	完成	かんせい	noun-suru	완성	core
+148	n3-v0148	慌てる	あわてる	verb	당황하다	core
+149	n3-v0149	実物	じつぶつ	noun	실물	core
+150	n3-v0150	側	そば	noun	곁	core
+151	n3-v0151	腹	はら	noun	배	core
+152	n3-v0152	寒い	さむい	i-adj	춥다	core
+153	n3-v0153	ちかちか	ちかちか	adverb	깜빡깜빡, 따끔따끔	core
+154	n3-v0154	狭い	せまい	i-adj	좁다	core
+155	n3-v0155	込む	こむ	verb	붐비다	core
+156	n3-v0156	暗い	くらい	i-adj	어둡다	core
+157	n3-v0157	楽しい	たのしい	i-adj	즐겁다	core
+158	n3-v0158	時間	じかん	noun	시간	core
+159	n3-v0159	過ごす	すごす	verb	지내다	core
+160	n3-v0160	歩く	あるく	verb	걷다	core
+161	n3-v0161	行く	いく	verb	가다	core
+162	n3-v0162	バス	バス	noun	버스	core
+163	n3-v0163	運転手	うんてんしゅ	noun	운전기사	core
+164	n3-v0164	働く	はたらく	verb	일하다	core
+165	n3-v0165	タクシー	タクシー	noun	택시	core
+166	n3-v0166	乗る	のる	verb	타다	core
+167	n3-v0167	遅刻	ちこく	noun-suru	지각	core
+168	n3-v0168	聞く	きく	verb	듣다, 묻다	core
+169	n3-v0169	帰る	かえる	verb	돌아가다	core
+170	n3-v0170	まだ	まだ	adverb	아직	core
+171	n3-v0171	決まる	きまる	verb	정해지다	core
+172	n3-v0172	実際に	じっさいに	adverb	실제로	core
+173	n3-v0173	着る	きる	verb	입다	core
+174	n3-v0174	ぴったり	ぴったり	adverb	꼭 맞음	core
+175	n3-v0175	レポート	レポート	noun	보고서, 과제	core
+176	n3-v0176	出す	だす	verb	내다	core
+177	n3-v0177	町	まち	noun	동네, 마을	core
+178	n3-v0178	続ける	つづける	verb	계속하다	core
+179	n3-v0179	復習	ふくしゅう	noun-suru	복습	core
+180	n3-v0180	小型	こがた	noun	소형	core
+181	n3-v0181	疑う	うたがう	verb	의심하다	core
+182	n3-v0182	細い	ほそい	i-adj	가늘다, 좁다	core
+183	n3-v0183	退院	たいいん	noun-suru	퇴원	core
+184	n3-v0184	夫婦	ふうふ	noun	부부	core
+185	n3-v0185	留守	るす	noun	부재중	core
+186	n3-v0186	高価	こうか	na-adj	값비쌈	core
+187	n3-v0187	汚す	よごす	verb	더럽히다	core
+188	n3-v0188	選手	せんしゅ	noun	선수	core
+189	n3-v0189	月末	げつまつ	noun	월말	core
+190	n3-v0190	裏	うら	noun	뒤, 뒷면	core
+191	n3-v0191	産業	さんぎょう	noun	산업	core
+192	n3-v0192	朝刊	ちょうかん	noun	조간	core
+193	n3-v0193	断る	ことわる	verb	거절하다	core
+194	n3-v0194	広場	ひろば	noun	광장	core
+195	n3-v0195	短気	たんき	na-adj	성급함	core
+196	n3-v0196	心配	しんぱい	noun-suru	걱정	core
+197	n3-v0197	焼く	やく	verb	굽다	core
+198	n3-v0198	必ず	かならず	adverb	반드시	core
+199	n3-v0199	制服	せいふく	noun	제복, 교복	core
+200	n3-v0200	薬局	やっきょく	noun	약국	core
+201	n3-v0201	降りる	おりる	verb	내리다	core
+202	n3-v0202	帰宅	きたく	noun-suru	귀가	core
+203	n3-v0203	細かい	こまかい	i-adj	잘다, 자세하다	core
+204	n3-v0204	法律	ほうりつ	noun	법률	core
+205	n3-v0205	空	から	noun	비어 있음	core
+206	n3-v0206	会費	かいひ	noun	회비	core
+207	n3-v0207	平気	へいき	na-adj	아무렇지 않음	core
+208	n3-v0208	面倒くさい	めんどうくさい	i-adj	아주 귀찮다	core
+209	n3-v0209	あくび	あくび	noun	하품	core
+210	n3-v0210	テーマ	テーマ	noun	주제	core
+211	n3-v0211	差	さ	noun	차이	core
+212	n3-v0212	うっかり	うっかり	adverb	깜빡	core
+213	n3-v0213	可能	かのう	na-adj	가능함	core
+214	n3-v0214	動作	どうさ	noun	동작	core
+215	n3-v0215	期限	きげん	noun	기한	core
+216	n3-v0216	恋しい	こいしい	i-adj	그립다	core
+217	n3-v0217	付き合う	つきあう	verb	사귀다, 어울리다	core
+218	n3-v0218	ヒント	ヒント	noun	힌트	core
+219	n3-v0219	想像	そうぞう	noun-suru	상상	core
+220	n3-v0220	振る	ふる	verb	흔들다	core
+221	n3-v0221	きちんと	きちんと	adverb	제대로, 깔끔히	core
+222	n3-v0222	感覚	かんかく	noun	감각	core
+223	n3-v0223	効果的	こうかてき	na-adj	효과적	core
+224	n3-v0224	お互いに	おたがいに	adverb	서로	core
+225	n3-v0225	番	ばん	noun	차례	core
+226	n3-v0226	制限	せいげん	noun-suru	제한	core
+227	n3-v0227	なめる	なめる	verb	핥다	core
+228	n3-v0228	だるい	だるい	i-adj	나른하다	core
+229	n3-v0229	覚える	おぼえる	verb	외우다	core
+230	n3-v0230	得意	とくい	na-adj	잘함	core
+231	n3-v0231	欠点	けってん	noun	결점	core
+232	n3-v0232	怒鳴る	どなる	verb	고함치다	core
+233	n3-v0233	避難	ひなん	noun-suru	피난	core
+234	n3-v0234	逃げる	にげる	verb	도망치다	core
+235	n3-v0235	案	あん	noun	안, 생각	core
+236	n3-v0236	アイデア	アイデア	noun	아이디어	core
+237	n3-v0237	黙る	だまる	verb	입을 다물다	core
+238	n3-v0238	ベスト	ベスト	na-adj	가장 좋음	core
+239	n3-v0239	配達	はいたつ	noun-suru	배달	core
+240	n3-v0240	届ける	とどける	verb	보내다, 전하다	core
+241	n3-v0241	進歩	しんぽ	noun-suru	진보	core
+242	n3-v0242	話しかける	はなしかける	verb	말을 걸다	core
+243	n3-v0243	交流	こうりゅう	noun-suru	교류	core
+244	n3-v0244	渋滞	じゅうたい	noun-suru	정체	core
+245	n3-v0245	にこにこ	にこにこ	adverb	싱글벙글	core
+246	n3-v0246	診察	しんさつ	noun-suru	진찰	core
+247	n3-v0247	行き先	ゆきさき	noun	행선지	core
+248	n3-v0248	取り消す	とりけす	verb	취소하다	core
+249	n3-v0249	共通	きょうつう	noun-suru	공통	core
+250	n3-v0250	詰める	つめる	verb	채우다, 담다	core
+251	n3-v0251	情報	じょうほう	noun	정보	core
+252	n3-v0252	現在	げんざい	noun	현재	core
+253	n3-v0253	有名	ゆうめい	na-adj	유명함	core
+254	n3-v0254	角	かど	noun	모퉁이	core
+255	n3-v0255	容器	ようき	noun	용기, 그릇	core
+256	n3-v0256	比べる	くらべる	verb	비교하다	core
+257	n3-v0257	複数	ふくすう	noun	여러 개	core
+258	n3-v0258	血圧	けつあつ	noun	혈압	core
+259	n3-v0259	夕日	ゆうひ	noun	석양	core
+260	n3-v0260	難しい	むずかしい	i-adj	어렵다	core
+261	n3-v0261	件	けん	noun	건	core
+262	n3-v0262	横断	おうだん	noun-suru	횡단	core
+263	n3-v0263	冷える	ひえる	verb	차가워지다, 식다	core
+264	n3-v0264	検査	けんさ	noun-suru	검사	core
+265	n3-v0265	絵画	かいが	noun	그림, 회화	core
+266	n3-v0266	吸う	すう	verb	들이마시다	core
+267	n3-v0267	短い	みじかい	i-adj	짧다	core
+268	n3-v0268	胃	い	noun	위(위장)	core
+269	n3-v0269	笑顔	えがお	noun	웃는 얼굴	core
+270	n3-v0270	黒板	こくばん	noun	칠판	core
+271	n3-v0271	一般的	いっぱんてき	na-adj	일반적	core
+272	n3-v0272	むく	むく	verb	(껍질을) 벗기다	core
+273	n3-v0273	資源	しげん	noun	자원	core
+274	n3-v0274	キャンセル	キャンセル	noun-suru	취소	core
+275	n3-v0275	染み	しみ	noun	얼룩	core
+276	n3-v0276	たたく	たたく	verb	두드리다	core
+277	n3-v0277	防ぐ	ふせぐ	verb	막다	core
+278	n3-v0278	乾く	かわく	verb	마르다	core
+279	n3-v0279	別々	べつべつ	na-adj	따로따로	core
+280	n3-v0280	話し合う	はなしあう	verb	의논하다	core
+281	n3-v0281	ずきずき	ずきずき	adverb	욱신욱신	core
+282	n3-v0282	親戚	しんせき	noun	친척	core
+283	n3-v0283	偶然	ぐうぜん	adverb	우연히	core
+284	n3-v0284	迷う	まよう	verb	헤매다, 망설이다	core
+285	n3-v0285	干す	ほす	verb	말리다	core
+286	n3-v0286	レシピ	レシピ	noun	조리법	core
+287	n3-v0287	登場	とうじょう	noun-suru	등장	core
+288	n3-v0288	どきどき	どきどき	adverb	두근두근	core
+289	n3-v0289	希望	きぼう	noun-suru	희망	core
+290	n3-v0290	吠える	ほえる	verb	(짐승이) 짖다	core
+291	n3-v0291	追い越す	おいこす	verb	앞지르다	core
+292	n3-v0292	ふだん	ふだん	noun	평소	core
+293	n3-v0293	いつも	いつも	adverb	늘, 항상	core
+294	n3-v0294	怒る	おこる	verb	화내다	core
+295	n3-v0295	グラウンド	グラウンド	noun	운동장	core
+296	n3-v0296	運動場	うんどうじょう	noun	운동장	core
+297	n3-v0297	おい	おい	noun	(남자) 조카	core
+298	n3-v0298	詳しい	くわしい	i-adj	자세하다	core
+299	n3-v0299	あげる	あげる	verb	(내가 남에게) 주다	core
+300	n3-v0300	ずいぶん	ずいぶん	adverb	꽤, 몹시	core
+301	n3-v0301	非常に	ひじょうに	adverb	매우	core
+302	n3-v0302	指定	してい	noun-suru	지정	core
+303	n3-v0303	決められる	きめられる	phrase	정해지다	core
+304	n3-v0304	不安	ふあん	na-adj	불안	core
+305	n3-v0305	スケジュール	スケジュール	noun	일정	core
+306	n3-v0306	予定	よてい	noun-suru	예정	core
+307	n3-v0307	参加	さんか	noun-suru	참가	core
+308	n3-v0308	盛ん	さかん	na-adj	활발함	core
+309	n3-v0309	通り過ぎる	とおりすぎる	verb	지나가다	core
+310	n3-v0310	発展	はってん	noun-suru	발전	core
+311	n3-v0311	抱く	だく	verb	안다	core
+312	n3-v0312	異常	いじょう	na-adj	비정상, 이상	core
+313	n3-v0313	重なる	かさなる	verb	겹치다	core
+314	n3-v0314	駐車	ちゅうしゃ	noun-suru	주차	core
+315	n3-v0315	過去	かこ	noun	과거	core
+316	n3-v0316	泊まる	とまる	verb	묵다	core
+317	n3-v0317	暖かい	あたたかい	i-adj	따뜻하다	core
+318	n3-v0318	重ねる	かさねる	verb	겹치다, 거듭하다	core
+319	n3-v0319	伝言	でんごん	noun-suru	전언, 메시지	core
+320	n3-v0320	延期	えんき	noun-suru	연기(미룸)	core
+321	n3-v0321	枯れる	かれる	verb	시들다	core
+322	n3-v0322	訓練	くんれん	noun-suru	훈련	core
+323	n3-v0323	セット	セット	noun	세트	core
+324	n3-v0324	もったいない	もったいない	i-adj	아깝다	core
+325	n3-v0325	材料	ざいりょう	noun	재료	core
+326	n3-v0326	愛用者	あいようしゃ	noun	애용자	core
+327	n3-v0327	効果	こうか	noun	효과	core
+328	n3-v0328	身につける	みにつける	phrase	몸에 지니다, 익히다	core
+329	n3-v0329	報告	ほうこく	noun-suru	보고	core
+330	n3-v0330	知らせる	しらせる	verb	알리다	core
+331	n3-v0331	絶対に	ぜったいに	adverb	절대로	core
+332	n3-v0332	おしまい	おしまい	noun	끝	core
+333	n3-v0333	終わり	おわり	noun	끝	core
+334	n3-v0334	学校をサボる	がっこうをさぼる	phrase	학교를 빼먹다	core
+335	n3-v0335	遊びたくて学校を休む	あそびたくてがっこうをやすむ	phrase	놀고 싶어서 학교를 쉬다	core
+336	n3-v0336	オーバー	オーバー	noun-suru	초과	core
+337	n3-v0337	親しい	したしい	i-adj	친하다	core
+338	n3-v0338	支給	しきゅう	noun-suru	지급	core
+339	n3-v0339	自然	しぜん	noun	자연	core
+340	n3-v0340	秒	びょう	noun	초	core
+341	n3-v0341	残り	のこり	noun	나머지	core
+342	n3-v0342	増減	ぞうげん	noun-suru	증감	core
+343	n3-v0343	通知	つうち	noun-suru	통지	core
+344	n3-v0344	生える	はえる	verb	(풀·털이) 나다	core
+345	n3-v0345	郵送	ゆうそう	noun-suru	우편으로 보냄	core
+346	n3-v0346	娘	むすめ	noun	딸	core
+347	n3-v0347	預ける	あずける	verb	맡기다	core
+348	n3-v0348	予想	よそう	noun-suru	예상	core
+349	n3-v0349	当たる	あたる	verb	맞다, 들어맞다	core
+350	n3-v0350	無駄	むだ	na-adj	쓸데없음	core
+351	n3-v0351	なるべく	なるべく	adverb	가능한 한	core
+352	n3-v0352	翌日	よくじつ	noun	다음 날	core
+353	n3-v0353	チャレンジ	チャレンジ	noun-suru	도전	core
+354	n3-v0354	土地	とち	noun	토지	core
+355	n3-v0355	このあいだ	このあいだ	noun	얼마 전	core
+356	n3-v0356	意志	いし	noun	의지	core
+357	n3-v0357	お疲れさま	おつかれさま	phrase	수고하셨습니다	core
+358	n3-v0358	触れる	ふれる	verb	닿다	core
+359	n3-v0359	触る	さわる	verb	만지다	core
+360	n3-v0360	機会	きかい	noun	기회	core
+361	n3-v0361	チャンス	チャンス	noun	기회	core
+362	n3-v0362	きつい	きつい	i-adj	힘들다, 꽉 끼다	core
+363	n3-v0363	大変	たいへん	na-adj	힘듦	core
+364	n3-v0364	納得	なっとく	noun-suru	납득	core
+365	n3-v0365	とてもよくわかる	とてもよくわかる	phrase	아주 잘 알다	core
+366	n3-v0366	集合	しゅうごう	noun-suru	집합	core
+367	n3-v0367	追い抜く	おいぬく	verb	앞지르다	core
+368	n3-v0368	見本	みほん	noun	견본	core
+369	n3-v0370	通勤	つうきん	noun-suru	통근	core
+370	n3-v0375	組む	くむ	verb	짜다, 맞추다	core
+371	n3-v0376	順番	じゅんばん	noun	순서, 차례	core
+372	n3-v0378	応募	おうぼ	noun-suru	응모	core
+373	n3-v0382	発表	はっぴょう	noun-suru	발표	core
+374	n3-v0384	協力	きょうりょく	noun-suru	협력	core
+375	n3-v0402	苦しい	くるしい	i-adj	괴롭다	core
+376	n3-v0403	出張	しゅっちょう	noun-suru	출장	core
+377	n3-v0428	分類	ぶんるい	noun-suru	분류	core
+378	n3-v0436	はかる	はかる	verb	(길이·무게 등을) 재다	core
+379	n3-v0447	転ぶ	ころぶ	verb	넘어지다	core
+380	n3-v0451	位置	いち	noun-suru	위치	core
+381	n3-v0452	回す	まわす	verb	돌리다	core
+382	n3-v0454	結ぶ	むすぶ	verb	묶다, 잇다	core
+383	n3-v0471	守る	まもる	verb	지키다	core
+384	n3-v0474	自信	じしん	noun	자신감	core
+385	n3-v0480	疲れる	つかれる	verb	지치다	core
+386	n3-v0509	期待	きたい	noun-suru	기대	core
+387	n3-v0552	がっかり	がっかり	noun-suru	실망함	core
+388	n3-v0567	引き受ける	ひきうける	verb	떠맡다, 받아들이다	core
+389	n3-v0589	そっくり	そっくり	na-adj	꼭 닮음	core
+390	n3-v0610	確かめる	たしかめる	verb	확인하다	core
+391	n3-v0619	落ち着く	おちつく	verb	차분해지다, 안정되다	core
+392	n3-v0630	たまる	たまる	verb	쌓이다	core
+393	n3-v0665	回収	かいしゅう	noun-suru	회수	core
+394	n3-v0693	余る	あまる	verb	남다	core
+395	n3-v0369	岩	いわ	noun	바위	rest
+396	n3-v0371	発見	はっけん	noun-suru	발견	rest
+397	n3-v0372	表す	あらわす	verb	나타내다	rest
+398	n3-v0373	息	いき	noun	숨	rest
+399	n3-v0374	失業	しつぎょう	noun-suru	실업	rest
+400	n3-v0377	苦労	くろう	noun-suru	고생	rest
+401	n3-v0379	首都	しゅと	noun	수도	rest
+402	n3-v0380	単語	たんご	noun	단어	rest
+403	n3-v0381	地球	ちきゅう	noun	지구	rest
+404	n3-v0383	遅れる	おくれる	verb	늦다	rest
+405	n3-v0385	疑問	ぎもん	noun	의문	rest
+406	n3-v0386	到着	とうちゃく	noun-suru	도착	rest
+407	n3-v0387	折る	おる	verb	접다, 꺾다	rest
+408	n3-v0388	値段	ねだん	noun	가격	rest
+409	n3-v0389	深い	ふかい	i-adj	깊다	rest
+410	n3-v0390	表面	ひょうめん	noun	표면	rest
+411	n3-v0391	汗	あせ	noun	땀	rest
+412	n3-v0392	配る	くばる	verb	나누어 주다	rest
+413	n3-v0393	島	しま	noun	섬	rest
+414	n3-v0394	平日	へいじつ	noun	평일	rest
+415	n3-v0395	卒業	そつぎょう	noun-suru	졸업	rest
+416	n3-v0396	固い	かたい	i-adj	딱딱하다	rest
+417	n3-v0397	他人	たにん	noun	남, 타인	rest
+418	n3-v0398	示す	しめす	verb	가리키다, 나타내다	rest
+419	n3-v0399	外科	げか	noun	외과	rest
+420	n3-v0400	以降	いこう	noun	이후	rest
+421	n3-v0401	合図	あいず	noun-suru	신호	rest
+422	n3-v0404	席	せき	noun	자리	rest
+423	n3-v0405	根	ね	noun	뿌리	rest
+424	n3-v0406	事情	じじょう	noun	사정	rest
+425	n3-v0407	実力	じつりょく	noun	실력	rest
+426	n3-v0408	各地	かくち	noun	각지	rest
+427	n3-v0409	貯金	ちょきん	noun-suru	저금	rest
+428	n3-v0410	文章	ぶんしょう	noun	문장, 글	rest
+429	n3-v0411	改札	かいさつ	noun	개찰(구)	rest
+430	n3-v0412	笑う	わらう	verb	웃다	rest
+431	n3-v0413	商業	しょうぎょう	noun	상업	rest
+432	n3-v0414	相手	あいて	noun	상대	rest
+433	n3-v0415	大会	たいかい	noun	대회	rest
+434	n3-v0416	割れる	われる	verb	깨지다, 갈라지다	rest
+435	n3-v0417	集中	しゅうちゅう	noun-suru	집중	rest
+436	n3-v0418	食器	しょっき	noun	식기	rest
+437	n3-v0419	替える	かえる	verb	바꾸다, 교체하다	rest
+438	n3-v0420	応用	おうよう	noun-suru	응용	rest
+439	n3-v0421	厚い	あつい	i-adj	두껍다	rest
+440	n3-v0422	美しい	うつくしい	i-adj	아름답다	rest
+441	n3-v0423	創造	そうぞう	noun-suru	창조	rest
+442	n3-v0424	汚れる	よごれる	verb	더러워지다	rest
+443	n3-v0425	朝食	ちょうしょく	noun	아침 식사	rest
+444	n3-v0426	首	くび	noun	목	rest
+445	n3-v0427	経営学	けいえいがく	noun	경영학	rest
+446	n3-v0429	血液型	けつえきがた	noun	혈액형	rest
+447	n3-v0430	湖	みずうみ	noun	호수	rest
+448	n3-v0431	伝える	つたえる	verb	전하다	rest
+449	n3-v0432	荷物	にもつ	noun	짐	rest
+450	n3-v0433	丸い	まるい	i-adj	둥글다	rest
+451	n3-v0434	個人	こじん	noun	개인	rest
+452	n3-v0435	申し込み	もうしこみ	noun	신청	rest
+453	n3-v0437	独立	どくりつ	noun-suru	독립	rest
+454	n3-v0438	折れる	おれる	verb	부러지다	rest
+455	n3-v0439	観客	かんきゃく	noun	관객	rest
+456	n3-v0440	払う	はらう	verb	지불하다	rest
+457	n3-v0441	加える	くわえる	verb	더하다	rest
+458	n3-v0442	豆	まめ	noun	콩	rest
+459	n3-v0443	税金	ぜいきん	noun	세금	rest
+460	n3-v0444	汚い	きたない	i-adj	더럽다	rest
+461	n3-v0445	商品	しょうひん	noun	상품	rest
+462	n3-v0446	下線	かせん	noun	밑줄	rest
+463	n3-v0448	主要	しゅよう	na-adj	주요함	rest
+464	n3-v0449	直接	ちょくせつ	noun	직접	rest
+465	n3-v0450	燃える	もえる	verb	타다	rest
+466	n3-v0453	禁煙	きんえん	noun-suru	금연	rest
+467	n3-v0455	手術	しゅじゅつ	noun-suru	수술	rest
+468	n3-v0456	血液	けつえき	noun	혈액	rest
+469	n3-v0457	追う	おう	verb	뒤쫓다	rest
+470	n3-v0458	物語	ものがたり	noun	이야기	rest
+471	n3-v0459	成績	せいせき	noun	성적	rest
+472	n3-v0460	楽器	がっき	noun	악기	rest
+473	n3-v0461	専門家	せんもんか	noun	전문가	rest
+474	n3-v0462	案内	あんない	noun-suru	안내	rest
+475	n3-v0463	解決	かいけつ	noun-suru	해결	rest
+476	n3-v0464	気温	きおん	noun	기온	rest
+477	n3-v0465	健康	けんこう	na-adj	건강	rest
+478	n3-v0466	大量	たいりょう	noun	대량	rest
+479	n3-v0467	痛い	いたい	i-adj	아프다	rest
+480	n3-v0468	自由	じゆう	na-adj	자유	rest
+481	n3-v0469	観光	かんこう	noun-suru	관광	rest
+482	n3-v0470	券	けん	suffix	~권, 표	rest
+483	n3-v0472	週刊誌	しゅうかんし	noun	주간지	rest
+484	n3-v0473	相談	そうだん	noun-suru	상담, 의논	rest
+485	n3-v0475	温める	あたためる	verb	데우다	rest
+486	n3-v0476	原料	げんりょう	noun	원료	rest
+487	n3-v0477	歯	は	noun	이, 치아	rest
+488	n3-v0478	信じる	しんじる	verb	믿다	rest
+489	n3-v0479	遅い	おそい	i-adj	늦다, 느리다	rest
+490	n3-v0481	残業	ざんぎょう	noun-suru	잔업, 야근	rest
+491	n3-v0482	倍	ばい	noun	배(곱절)	rest
+492	n3-v0483	停電	ていでん	noun-suru	정전	rest
+493	n3-v0484	独身	どくしん	noun	독신	rest
+494	n3-v0485	貸す	かす	verb	빌려주다	rest
+495	n3-v0486	消す	けす	verb	끄다, 지우다	rest
+496	n3-v0487	欠席	けっせき	noun-suru	결석	rest
+497	n3-v0488	若い	わかい	i-adj	젊다	rest
+498	n3-v0489	移る	うつる	verb	옮기다, 이동하다	rest
+499	n3-v0490	温泉	おんせん	noun	온천	rest
+500	n3-v0491	雑誌	ざっし	noun	잡지	rest
+501	n3-v0492	仮定	かてい	noun-suru	가정	rest
+502	n3-v0493	正解	せいかい	noun-suru	정답	rest
+503	n3-v0494	関心	かんしん	noun	관심	rest
+504	n3-v0495	投げる	なげる	verb	던지다	rest
+505	n3-v0496	原因	げんいん	noun	원인	rest
+506	n3-v0497	勤める	つとめる	verb	근무하다	rest
+507	n3-v0498	借りる	かりる	verb	빌리다	rest
+508	n3-v0499	緑	みどり	noun	초록	rest
+509	n3-v0500	願う	ねがう	verb	바라다	rest
+510	n3-v0501	乗車	じょうしゃ	noun-suru	승차	rest
+511	n3-v0502	波	なみ	noun	파도	rest
+512	n3-v0503	速い	はやい	i-adj	빠르다	rest
+513	n3-v0504	満足	まんぞく	noun-suru	만족	rest
+514	n3-v0505	輸出	ゆしゅつ	noun-suru	수출	rest
+515	n3-v0506	眠る	ねむる	verb	잠들다	rest
+516	n3-v0507	頭痛	ずつう	noun	두통	rest
+517	n3-v0508	葉	は	noun	잎	rest
+518	n3-v0510	飛ぶ	とぶ	verb	날다	rest
+519	n3-v0511	違う	ちがう	verb	다르다, 틀리다	rest
+520	n3-v0512	関係	かんけい	noun-suru	관계	rest
+521	n3-v0513	教師	きょうし	noun	교사	rest
+522	n3-v0514	カタログ	カタログ	noun	카탈로그, 상품 목록	rest
+523	n3-v0515	感じる	かんじる	verb	느끼다	rest
+524	n3-v0516	家賃	やちん	noun	집세	rest
+525	n3-v0517	しまう	しまう	verb	치우다, 넣어 두다	rest
+526	n3-v0518	最新	さいしん	noun	최신	rest
+527	n3-v0519	しばる	しばる	verb	묶다	rest
+528	n3-v0520	向き	むき	suffix	~향, ~방향	rest
+529	n3-v0521	感動	かんどう	noun-suru	감동	rest
+530	n3-v0522	立派	りっぱ	na-adj	훌륭함	rest
+531	n3-v0523	早めに	はやめに	adverb	일찌감치	rest
+532	n3-v0524	泡	あわ	noun	거품	rest
+533	n3-v0525	ノック	ノック	noun-suru	노크	rest
+534	n3-v0526	半日	はんにち	noun	반나절	rest
+535	n3-v0527	扱う	あつかう	verb	다루다	rest
+536	n3-v0528	全	ぜん	prefix	전~	rest
+537	n3-v0529	しばらく	しばらく	adverb	잠시	rest
+538	n3-v0530	体力	たいりょく	noun	체력	rest
+539	n3-v0531	不満	ふまん	na-adj	불만	rest
+540	n3-v0532	ぶらぶら	ぶらぶら	adverb	어슬렁어슬렁	rest
+541	n3-v0533	申込書	もうしこみしょ	noun	신청서	rest
+542	n3-v0534	複雑	ふくざつ	na-adj	복잡함	rest
+543	n3-v0535	流れる	ながれる	verb	흐르다	rest
+544	n3-v0536	産	さん	suffix	~산(생산지)	rest
+545	n3-v0537	インタビュー	インタビュー	noun-suru	인터뷰	rest
+546	n3-v0538	主張	しゅちょう	noun-suru	주장	rest
+547	n3-v0539	からから	からから	adverb	바싹 마른 모양	rest
+548	n3-v0540	ためる	ためる	verb	모으다	rest
+549	n3-v0541	かかる	かかる	verb	걸리다	rest
+550	n3-v0542	合わせる	あわせる	verb	합치다, 맞추다	rest
+551	n3-v0543	両替	りょうがえ	noun-suru	환전	rest
+552	n3-v0544	前後	ぜんご	noun	전후, 앞뒤	rest
+553	n3-v0545	流れ	ながれ	noun	흐름	rest
+554	n3-v0546	外食	がいしょく	noun-suru	외식	rest
+555	n3-v0547	別れる	わかれる	verb	헤어지다	rest
+556	n3-v0548	起きる	おきる	verb	일어나다	rest
+557	n3-v0549	応援	おうえん	noun-suru	응원	rest
+558	n3-v0550	延ばす	のばす	verb	연장하다, 미루다	rest
+559	n3-v0551	カバー	カバー	noun	덮개	rest
+560	n3-v0553	代金	だいきん	noun	대금	rest
+561	n3-v0554	しつこい	しつこい	i-adj	끈질기다	rest
+562	n3-v0555	自動的	じどうてき	na-adj	자동적	rest
+563	n3-v0556	片方	かたほう	noun	한쪽	rest
+564	n3-v0557	おかしい	おかしい	i-adj	이상하다	rest
+565	n3-v0558	リサイクル	リサイクル	noun-suru	재활용	rest
+566	n3-v0559	うわさ	うわさ	noun	소문	rest
+567	n3-v0560	主に	おもに	adverb	주로	rest
+568	n3-v0561	閉じる	とじる	verb	닫다, (눈을) 감다	rest
+569	n3-v0562	たたむ	たたむ	verb	접다, 개다	rest
+570	n3-v0563	突然	とつぜん	adverb	갑자기	rest
+571	n3-v0564	物価	ぶっか	noun	물가	rest
+572	n3-v0565	追いつく	おいつく	verb	따라잡다	rest
+573	n3-v0566	おぼれる	おぼれる	verb	물에 빠지다	rest
+574	n3-v0568	自慢	じまん	noun-suru	자랑	rest
+575	n3-v0569	分ける	わける	verb	나누다	rest
+576	n3-v0570	お祝い	おいわい	noun	축하	rest
+577	n3-v0571	方法	ほうほう	noun	방법	rest
+578	n3-v0572	積極的	せっきょくてき	na-adj	적극적	rest
+579	n3-v0573	印象	いんしょう	noun	인상	rest
+580	n3-v0574	記念	きねん	noun-suru	기념	rest
+581	n3-v0575	使用	しよう	noun-suru	사용	rest
+582	n3-v0576	飽きる	あきる	verb	질리다	rest
+583	n3-v0577	パンフレット	パンフレット	noun	팸플릿	rest
+584	n3-v0578	目標	もくひょう	noun	목표	rest
+585	n3-v0579	覚める	さめる	verb	(잠이) 깨다	rest
+586	n3-v0580	穴	あな	noun	구멍	rest
+587	n3-v0581	合計	ごうけい	noun-suru	합계	rest
+588	n3-v0582	ぶつける	ぶつける	verb	부딪치다	rest
+589	n3-v0583	癖	くせ	noun	버릇	rest
+590	n3-v0584	当日	とうじつ	noun	당일	rest
+591	n3-v0585	代表的	だいひょうてき	na-adj	대표적	rest
+592	n3-v0586	栄養	えいよう	noun	영양	rest
+593	n3-v0587	隠す	かくす	verb	숨기다	rest
+594	n3-v0588	割合	わりあい	noun	비율	rest
+595	n3-v0590	観察	かんさつ	noun-suru	관찰	rest
+596	n3-v0591	破れる	やぶれる	verb	찢어지다	rest
+597	n3-v0592	料金	りょうきん	noun	요금	rest
+598	n3-v0593	編む	あむ	verb	뜨개질하다	rest
+599	n3-v0594	戦う	たたかう	verb	싸우다	rest
+600	n3-v0595	興味	きょうみ	noun	흥미	rest
+601	n3-v0596	香り	かおり	noun	향기	rest
+602	n3-v0597	演奏	えんそう	noun-suru	연주	rest
+603	n3-v0598	アドバイス	アドバイス	noun-suru	조언	rest
+604	n3-v0599	うまい	うまい	i-adj	능숙하다, 맛있다	rest
+605	n3-v0600	流行	りゅうこう	noun-suru	유행	rest
+606	n3-v0601	惜しい	おしい	i-adj	아깝다	rest
+607	n3-v0602	傷	きず	noun	상처	rest
+608	n3-v0603	頼る	たよる	verb	의지하다	rest
+609	n3-v0604	特長	とくちょう	noun	특장점	rest
+610	n3-v0605	イメージ	イメージ	noun	이미지	rest
+611	n3-v0606	囲む	かこむ	verb	둘러싸다	rest
+612	n3-v0607	がらがら	がらがら	adverb	텅텅 빈 모양	rest
+613	n3-v0608	許す	ゆるす	verb	용서하다, 허락하다	rest
+614	n3-v0609	姿勢	しせい	noun	자세	rest
+615	n3-v0611	農業	のうぎょう	noun	농업	rest
+616	n3-v0612	沈む	しずむ	verb	가라앉다	rest
+617	n3-v0613	内緒	ないしょ	noun	비밀	rest
+618	n3-v0614	底	そこ	noun	바닥	rest
+619	n3-v0615	比較	ひかく	noun-suru	비교	rest
+620	n3-v0616	マナー	マナー	noun	매너	rest
+621	n3-v0617	呼びかける	よびかける	verb	호소하다, 부르다	rest
+622	n3-v0618	床	ゆか	noun	바닥, 마루	rest
+623	n3-v0620	申請	しんせい	noun-suru	신청	rest
+624	n3-v0621	くたびれる	くたびれる	verb	지치다	rest
+625	n3-v0622	明ける	あける	verb	(날이) 새다, 끝나다	rest
+626	n3-v0623	終わる	おわる	verb	끝나다	rest
+627	n3-v0624	混雑	こんざつ	noun-suru	혼잡	rest
+628	n3-v0625	客がたくさんいる	きゃくがたくさんいる	phrase	손님이 많다	rest
+629	n3-v0626	わかりやすい	わかりやすい	i-adj	알기 쉽다	rest
+630	n3-v0627	単純	たんじゅん	na-adj	단순함	rest
+631	n3-v0628	孫	まご	noun	손주	rest
+632	n3-v0629	娘の息子	むすめのむすこ	phrase	딸의 아들	rest
+633	n3-v0631	たくさん残る	たくさんのこる	phrase	많이 남다	rest
+634	n3-v0632	すぐ怒る	すぐおこる	phrase	금방 화를 내다	rest
+635	n3-v0633	決まり	きまり	noun	규칙	rest
+636	n3-v0634	仕事に行く	しごとにいく	phrase	일하러 가다	rest
+637	n3-v0635	恐ろしい	おそろしい	i-adj	무섭다	rest
+638	n3-v0636	怖い	こわい	i-adj	무섭다	rest
+639	n3-v0637	訳	わけ	noun	이유	rest
+640	n3-v0638	理由	りゆう	noun	이유	rest
+641	n3-v0639	少なくなる	すくなくなる	phrase	적어지다	rest
+642	n3-v0640	やり直す	やりなおす	verb	다시 하다	rest
+643	n3-v0641	もう一度やる	もういちどやる	phrase	한 번 더 하다	rest
+644	n3-v0642	悪いところ	わるいところ	phrase	나쁜 점	rest
+645	n3-v0643	翌年	よくとし	noun	이듬해	rest
+646	n3-v0644	次の年	つぎのとし	phrase	다음 해	rest
+647	n3-v0645	さっき	さっき	adverb	아까	rest
+648	n3-v0646	少し前に	すこしまえに	phrase	조금 전에	rest
+649	n3-v0647	共通点	きょうつうてん	noun	공통점	rest
+650	n3-v0648	同じところ	おなじところ	phrase	같은 점	rest
+651	n3-v0649	片付ける	かたづける	verb	정리하다	rest
+652	n3-v0650	内緒にする	ないしょにする	phrase	비밀로 하다	rest
+653	n3-v0651	だれにも話さない	だれにもはなさない	phrase	아무에게도 말하지 않다	rest
+654	n3-v0652	気に入る	きにいる	phrase	마음에 들다	rest
+655	n3-v0653	好き	すき	na-adj	좋아함	rest
+656	n3-v0654	やめる	やめる	verb	그만두다	rest
+657	n3-v0655	年中	ねんじゅう	noun	일 년 내내	rest
+658	n3-v0656	奪う	うばう	verb	빼앗다	rest
+659	n3-v0657	取る	とる	verb	잡다, 가지다	rest
+660	n3-v0658	明るすぎる	あかるすぎる	phrase	너무 밝다	rest
+661	n3-v0659	注文	ちゅうもん	noun-suru	주문	rest
+662	n3-v0660	頼む	たのむ	verb	부탁하다, 주문하다	rest
+663	n3-v0661	チェック	チェック	noun-suru	확인	rest
+664	n3-v0662	このごろ	このごろ	noun	요즘	rest
+665	n3-v0663	最近	さいきん	noun	최근	rest
+666	n3-v0664	場所	ばしょ	noun	장소	rest
+667	n3-v0666	集める	あつめる	verb	모으다	rest
+668	n3-v0667	おかしな	おかしな	adnominal	이상한	rest
+669	n3-v0668	変	へん	na-adj	이상함	rest
+670	n3-v0669	急ぐ	いそぐ	verb	서두르다	rest
+671	n3-v0670	約	やく	prefix	약(대략)	rest
+672	n3-v0671	大体	だいたい	adverb	대략	rest
+673	n3-v0672	すべて	すべて	adverb	모두	rest
+674	n3-v0673	全部	ぜんぶ	noun	전부	rest
+675	n3-v0674	手段	しゅだん	noun	수단	rest
+676	n3-v0675	やり方	やりかた	noun	방법	rest
+677	n3-v0676	何も言わずに	なにもいわずに	phrase	아무 말 없이	rest
+678	n3-v0677	次第に	しだいに	adverb	점차	rest
+679	n3-v0678	少しずつ	すこしずつ	adverb	조금씩	rest
+680	n3-v0679	上手にできる	じょうずにできる	phrase	잘할 수 있다	rest
+681	n3-v0680	本当ではないと思う	ほんとうではないとおもう	phrase	사실이 아니라고 생각하다	rest
+682	n3-v0681	相変わらず	あいかわらず	adverb	여전히	rest
+683	n3-v0682	前と同じで	まえとおなじで	phrase	전과 같이	rest
+684	n3-v0683	学ぶ	まなぶ	verb	배우다	rest
+685	n3-v0684	勉強	べんきょう	noun-suru	공부	rest
+686	n3-v0685	まったく	まったく	adverb	전혀	rest
+687	n3-v0686	全然	ぜんぜん	adverb	전혀	rest
+688	n3-v0687	後の別の日にやる	あとのべつのひにやる	phrase	나중에 다른 날 하다	rest
+689	n3-v0688	輝く	かがやく	verb	빛나다	rest
+690	n3-v0689	光る	ひかる	verb	빛나다	rest
+691	n3-v0690	残念だと思う	ざんねんだとおもう	phrase	아쉽다고 생각하다	rest
+692	n3-v0691	当然	とうぜん	adverb	당연히	rest
+693	n3-v0692	もちろん	もちろん	adverb	물론	rest
+694	n3-v0694	多すぎて残る	おおすぎてのこる	phrase	너무 많아서 남다	rest
+695	n3-v0695	横断禁止	おうだんきんし	noun	횡단 금지	rest
+696	n3-v0696	渡ってはいけない	わたってはいけない	phrase	건너서는 안 된다	rest
+697	n3-v0697	あらゆる	あらゆる	adnominal	모든	rest
+698	n3-v0698	すべての	すべての	phrase	모든	rest
+699	n3-v0699	大声で怒る	おおごえでおこる	phrase	큰 소리로 화내다	rest
+700	n3-v0700	未来	みらい	noun	미래	rest
+701	n3-v0701	ユーモア	ユーモア	noun	유머	rest
+702	n3-v0702	貧しい	まずしい	i-adj	가난하다	rest
+703	n3-v0703	なだらか	なだらか	na-adj	완만함	rest
+704	n3-v0704	区切る	くぎる	verb	구분하다	rest
+705	n3-v0705	指示	しじ	noun-suru	지시	rest
+706	n3-v0706	見送る	みおくる	verb	배웅하다	rest
+707	n3-v0707	植える	うえる	verb	심다	rest
+708	n3-v0708	正直	しょうじき	na-adj	정직함	rest
+709	n3-v0709	受け入れる	うけいれる	verb	받아들이다	rest
+710	n3-v0710	そろそろ	そろそろ	adverb	슬슬	rest
+711	n3-v0711	緊張	きんちょう	noun-suru	긴장	rest
+712	n3-v0712	訪問	ほうもん	noun-suru	방문	rest
+713	n3-v0713	翻訳	ほんやく	noun-suru	번역	rest
+714	n3-v0714	活動	かつどう	noun-suru	활동	rest
+715	n3-v0715	建設	けんせつ	noun-suru	건설	rest
+716	n3-v0716	発生	はっせい	noun-suru	발생	rest
+717	n3-v0717	こぼす	こぼす	verb	엎지르다	rest
+718	n3-v0718	内容	ないよう	noun	내용	rest
+719	n3-v0719	伝わる	つたわる	verb	전해지다	rest
+720	n3-v0720	縮小	しゅくしょう	noun-suru	축소	rest
+721	n3-v0721	離す	はなす	verb	떼다, 떨어뜨리다	rest
+722	n3-v0722	移動	いどう	noun-suru	이동	rest
+723	n3-v0723	新鮮	しんせん	na-adj	신선함	rest
+724	n3-v0724	混ぜる	まぜる	verb	섞다	rest
+725	n3-v0725	締め切り	しめきり	noun	마감	rest
+726	n3-v0726	ゆでる	ゆでる	verb	삶다	rest
+727	n3-v0727	似合う	にあう	verb	어울리다	rest
+728	n3-v0728	急に	きゅうに	adverb	갑자기	rest
+729	n3-v0729	沸騰	ふっとう	noun-suru	끓음	rest
+730	n3-v0730	曲げる	まげる	verb	구부리다	rest
+731	n3-v0731	慰める	なぐさめる	verb	위로하다	rest
+732	n3-v0732	滞在	たいざい	noun-suru	체재, 머묾	rest
+733	n3-v0733	受け取る	うけとる	verb	받다	rest
