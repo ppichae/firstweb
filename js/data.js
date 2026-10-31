@@ -48,6 +48,7 @@ const EXTRA_FILES = {
   n3grammar: "data/n3/grammar.json",
   n3basics: "data/n3/basics.json",
   kanji: "data/kanji/common.json",
+  kanjiIndex: "data/kanji/index.json",
   kanjiN1: "data/kanji/n1.json",
   kanjiN3: "data/kanji/n3.json",
   n3reading: "data/n3/reading.json",
@@ -63,6 +64,8 @@ const pending = {};
 
 // 파일이 없거나 읽지 못해도 사이트 전체를 멈추지 않는다. 그 영역만 '준비 중'으로 보여 준다
 export function ensureExtra(keys) {
+  // 한자 자료(kanji)를 쓰는 화면은 987자 기본 자료(kanjiIndex)도 함께 쓴다
+  keys = keys.flatMap(k => (k === "kanji" ? ["kanji", "kanjiIndex"] : [k]));
   return Promise.all(keys.map(key => {
     if (!pending[key]) {
       pending[key] = fetch(EXTRA_FILES[key], { cache: "no-cache" })

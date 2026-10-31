@@ -664,6 +664,45 @@ footer p { margin: 0 0 6px; max-width: 70ch; }
 .kt-n { font-size: 12px; color: var(--muted); }
 .kanji-others { display: flex; flex-wrap: wrap; gap: 6px; max-height: 260px; overflow-y: auto; }
 
+/* 한자 목록: 한국어 훈음 가나다순 + 초성 바로가기 */
+.k-filter-rows { display: grid; gap: 6px; }
+.k-flabel { font-size: 13px; color: var(--muted); font-weight: 600; min-width: 2.5em; }
+.k-index {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + 61px); z-index: 3;
+  display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; max-width: 100%;
+  background: var(--bg); padding: 8px 0; border-bottom: 1px solid var(--line);
+}
+.k-index::-webkit-scrollbar { display: none; }
+.k-ix {
+  flex: 0 0 auto; min-width: 40px; min-height: 40px; padding: 0 8px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font-size: 15px; font-weight: 700;
+  -webkit-tap-highlight-color: transparent;
+}
+.k-ix:hover:not(:disabled) { border-color: var(--ink); color: var(--ink); }
+.k-ix:disabled { color: var(--muted); opacity: .45; }
+.k-count { margin: 0; }
+.k-list { display: grid; gap: 18px; }
+.k-group { content-visibility: auto; contain-intrinsic-block-size: auto 600px; min-width: 0; }
+.k-ghead { margin: 0 0 6px; font-size: 18px; color: var(--ink); }
+.k-rows { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 6px; }
+.k-row {
+  width: 100%; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-areas: "c ko meta" "c rd meta";
+  align-items: center; column-gap: 12px; row-gap: 0; text-align: left;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 10px; padding: 8px 12px; min-height: 60px;
+  -webkit-tap-highlight-color: transparent;
+}
+.k-row:hover { border-color: var(--ink); }
+.k-row.seen { background: var(--ink-soft); border-color: var(--ink-soft); }
+.kr-char { grid-area: c; font-family: var(--font-jp); font-size: 32px; font-weight: 700; line-height: 1.1; text-align: center; }
+.kr-ko { grid-area: ko; font-size: 15px; min-width: 0; }
+.kr-ko b { color: var(--ink); }
+.kr-read { grid-area: rd; font-family: var(--font-jp); font-size: 13px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kr-meta { grid-area: meta; display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+.kr-lv { border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; }
+.kr-fav { color: var(--stamp); font-size: 14px; }
+.kr-seen { color: var(--good); font-weight: 700; }
+.kd-alt { margin-top: 2px; }
+
 .kanji-dialog {
   border: 0; padding: 0; border-radius: 16px; width: min(640px, calc(100vw - 24px)); max-height: calc(100dvh - 32px);
   background: var(--surface); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .25); overflow-y: auto;

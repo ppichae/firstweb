@@ -13,10 +13,24 @@ const STORES = { n1: store, n3: n3store };
 export const isKanji = c => /[一-鿿㐀-䶿々]/.test(c);
 const toHira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60));
 
-export function kanjiInfo(ch) {
-  const d = EXTRA.kanji;
-  return d && d.items ? d.items.find(k => k.char === ch) || null : null;
+// 한자 자료: 987자 기본 자료(index.json: 한국어 훈음·음독/훈독·획수)에 자세한 설명이 있는 한자(common.json)를 덧씌운다.
+// 한국어 훈음은 공개 한자 자료와 대조한 index.json의 값을 쓴다(common.json의 예전 값은 파일에 그대로 둔다).
+let infoMap = null, infoSig = "";
+function infoIndex() {
+  const idx = (EXTRA.kanjiIndex && EXTRA.kanjiIndex.items) || [], com = (EXTRA.kanji && EXTRA.kanji.items) || [];
+  const sig = idx.length + "|" + com.length;
+  if (infoMap && sig === infoSig) return infoMap;
+  infoMap = new Map();
+  idx.forEach(k => infoMap.set(k.char, {
+    char: k.char, lv: k.lv, ko: k.ko, alt: k.alt || [], on: k.on, kun: k.kun, strokes: k.strokes, strokeRef: k.strokeRef, kokuji: k.kokuji,
+    meaning: "", radical: null, components: [], similar: [], strokesCheck: "KanjiVG 획 수", readingsCheck: "KANJIDIC2",
+  }));
+  com.forEach(k => { const b = infoMap.get(k.char); infoMap.set(k.char, b ? { ...k, ko: b.ko.eum ? b.ko : k.ko, alt: b.alt, lv: b.lv, kokuji: b.kokuji } : k); });
+  infoSig = sig;
+  return infoMap;
 }
+export const kanjiInfo = ch => infoIndex().get(ch) || null;
+export const allKanji = () => [...infoIndex().values()].filter(k => k.lv);
 
 /* ---------- 단어 읽기를 한자별로 나누기 ----------
    한자 자료에 있는 음독·훈독(탁음·촉음으로 바뀐 형태 포함)으로 단어 읽기를 처음부터 끝까지 맞춰 본다.
@@ -92,7 +106,11 @@ export function examplesWith(ch, roomId) {
   return out;
 }
 
+// 이 방의 한자: N3 = N3 단어장에 나오는 한자, N1 = N1 단어장에만 나오는 한자 (이 사이트 단어장 기준)
 export function roomKanjiList(roomId) {
+  const lv = roomId === "n1" ? "N1" : "N3";
+  const list = allKanji().filter(k => k.lv === lv).map(k => k.char);
+  if (list.length) return list;
   const d = EXTRA[roomId === "n1" ? "kanjiN1" : "kanjiN3"];
   return (d && d.kanji) || [];
 }
@@ -139,6 +157,9 @@ export function openKanji(ch, ctx) {
 }
 
 const kunHTML = k => { const [stem, okuri] = k.split("-"); return esc(stem) + (okuri ? '<span class="okuri">' + esc(okuri) + "</span>" : ""); };
+// 한국어 훈음 (훈이 없으면 음만, 둘 다 없으면 빈칸)
+export const koText = info => info && info.ko ? [info.ko.hun, info.ko.eum].filter(Boolean).join(" ") : "";
+const koHTML = info => info && info.ko && info.ko.eum ? (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b>" : "";
 const chips = (list, cls) => list.length ? list.map(x => '<span class="rd ' + cls + '" lang="ja">' + x + "</span>").join("") : '<span class="hint">없음</span>';
 const linkChips = list => list.map(c => '<button type="button" class="kj' + (kanjiInfo(c) ? "" : " no-data") + '" data-goto-kanji="' + esc(c) + '" lang="ja">' + esc(c) + "</button>").join("");
 
@@ -157,8 +178,10 @@ function draw() {
     '<div class="kd-head"><div class="kd-char" lang="ja">' + esc(ch) + "</div>" +
       '<div class="kd-title">' +
         (info
-          ? '<div class="kd-ko">' + (info.ko ? (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b>" : "") + "</div>" +
-            '<div class="kd-mean">' + esc(info.meaning) + "</div>"
+          ? '<div class="kd-ko">' + koHTML(info) + "</div>" +
+            (info.meaning ? '<div class="kd-mean">' + esc(info.meaning) + "</div>" : "") +
+            (info.alt && info.alt.length ? '<div class="kd-alt hint">다른 뜻 · ' + info.alt.map(esc).join(" · ") + "</div>" : "") +
+            (info.kokuji ? '<div class="kd-alt hint">일본에서 만든 한자예요.</div>' : "")
           : '<p class="hint">아래 단어들로 이 한자를 익혀 보세요.</p>') +
       "</div>" +
       '<div class="kd-actions"><button type="button" class="mark star" data-kfav aria-pressed="' + !!rec.fav + '" aria-label="즐겨찾기">' + (rec.fav ? "★" : "☆") + "</button>" +
@@ -175,10 +198,10 @@ function draw() {
     ? '<section class="kd-sec"><h4>읽기</h4><dl class="kd-dl">' +
         "<div><dt>음독 (音読み)</dt><dd>" + chips(info.on.map(esc), "on") + "</dd></div>" +
         "<div><dt>훈독 (訓読み)</dt><dd>" + chips(info.kun.map(kunHTML), "kun") + "</dd></div></dl>" +
-        '<p class="hint">일본 상용한자표에 있는 읽기만 적었어요. 회색 글자는 오쿠리가나(한자 뒤에 붙는 가나)예요.</p>' +
+        (info.kun.length ? '<p class="hint">회색 글자는 오쿠리가나(한자 뒤에 붙는 가나)예요.</p>' : "") +
         (info.note ? '<p class="kd-note">' + esc(info.note) + "</p>" : "") + "</section>" +
       '<section class="kd-sec"><h4>모양</h4><dl class="kd-dl">' +
-        '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" +
+        (info.radical ? '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" : "") +
         "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식" + (info.strokesCheck ? " · KanjiVG 획순 데이터와 일치" : "") + ")</small></dd></div>" +
         // 구성 요소·형성 원리는 근거가 확인된 경우(…Source)에만 보여 준다
         (info.components.length && info.componentsSource ? "<div><dt>구성 요소</dt><dd>" + info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") + "</dd></div>" : "") +
@@ -212,7 +235,7 @@ function draw() {
   const naver = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(ch);
   const foot =
     '<p class="kd-foot">자료 정보 · ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나오는 한자예요(JLPT는 공식 한자 급수 목록을 공개하지 않아요)." +
-      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기·한국 한자음: KANJIDIC2와 대조" : "", "뜻 설명·연상 이야기: 자체 제작 학습 자료"].filter(Boolean).join(" · ") : "") +
+      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기: KANJIDIC2 (CC BY-SA 4.0)" : "", "한국어 훈음: 공개 한자 자료 대조", info.meaning || info.mnemonic ? "뜻 설명·연상 이야기: 자체 제작 학습 자료" : ""].filter(Boolean).join(" · ") : "") +
       '<br><a href="' + naver + '" target="_blank" rel="noopener">네이버 한자사전에서 보기</a></p>';
 
   const strokes = info ? '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes"></div></section>' : "";

@@ -38,7 +38,7 @@ function build(roomId, type, info, all) {
     if (!hasKo(info)) return null;
     const o = pickOthers(all.filter(hasKo), 3, koText, [koText(info)]);
     return o.length < 3 ? null : Object.assign(base, { id: "kq-meaning-" + info.char, prompt: "「" + info.char + "」의 한국 한자음과 뜻은?" },
-      choice(koText(info), o, { explanation: "「" + info.char + "」는 '" + koText(info) + "'이고, 일본어에서는 주로 '" + info.meaning + "'라는 뜻으로 써요." }));
+      choice(koText(info), o, { explanation: "「" + info.char + "」는 '" + koText(info) + "'이에요." + (info.meaning ? " 일본어에서는 주로 '" + info.meaning + "'라는 뜻으로 써요." : "") }));
   }
   if (type === "reverse") {
     if (!hasKo(info)) return null;
@@ -66,10 +66,11 @@ function build(roomId, type, info, all) {
       choice(correct, o, { explanation: "「" + v.word + "」는 " + v.reading + "로 읽고, 「" + info.char + "」 부분은 「" + correct + "」예요." }));
   }
   if (type === "radical") {
+    if (!info.radical) return null;   // 부수 자료가 있는 한자만
     const t = r => r.char + " (" + r.name + ")";
-    const o = pickOthers(all.filter(x => x.radical.char !== info.radical.char), 3, x => t(x.radical), [t(info.radical)]);
+    const o = pickOthers(all.filter(x => x.radical && x.radical.char !== info.radical.char), 3, x => t(x.radical), [t(info.radical)]);
     return o.length < 3 ? null : Object.assign(base, { id: "kq-radical-" + info.char, prompt: "「" + info.char + "」의 부수는?" },
-      choice(t(info.radical), o, { explanation: "「" + info.char + "」의 부수는 " + t(info.radical) + "이에요." + (info.radical.note ? " " + info.radical.note : "") + (info.components.length ? " 구성 요소: " + info.components.map(c => c.part + "(" + c.meaning + ")").join(" + ") : "") }));
+      choice(t(info.radical), o, { explanation: "「" + info.char + "」의 부수는 " + t(info.radical) + "이에요." + (info.radical.note ? " " + info.radical.note : "") }));
   }
   return null;
 }
@@ -131,8 +132,8 @@ export function kanjiExtra(info, roomId) {
   const ex = examplesWith(info.char, roomId)[0];
   return '<div class="learn-box"><div class="lb-title">학습 정보</div>' +
     '<div class="lb-word"><b class="lb-kanji" lang="ja">' + esc(info.char) + "</b> " +
-      (info.ko ? '<span class="lb-mean">' + (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b></span>" : "") +
-      ' <small class="hint">' + esc(info.meaning) + "</small></div>" +
+      (info.ko && info.ko.eum ? '<span class="lb-mean">' + (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b></span>" : "") +
+      (info.meaning ? ' <small class="hint">' + esc(info.meaning) + "</small>" : "") + "</div>" +
     '<div class="lb-row"><span class="lb-label">음독</span><span lang="ja">' + (info.on.join("・") || "—") + "</span></div>" +
     '<div class="lb-row"><span class="lb-label">훈독</span><span lang="ja">' + (info.kun.map(k => { const [a, b] = k.split("-"); return esc(a) + (b ? '<span class="okuri">' + esc(b) + "</span>" : ""); }).join("・") || "—") + "</span></div>" +
     withSplit.map(({ v, s }) => '<div class="lb-row"><span class="lb-label">대표 단어</span><span><b lang="ja">' + esc(v.word) + '</b> <span class="reading" lang="ja">' + esc(v.reading) + "</span> " + esc(v.meaning) +

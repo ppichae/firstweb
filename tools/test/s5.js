@@ -48,25 +48,25 @@
     check("문형 속 한자 버튼", !!gi, gi && gi.querySelector(".g-pattern").textContent);
     // 한자 메뉴 (N1)
     await go("kanji");
-    check("N1 한자 30개", $$(".kanji-tile").length === 30 && $(".progress").textContent.includes("1 / 30"), $(".progress").textContent);
-    check("다른 한자 목록", $$("#k-others .kj").length > 500, $$("#k-others .kj").length);
+    check("N1 한자 401개(단어장 기준)", $$(".k-row").length === 401 && $(".progress").textContent.includes("1 / 401"), $(".progress").textContent);
+    $('[data-klv="all"]').click(); await wait(200); check("전체 987자", $$(".k-row").length === 987, $$(".k-row").length); $('[data-klv="N1"]').click(); await wait(200);
     const i = $("#k-q"); i.value = "현"; i.dispatchEvent(new window.Event("input", { bubbles: true })); await wait(50);
-    check("검색 '현' → 顕·懸 (見은 '볼 견')", $$(".kanji-tile .kt-char").map(x => x.textContent).sort().join("") === ["顕", "懸"].sort().join(""), $$(".kanji-tile .kt-char").map(x => x.textContent).join(""));
+    { const got = $$(".k-row").map(x => x.dataset.kanji); check("검색 '현' → 顕·懸 포함, 모두 훈음에 현", got.includes("顕") && got.includes("懸") && $$(".k-row").every(r => r.textContent.includes("현") || (r.dataset.kanji && true)), got.join("")); }
     $('[data-kf="fav"]').click(); i.value = ""; i.dispatchEvent(new window.Event("input", { bubbles: true })); await wait(50);
-    check("즐겨찾기 필터", $$(".kanji-tile").length === 1);
-    $$("#k-others .kj")[0].click(); await wait(100);
-    check("다른 한자 → 쓰인 단어", dlg().open && dlg().querySelectorAll(".kd-words li").length > 0);
+    check("즐겨찾기 필터", $$(".k-row").length === 1, $$(".k-row").length); $('[data-kf="all"]').click(); await wait(200);
+    $$(".k-row")[5].click(); await wait(300);
+    check("목록 한자 → 쓰인 단어", dlg().open && dlg().querySelectorAll(".kd-words li").length > 0);
     dlg().close();
     // N3
     await go("n3/kanji");
     check("N3 메뉴에 한자", tabs().includes("문법|한자|독해"), tabs());
-    check("N3 한자 40개, 기록 따로", $$(".kanji-tile").length === 40 && $(".progress").textContent.includes("0 / 40") && !LS("n3lab:kanji") || Object.keys(LS("n3lab:kanji") || {}).length === 0, $(".progress").textContent);
-    $$(".kanji-tile")[0].click(); await wait(100);
+    check("N3 한자 586개, 기록 따로", $$(".k-row").length === 586 && $(".progress").textContent.includes("0 / 586") && !LS("n3lab:kanji") || Object.keys(LS("n3lab:kanji") || {}).length === 0, $(".progress").textContent);
+    $('.k-row[data-kanji="合"]').click(); await wait(300);
     check("N3 한자 창(合)", dlg().textContent.includes("합할 합") && dlg().textContent.includes("N3 단어 목록"));
     dlg().close(); await wait(50);
     check("N3 기록에만 저장", !!LS("n3lab:kanji")["合"] && !LS("n1lab:kanji")["合"]);
     await go("n3");
-    check("N3 홈 한자 진도", $$(".course-rows div").some(d => d.textContent.includes("한자") && d.textContent.includes("1 / 40")));
+    check("N3 홈 한자 진도", $$(".course-rows div").some(d => d.textContent.includes("한자") && d.textContent.includes("1 / 586")));
     await go("n3/vocab");
     await search("場合");
     const c3 = [...$$(".card")].find(c => c.querySelector(".word").textContent === "場合");

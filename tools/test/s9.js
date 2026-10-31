@@ -33,12 +33,12 @@
     await go("n3/listening");
     check("N3 청해 자료 준비 중", app().textContent.includes("자료 준비 중"));
     await go("kanji");
-    const ib = [...$$(".kanji-tile")].find(b => b.textContent.includes("込"));
+    $('[data-klv="all"]').click(); await wait(300); const ib = $('.k-row[data-kanji="込"]');
     check("込 타일 한국음 입", ib && ib.textContent.includes("입"), ib && ib.textContent);
     ib.click(); await wait(500);
     const d = document.querySelector(".kanji-dialog");
     check("込 창: 한국 한자음 입", d.querySelector(".kd-ko b").textContent === "입" && !d.textContent.includes("뜻 미확인"));
-    check("자료 정보 표시", d.textContent.includes("KANJIDIC2와 대조") && d.textContent.includes("KanjiVG"));
+    check("자료 정보 표시", d.textContent.includes("KANJIDIC2") && d.textContent.includes("KanjiVG"));
     d.close();
     await go("home");
     check("가로 스크롤 없음 (" + W() + ")", document.documentElement.scrollWidth <= W());
