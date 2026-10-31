@@ -4,6 +4,9 @@
 // 방(N1 · N3)마다 저장소를 따로 만든다. 앞이름(prefix)이 달라서 기록이 서로 섞이지 않는다.
 
 import { today } from "./util.js";
+import { syncRoom, viewEnsure, change as syncChange, importData, resetRoom, syncStatus } from "./sync.js";
+
+const newId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
 
 const VERSION = 1;
 
@@ -33,7 +36,10 @@ export function createStore(PREFIX, APP_ID, DEFAULTS) {
   const cache = {};
   let storageOK = true;
 
+  // 로그인한 계정으로 동기화 중이면 계정 기록(sync.js)을 읽고 쓴다. 아니면 지금까지처럼 이 브라우저(localStorage)
   function read(key) {
+    const room = syncRoom(PREFIX);
+    if (room) return viewEnsure(room, key, clone(DEFAULTS[key]));
     if (key in cache) return cache[key];
     let value = clone(DEFAULTS[key]);
     try {
@@ -45,6 +51,8 @@ export function createStore(PREFIX, APP_ID, DEFAULTS) {
   }
 
   function write(key, value) {
+    const room = syncRoom(PREFIX);
+    if (room) { syncChange(room, key, clone(read(key)), value); return; }
     cache[key] = value;
     try { localStorage.setItem(PREFIX + key, JSON.stringify(value)); }
     catch (e) { storageOK = false; }
@@ -55,14 +63,22 @@ export function createStore(PREFIX, APP_ID, DEFAULTS) {
     get: read,
     set: write,
     // 기록을 꺼내서 고친 뒤 다시 저장한다
-    update(key, fn) { const v = read(key); const r = fn(v); write(key, r === undefined ? v : r); },
-    get available() { return storageOK; },
+    update(key, fn) {
+      const room = syncRoom(PREFIX);
+      if (room) {   // 바뀌기 전 모습을 먼저 떠 두어야 무엇이 바뀌었는지 알 수 있다
+        const before = clone(read(key)), v = read(key), r = fn(v);
+        syncChange(room, key, before, r === undefined ? v : r);
+        return;
+      }
+      const v = read(key); const r = fn(v); write(key, r === undefined ? v : r);
+    },
+    get available() { return syncRoom(PREFIX) ? !syncStatus().storageError : storageOK; },
 
     // 문제를 풀 때마다 한 줄씩 남긴다. 오답 노트와 대시보드는 모두 이 기록으로 계산한다
     // 자동으로 만든 문제(무작위 단어 퀴즈 등)는 자료 파일에 없으므로 문제 내용도 함께 남긴다
     recordAttempt(q, choice, mode = "practice") {
       this.update("attempts", list => {
-        const rec = { qid: q.id, area: q.area, choice, correct: choice === q.answer, at: Date.now(), mode };
+        const rec = { id: newId(), qid: q.id, area: q.area, choice, correct: choice === q.answer, at: Date.now(), mode };   // id: 동기화용 고유 번호
         if (q.generated) rec.snap = { kind: q.kind, prompt: q.prompt, options: q.options, answer: q.answer, explanation: q.explanation, wordId: q.wordId };
         list.push(rec);
         if (this.onAttempt) this.onAttempt(rec);   // 경험치 등 (N1 방에서 game.js가 연결)
@@ -86,9 +102,17 @@ export function createStore(PREFIX, APP_ID, DEFAULTS) {
       if (!obj || obj.app !== APP_ID || typeof obj.data !== "object") {
         throw new Error("이 사이트에서 만든 백업 파일이 아니에요.");
       }
+      // 계정으로 동기화 중이면 덮어쓰지 않고 '가져오기'로 올린다 (같은 기록은 두 번 들어가지 않고, 나중에 취소할 수 있다)
+      const room = syncRoom(PREFIX);
+      if (room) return importData({ [room]: obj.data }, "backup-file", "백업 파일 " + (obj.exportedAt || ""));
       KEYS.forEach(k => { if (k in obj.data) write(k, obj.data[k]); });
     },
-    resetAll() { KEYS.forEach(k => write(k, clone(DEFAULTS[k]))); },
+    // 기록 지우기. 계정으로 동기화 중이면 서버의 이 학습실 기록만 지운다
+    resetAll() {
+      const room = syncRoom(PREFIX);
+      if (room) return resetRoom(room);
+      KEYS.forEach(k => write(k, clone(DEFAULTS[k])));
+    },
 
     // 예전 버전(외운 단어만 저장)의 기록을 새 구조로 옮긴다
     migrateLegacy(vocabItems) {

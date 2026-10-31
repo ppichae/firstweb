@@ -132,7 +132,8 @@ export function createPartnerView() {
         '<div class="panel-head"><div><h2>공부 파트너</h2><p>서로의 학습 현황을 보고 응원해요. 상대에게는 닉네임·급수·학습 요약만 보이고, 오답이나 즐겨찾기 같은 개인 기록은 보이지 않아요.</p></div>' +
           '<div class="toolbar"><a class="btn ghost" href="#profile">프로필 바꾸기</a><button type="button" class="btn ghost" id="pt-refresh">새로고침</button></div></div>' +
         flash + body +
-        '<p class="hint">학습 요약은 지금 이 기기에 저장된 기록으로 계산해요. 여러 기기의 기록을 합치는 기능은 준비 중이에요.</p>' +
+        '<p class="hint">학습 요약은 계정에 저장된 기록(이 기기에서 아직 보내지 않은 기록 포함)으로 계산해요.</p>' +
+        '<p><a href="#records">내 기록(동기화·예전 기록 가져오기·백업) →</a></p>' +
         '<p><a href="#' + (me.jlpt_level === "N3" ? "n3" : "home") + '">← ' + esc(me.jlpt_level) + " 공부방으로 돌아가기</a></p>" +
       "</section>";
     ui.msg = "";

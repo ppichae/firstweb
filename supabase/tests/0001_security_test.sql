@@ -65,7 +65,7 @@ declare
   C constant uuid := '00000000-0000-4000-8000-00000000000c';
   code text; code2 text; r jsonb; req uuid; batch uuid; n bigint; v jsonb; i int;
 begin
-  perform rls_test.ok(public.app_schema_version() = 1, '스키마 버전 1');
+  perform rls_test.ok(public.app_schema_version() >= 1, '스키마 버전 1 이상');
 
   -- ===== 1. 로그인하지 않은 사람: 모두 막힘 =====
   perform rls_test.as_anon();

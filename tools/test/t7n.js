@@ -10,7 +10,7 @@
   check("기록 없을 때 0/기록 없음", JSON.stringify(tiles) === JSON.stringify(["0", "0", "0", "기록 없음"]), JSON.stringify(tiles));
   check("영역별 기록 없음", $$(".meter-val").every(m => m.textContent.startsWith("기록 없음")));
   check("약점: 기록 부족 안내", $(".home-grid").textContent.includes("기록이 부족"));
-  check("7일 그래프 빈 상태", $(".card-box .empty") && $(".card-box .empty").textContent.includes("학습 기록이 없어요"));
+  check("7일 그래프 빈 상태", $$(".card-box .hint").some(h => h.textContent.includes("학습 기록이 없어요")));
   check("D-day 표시", /^D-\d+$/.test($(".dday").textContent), $(".dday").textContent);
   check("시험 구성 110/55", $(".facts").textContent.includes("110분") && $(".facts").textContent.includes("55분"));
   // 기록 만들기: 문법 6문제(정답 3, 오답 3)

@@ -9,6 +9,7 @@ import { growthCardHTML } from "../badges.js";
 import { weekCardHTML } from "../weekchart.js";
 import { EXAM_INFO, examCardHTML } from "../exam.js";
 import { sprintSummary } from "./sprint.js";
+import { syncActive } from "../sync.js";
 
 function render(app) {
   const attempts = store.get("attempts");
@@ -22,7 +23,7 @@ function render(app) {
 
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>오늘의 학습</h2><p>모든 숫자는 이 브라우저에 저장된 실제 학습 기록으로 계산해요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>오늘의 학습</h2><p>모든 숫자는 ' + (syncActive() ? "내 계정에 저장된" : "이 브라우저에 저장된") + ' 실제 학습 기록으로 계산해요.</p></div></div>' +
 
       '<div class="home-top">' +
         ddayTileHTML(store) +
