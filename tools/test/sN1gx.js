@@ -8,9 +8,9 @@
   const until = async (fn, ms = 10000) => { const t = Date.now(); while (Date.now() - t < ms) { try { if (fn()) return true; } catch (e) { /* 아직 */ } await wait(200); } return false; };
   try {
     location.hash = "grammar"; await until(() => $("#g001"), 10000);
-    const ids = ["n1-g0003", "n1-g0080", "n1-g0158", "n1-g0160"];
+    const ids = ["n1-g0003", "n1-g0080", "n1-g0158", "n1-g0160", "n1-g0211", "n1-g0240", "n1-g0320"];
     // 목록은 60개씩 보여 주므로, 찾는 문형이 나올 때까지 '더 보기'를 누른다
-    for (let k = 0; k < 15 && !ids.every(id => document.getElementById(id)); k++) { const m = document.getElementById("g-more-btn"); if (!m) break; m.click(); await wait(300); }
+    for (let k = 0; k < 30 && !ids.every(id => document.getElementById(id)); k++) { const m = document.getElementById("g-more-btn"); if (!m) break; m.click(); await wait(300); }
     let shown = 0;
     for (const id of ids) {
       let el = document.getElementById(id);
