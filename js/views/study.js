@@ -8,7 +8,7 @@ import { runQuiz } from "../quizRunner.js";
 import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
 import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
-import { examplesFor, exampleHTML, EXAMPLE_KEYS } from "../examples.js";
+import { examplesFor, exampleHTML, plainOf, EXAMPLE_KEYS } from "../examples.js";
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
@@ -217,7 +217,7 @@ export function createVocabView(cfg) {
   function cardHTML(e) {
     const v = e.item, s = state(v.id);
     const open = ui.showAll || revealed.has(v.id);
-    const ex = v.examples && v.examples[0];
+    const ex = examplesFor(v.id)[0] ? null : v.examples && v.examples[0];   // 읽기가 붙은 예문이 있으면 그것을 보여 준다
     const rel = (label, arr) => arr && arr.length ? '<span class="rel"><b>' + label + '</b> <span lang="ja">' + arr.map(esc).join("、") + "</span></span>" : "";
     const meta = e.core ? esc(POS[v.pos] || v.pos) + " · " + esc(v.topic) + " · " + LEVEL[v.level] : esc(POS[v.pos] || v.pos) + " · " + esc(v.level);
     return '<article class="card' + (s.status === "known" ? " is-known" : "") + '">' +
@@ -268,7 +268,7 @@ export function createVocabView(cfg) {
       }
       const v = items().find(x => x.id === session.queue[0]);
       const card = state(v.id).srs || newCard();
-      const ex = v.examples && v.examples[0];
+      const ex = examplesFor(v.id)[0] ? null : v.examples && v.examples[0];
       el.innerHTML =
         '<p class="progress">남은 카드 <strong>' + session.queue.length + "</strong> · 복습 " + session.dueCount + " · 새 단어 " + session.newCount + "</p>" +
         '<div class="flash">' +
@@ -365,8 +365,9 @@ export function createVocabView(cfg) {
     const all = items();
     const v = all.find(x => x.id === q.wordId) || all.find(x => x.id === q.word);
     if (!v) return "";
-    const exs = (v.examples || []).slice(0, 2);
-    const own = exs.length ? [] : examplesFor(v.id).slice(0, 1);   // 기본 자료에 예문이 없으면 자체 제작 예문(읽기·쓰임 설명 포함)
+    // 읽기가 붙은 예문(읽기·쓰임 설명 포함)이 있으면 그것을 먼저, 같은 문장의 기본 예문은 빼고 보여 준다
+    const own = examplesFor(v.id).slice(0, 1);
+    const exs = (v.examples || []).filter(x => !own.some(e => plainOf(e.ja) === x.ja)).slice(0, own.length ? 1 : 2);
     const rel = (label, arr) => (arr && arr.length ? '<div class="lb-row"><span class="lb-label">' + label + '</span><span lang="ja">' + arr.map(esc).join("、") + "</span></div>" : "");
     let wrongPart = "";
     if (picked !== null && picked !== undefined && picked !== q.answer) {

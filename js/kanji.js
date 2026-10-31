@@ -82,11 +82,13 @@ export const wordsWith = (ch, roomId) => roomWords(roomId).filter(v => (v.word |
 
 export function examplesWith(ch, roomId) {
   const out = [];
-  if (roomId === "n1") [...((DB.vocab && DB.vocab.items) || []), ...((DB.grammar && DB.grammar.items) || [])].forEach(it =>
-    (it.examples || []).forEach(x => { if (x.ja.includes(ch) && out.length < 3) out.push(x); }));
-  // 자체 제작 예문(이 방의 것)도 함께: own에 원본을 담아 두면 화면에서 읽기(루비)와 함께 보여 준다
+  // 읽기가 붙은 예문(이 방의 것): own에 원본을 담아 두면 화면에서 읽기(루비)와 함께 보여 준다
   const keys = roomId === "n1" ? [EXAMPLE_KEYS.n1vocab, EXAMPLE_KEYS.n1grammar] : [EXAMPLE_KEYS.n3vocab, EXAMPLE_KEYS.n3grammar];
-  examplesWithChar(ch, keys).forEach(e => { if (out.length < 3) out.push({ ja: plainOf(e.ja), ko: e.ko, own: e }); });
+  const owned = new Map(); keys.forEach(k => ((EXTRA[k] && EXTRA[k].items) || []).forEach(e => owned.set(plainOf(e.ja), e)));
+  const push = x => { if (out.length < 3 && !out.some(o => o.ja === x.ja)) out.push(x); };
+  if (roomId === "n1") [...((DB.vocab && DB.vocab.items) || []), ...((DB.grammar && DB.grammar.items) || [])].forEach(it =>
+    (it.examples || []).forEach(x => { if (x.ja.includes(ch)) push(owned.has(x.ja) ? { ja: x.ja, ko: x.ko, own: owned.get(x.ja) } : x); }));
+  examplesWithChar(ch, keys).forEach(e => push({ ja: plainOf(e.ja), ko: e.ko, own: e }));
   return out;
 }
 
