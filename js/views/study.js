@@ -543,11 +543,13 @@ export function createGrammarView(cfg) {
 
   function itemHTML(e) {
     const g = e.item, s = state(g.id);
-    const ex = g.examples && g.examples[0];
+    const own = examplesFor(g.id);   // 읽기가 붙은 예문이 있으면 그것을 보여 준다
+    const ex = own[0] ? null : g.examples && g.examples[0];
     const more = e.core
       ? "<dl>" +
           "<div><dt>상세 설명</dt><dd>" + esc(g.explanation) + "</dd></div>" +
-          (g.examples.length > 1 ? "<div><dt>예문 더 보기</dt><dd>" + g.examples.slice(1).map(x =>
+          (own.length > 1 ? "<div><dt>예문 더 보기</dt><dd>" + own.slice(1).map(x => exampleHTML(x, true)).join("") + "</dd></div>"
+            : !own.length && g.examples.length > 1 ? "<div><dt>예문 더 보기</dt><dd>" + g.examples.slice(1).map(x =>
             '<span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko block">' + esc(x.ko) + "</span>").join("") + "</dd></div>" : "") +
           (g.similar && g.similar.length ? "<div><dt>유사 문법과의 차이</dt><dd>" + g.similar.map(x =>
             '<span class="block"><b lang="ja">' + esc(x.pattern) + "</b> — " + esc(x.difference) + "</span>").join("") + "</dd></div>" : "") +
@@ -580,7 +582,7 @@ export function createGrammarView(cfg) {
     const all = items();
     const g = all.find(x => x.id === q.wordId) || all.find(x => x.id === q.related);
     if (!g) return "";
-    const ex = (g.examples || [])[0];
+    const ex = examplesFor(g.id)[0] ? null : (g.examples || [])[0];
     let wrongPart = "";
     if (picked !== null && picked !== undefined && picked !== q.answer && q.generated) {
       const t = q.options[picked];
@@ -614,14 +616,14 @@ export function createGrammarView(cfg) {
       }
       const g = items().find(x => x.id === session.queue[0]);
       const card = state(g.id).srs || newCard();
-      const ex = g.examples && g.examples[0];
+      const ex = examplesFor(g.id)[0] ? null : g.examples && g.examples[0];
       el.innerHTML =
         '<p class="progress">남은 카드 <strong>' + session.queue.length + "</strong> · 복습 " + session.dueCount + " · 새 문형 " + session.newCount + "</p>" +
         '<div class="flash"><div class="flash-word sm" lang="ja">' + esc(g.pattern) + "</div>" +
           (session.flipped
             ? '<div class="flash-back"><div class="meaning">' + esc(g.meaning) + "</div>" +
               (g.connection ? '<div class="g-conn">접속 · ' + esc(g.connection) + "</div>" : "") +
-              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : "") + "</div>"
+              (ex ? '<div class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</div>" : (examplesFor(g.id)[0] ? '<div class="ex">' + exampleHTML(examplesFor(g.id)[0], false) + "</div>" : "")) + "</div>"
             : '<button type="button" class="btn" id="flip">답 보기</button>') +
         "</div>" +
         (session.flipped
