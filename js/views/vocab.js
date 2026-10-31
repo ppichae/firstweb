@@ -16,4 +16,5 @@ export const markWordWrong = v.markWordWrong;
 export const openVocabMode = v.openMode;
 export const vocabStudied = v.studiedCount;
 export const vocabTotal = v.total;
+export const vocabTouched = v.touchedCount;
 export default v.view;

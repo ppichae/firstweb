@@ -1,8 +1,8 @@
 // 홈 대시보드: 실제 학습 기록으로만 계산한 현황
 import { store } from "../store.js";
 import { esc, AREAS, pct, pctText } from "../util.js";
-import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW } from "../stats.js";
-import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal } from "./vocab.js";
+import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW, statsHelpHTML } from "../stats.js";
+import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal, vocabTouched } from "./vocab.js";
 import { grammarStudied, grammarTotal } from "./grammar.js";
 import { ddayTileHTML, bindDday } from "../dday.js";
 import { growthCardHTML } from "../badges.js";
@@ -35,11 +35,12 @@ function render(app) {
       "</div>" +
 
       '<div class="tiles">' +
-        tile("학습한 단어", vocabStudied(), "/ " + vocabTotal() + "개") +
+        tile("학습한 단어", vocabStudied(), "/ " + vocabTotal() + "개 · 공부 중 " + vocabTouched() + "개") +
         tile("공부한 문법", grammarStudied(), "/ " + grammarTotal() + "개") +
         tile("누적 문제 풀이", attempts.length, "문제") +
         tile("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "") +
       "</div>" +
+      statsHelpHTML("n1") +
       growthCardHTML("n1", "#badges") +
 
       '<div class="home-grid">' +

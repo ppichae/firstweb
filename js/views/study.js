@@ -77,7 +77,13 @@ export function createVocabView(cfg) {
   // 복습이 필요한 단어: 간격 반복 일정이 오늘 이전이거나, '몰라요'로 표시한 단어
   const needsReview = id => { const s = state(id); return s.status === "unknown" || (!!s.srs && s.srs.due <= today()); };
   const reviewWordIds = () => items().filter(v => needsReview(v.id)).map(v => v.id);
-  const studiedCount = () => items().filter(v => { const s = state(v.id); return s.srs || s.status; }).length;
+  // 학습한 단어: '외웠어요'를 눌렀거나, 퀴즈에서 맞혔거나, 카드에서 '알았어요·쉬워요'를 고른 단어 (같은 단어는 1개로 센다)
+  // 단어를 열어 보기만 했거나, 틀렸거나, '몰라요'만 누른 단어는 세지 않는다
+  const rightIds = () => new Set(st.get("attempts").filter(a => a.correct && a.area === "vocab" && a.snap && a.snap.wordId).map(a => a.snap.wordId));
+  const isStudied = (s, right, id) => s.status === "known" || s.right > 0 || !!s.cardOk || right.has(id);
+  const studiedCount = () => { const r = rightIds(); return items().filter(v => isStudied(state(v.id), r, v.id)).length; };
+  // 공부 중인 단어: 기록(카드·퀴즈·표시)은 있지만 아직 학습한 단어 기준에는 못 미친 단어
+  const touchedCount = () => { const r = rightIds(); return items().filter(v => { const s = state(v.id); return (s.srs || s.status || s.wrong) && !isStudied(s, r, v.id); }).length; };
 
   // 퀴즈에서 틀린 단어는 오늘 다시 복습하도록 일정을 당긴다
   function markWordWrong(id) {
@@ -300,6 +306,7 @@ export function createVocabView(cfg) {
       setState(id, s => {
         s.srs = schedule(s.srs, grade);
         if (grade === "again") s.status = "unknown";
+        if (grade === "good" || grade === "easy") s.cardOk = today();
       });
       st.logActivity("cards");
       st.logActivity("words");
@@ -345,6 +352,7 @@ export function createVocabView(cfg) {
         onAnswer: (it, ok) => {
           const wid = it.q.wordId || it.q.word;
           st.logActivity("words");
+          if (ok && wid && items().some(v => v.id === wid)) setState(wid, s => { s.right = (s.right || 0) + 1; });
           if (!ok && wid) { markWordWrong(wid); updateCounts(document); }
           emit(ok ? "correct" : "wrong");
         },
@@ -413,7 +421,7 @@ export function createVocabView(cfg) {
 
   return {
     view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks", EXAMPLE_KEYS[cfg.extraKey]], render },
-    needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, total: () => items().length,
+    needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, touchedCount, total: () => items().length,
   };
 }
 

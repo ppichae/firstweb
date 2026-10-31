@@ -4,7 +4,7 @@ import { n3store } from "../../store.js";
 import { syncActive } from "../../sync.js";
 import { esc, pct } from "../../util.js";
 import { daysUntil, examCardHTML, EXAM_INFO_N3 } from "../../exam.js";
-import { noteEntries } from "../../stats.js";
+import { noteEntries, statsHelpHTML } from "../../stats.js";
 import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone, coreUnits, openBasics } from "./basics.js";
@@ -55,12 +55,13 @@ function render(app) {
       "</div>" +
 
       '<div class="tiles">' +
-        tile("학습한 단어", n3vocab.studiedCount(), "/ " + n3vocab.total() + "개") +
+        tile("학습한 단어", n3vocab.studiedCount(), "/ " + n3vocab.total() + "개 · 공부 중 " + n3vocab.touchedCount() + "개") +
         tile("공부한 문법", n3grammar.studiedCount(), "/ " + n3grammar.total() + "개") +
         tile("누적 문제 풀이", attempts.length, attempts.length ? "정답률 " + pct(correct, attempts.length) + "%" : "문제") +
         tile("연속 학습", streak() + "일", "오늘 학습 " + todayCount() + "회") +
       "</div>" +
 
+      statsHelpHTML("n3") +
       growthCardHTML("n3", "#n3/badges") +
       weekCardHTML(n3store) +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정</h3><span class="badge">안내용</span></div>' +

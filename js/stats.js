@@ -81,3 +81,16 @@ export const judgedAreas = () => Object.entries(areaStats()).filter(([, r]) => r
 export function weakAreas() {
   return judgedAreas().filter(([, r]) => r.rate < WEAK_BELOW).sort((a, b) => a[1].rate - b[1].rate);
 }
+
+// 홈 숫자 칸의 기준 설명 (N1·N3 같은 기준). 화면의 숫자와 같은 규칙을 글로 적은 것이다
+export function statsHelpHTML(roomId) {
+  const rows = [
+    ["학습한 단어", "'외웠어요'를 눌렀거나, 퀴즈에서 한 번 이상 맞혔거나, 플래시카드에서 '알았어요·쉬워요'를 고른 단어예요. 같은 단어는 여러 번 공부해도 1개로 세요."],
+    ["공부 중", "카드·퀴즈·표시 기록은 있지만 아직 위 기준에 못 미친 단어예요. 틀렸거나 '몰라요'만 누른 단어가 여기에 들어가요. 단어를 열어 보기만 한 것은 세지 않아요."],
+    ["공부한 문법", "문법 화면에서 '공부했어요'를 누른 문형이에요."],
+    ["누적 문제 풀이", "지금까지 푼 문제 수예요. 같은 문제를 다시 풀면 다시 세요. 정답률은 맞힌 수 ÷ 푼 수예요."],
+  ];
+  if (roomId === "n3") rows.push(["연속 학습", "문제를 풀었거나 카드·글자 연습 등 학습 기록이 있는 날이 오늘(또는 어제)부터 며칠 이어졌는지예요."]);
+  return '<details class="voice-box stat-help"><summary>숫자는 이렇게 세요</summary><dl class="stat-rules">' +
+    rows.map(([k, v]) => '<div><dt>' + k + "</dt><dd>" + v + "</dd></div>").join("") + "</dl></details>";
+}

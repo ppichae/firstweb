@@ -1023,6 +1023,10 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .say-btn.on { border-color: var(--ink); background: var(--ink-soft); }
 .voice-box { margin-top: 8px; font-size: 14px; }
 .voice-box summary { cursor: pointer; color: var(--muted); }
+.stat-help { margin-top: 0; }
+.stat-rules { margin: 8px 0 0; display: grid; gap: 8px; }
+.stat-rules dt { font-weight: 600; color: var(--fg); }
+.stat-rules dd { margin: 2px 0 0; color: var(--muted); }
 .voice-set { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 8px; }
 .voice-set select { max-width: 100%; min-height: 40px; }
 .voice-set label { display: inline-flex; gap: 6px; align-items: center; max-width: 100%; }

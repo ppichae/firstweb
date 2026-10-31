@@ -31,7 +31,7 @@
     check("퀴즈에 후리가나 보이기/숨기기 버튼", !!$("[data-furi-toggle]"));
     const p = $("#quiz .q-text");
     check("뜻 고르기: 문제 단어에 후리가나 또는 가나 단어", !!p.querySelector("ruby") || !/[一-鿿]/.test((p.textContent.match(/「(.*?)」/) || ["", ""])[1]), p.innerHTML.slice(0, 80));
-    check("뜻 고르기: 문제에 발음 버튼", !!p.querySelector(".say-btn"));
+    check("뜻 고르기: 답 고르기 전 발음 버튼 없음", !p.querySelector(".say-btn"));
     const set1 = await playSet(true);
     check("한 세트 10문제, 같은 단어 두 번 안 나옴", set1.filter(Boolean).length === 10 && new Set(set1).size === 10, set1.join(","));
     const wrong1 = attempts().slice(-10).filter(a => !a.correct).map(a => a.snap.wordId);

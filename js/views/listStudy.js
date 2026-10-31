@@ -2,7 +2,6 @@
 // 단어·문법 화면(study.js)과 N3 시험 대비 화면(n3/practice.js)이 함께 쓴다.
 import { sourceById, EXTRA } from "../data.js";
 import { esc, shuffle } from "../util.js";
-import { sayBtn } from "../speech.js";
 
 export const LIST_POS = {
   noun: "명사", "noun-suru": "명사 · する동사", verb: "동사", "i-adj": "い형용사", "na-adj": "な형용사",
@@ -71,7 +70,7 @@ export function buildQuestion(v, type, set, pool, idPrefix = "gen") {
     id: idPrefix + "-" + type + "-" + v.id, area: set.area, generated: true, wordId: v.id,
     kind: kinds[type], prompt,
     // 뜻 고르기: 단어에 후리가나와 발음 버튼 (읽기 고르기는 읽기가 정답이라 붙이지 않는다)
-    promptHTML: type === "meaning" && v.word ? "「" + wordRubyHTML(v.word, v.reading) + "」の意味は？ " + sayBtn(v.reading || v.word, "단어 발음 듣기") : null,
+    promptHTML: type === "meaning" && v.word ? "「" + wordRubyHTML(v.word, v.reading) + "」の意味は？" : null,   // 답을 고르기 전에는 발음 버튼을 두지 않는다(답한 뒤 학습 정보에서 들을 수 있다)
     options: opts.map(o => o[field]),
     answer: opts.indexOf(v),
     explanation: "「" + head(v) + "」" + (v.reading && v.reading !== head(v) ? "(" + v.reading + ")" : "") + "은 '" + v.meaning + "'라는 뜻이에요.",
