@@ -25,12 +25,26 @@ let loginError = "";   // Google에서 로그인을 취소하거나 실패하고
 export const peekLoginError = () => loginError;
 export const clearLoginError = () => { loginError = ""; };
 
+// 같은 이름의 작업을 이 페이지 안에서 하나씩 차례로 실행하는 잠금 (Supabase 도구의 lock 자리에 넣는다)
+const lockChains = {};
+function pageLock(name, _timeout, fn) {
+  const prev = lockChains[name] || Promise.resolve();
+  const run = prev.catch(() => {}).then(fn);
+  lockChains[name] = run.catch(() => {});
+  return run;
+}
+
 // 사이트를 열 때 한 번 부른다. 연결 전에는 아무 일도 하지 않는다
 export async function initAuth(onChange) {
   if (!authConfigured()) return;
   const { createClient } = await import(SUPABASE_JS);
   client = createClient(AUTH_CONFIG.supabaseUrl, AUTH_CONFIG.publishableKey, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" },
+    auth: {
+      persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce",
+      // 브라우저 잠금(navigator.locks) 대신 이 페이지 안에서만 순서를 지키는 잠금을 쓴다.
+      // 브라우저 잠금이 풀리지 않아 로그인 뒤 서버 요청이 멈추는 문제가 있어서 바꿨다
+      lock: pageLock,
+    },
   });
   // 처음 연결할 때 Supabase 도구가 주소의 일회용 코드(?code=…)를 로그인 상태로 바꾼다. 실패하면 그 이유를 받아 둔다
   const init = await client.auth.initialize();
@@ -51,7 +65,8 @@ export async function initAuth(onChange) {
   client.auth.onAuthStateChange((_event, s) => {
     const before = session ? session.user.id : null, after = s ? s.user.id : null;
     session = s;
-    if (before !== after && onChange) onChange();
+    // 이 알림 안에서 바로 서버에 요청하면 Supabase 도구가 잠겨서 멈춘다. 알림이 끝난 뒤에 처리한다
+    if (before !== after && onChange) setTimeout(onChange, 0);
   });
 }
 
