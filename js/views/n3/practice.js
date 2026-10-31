@@ -17,6 +17,7 @@ const hasKanji = s => /[一-鿿々]/.test(s);
 const typeLabel = key => (DRILLS.find(d => d[0] === key) || [key, key])[1];
 
 const ui = { mode: "drill", drill: DRILLS[0][0] };
+// 예전 '독해·청해·모의고사' 칸은 실제 자료가 생기면 다시 연다
 let test = null;      // 진행 중이거나 막 끝난 테스트
 let timer = null;
 
@@ -42,9 +43,9 @@ function render(app) {
   app.innerHTML =
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>시험 대비</h2><p>영역별로 연습하고, 시간을 재며 풀어 본 뒤 약한 유형을 확인해요.</p></div></div>' +
-      '<p class="notice"><b>자체 제작 연습 문제</b>예요. N3 단어·문형 목록으로 자동으로 만든 문제라 실제 JLPT 기출문제나 공식 문제 형식이 아니에요. 뜻은 AI가 썼고 검수 전이에요.</p>' +
+      '<p class="notice"><b>자체 제작 연습 문제</b>예요. N3 단어·문형 목록으로 자동으로 만든 문제라 실제 JLPT 기출문제나 공식 문제 형식이 아니에요.</p>' +
       '<div class="segmented" role="tablist" aria-label="시험 대비">' +
-        seg("drill", "영역별 연습") + seg("test", "시간 제한 테스트") + seg("history", "결과 기록") + seg("pending", "독해·청해·모의고사") +
+        seg("drill", "영역별 연습") + seg("test", "시간 제한 테스트") + seg("history", "결과 기록") +
       "</div>" +
       '<div id="mode" class="stack"></div>' +
     "</section>";
@@ -55,8 +56,9 @@ function render(app) {
     ui.mode = s.dataset.mode; render(app);
   };
   const el = app.querySelector("#mode");
-  if (!ready && ui.mode !== "pending") { el.innerHTML = '<p class="notice">콘텐츠 준비 중이에요. N3 단어·문형 자료를 불러오지 못했어요.</p>'; return; }
-  ({ drill: renderDrill, test: renderTest, history: renderHistory, pending: renderPending })[ui.mode](el, app);
+  if (!ready) { el.innerHTML = '<p class="notice">N3 단어·문형 자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>'; return; }
+  if (ui.mode === "pending") ui.mode = "drill";
+  ({ drill: renderDrill, test: renderTest, history: renderHistory })[ui.mode](el, app);
 }
 
 function seg(key, label) {
@@ -245,10 +247,5 @@ function renderHistory(el) {
     "</article>";
 }
 
-function renderPending(el) {
-  el.innerHTML = '<div class="pending-list">' +
-    [["독해 연습", "N3 독해 지문 자료가 아직 없어요."], ["청해 연습", "N3 청해 스크립트·음성 자료가 아직 없어요."], ["실전 구성 모의고사", "실제 시험 구성(언어지식·독해·청해)으로 만든 문제 세트가 아직 없어요."]]
-      .map(([t, n]) => '<article class="card-box pending"><h3>' + t + '</h3><p class="hint">콘텐츠 준비 중이에요. ' + n + "</p></article>").join("") + "</div>";
-}
 
 export default { id: "n3/exam", label: "시험 대비", jp: "試験対策", needs: ["n3vocab", "n3grammar", "sources"], render, leave() { stopTimer(); test = null; } };

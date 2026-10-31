@@ -158,11 +158,11 @@ export function createBadgesView(id, roomId, homeId) {
           '<article class="card-box"><h3>오늘의 작은 목표</h3><ul class="goals">' + goals.map(g =>
             '<li class="' + (g.done ? "done" : "") + '"><span>' + (g.done ? "✅ " : "⬜ ") + esc(g.label) + "</span><b>" + g.n + " / " + g.need + "</b></li>").join("") + "</ul></article>" +
           CATS.map(([c, label]) => {
-            const items = list.filter(b => b.cat === c);
+            const items = list.filter(b => b.cat === c && !b.pending);   // 아직 받을 수 없는 배지(자료가 없는 영역)는 보여 주지 않는다
             if (!items.length) return "";
             return '<article class="card-box"><h3>' + label + '</h3><ul class="medals">' + items.map(b =>
               '<li class="medal-item' + (b.got ? " got" : "") + (b.pending ? " pending" : "") + '"><b>' + b.emoji + " " + esc(b.name) + "</b><small>" + esc(b.desc) + "</small>" +
-              '<small class="m-state">' + (b.got ? "받은 날 " + fmtDate(b.at) : b.pending ? "자료 준비 중" : "아직 못 받음") + "</small></li>").join("") + "</ul></article>";
+              '<small class="m-state">' + (b.got ? "받은 날 " + fmtDate(b.at) : "아직 못 받음") + "</small></li>").join("") + "</ul></article>";
           }).join("") +
         "</section>";
     },

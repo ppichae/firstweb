@@ -27,7 +27,7 @@ export function createKanjiView(id, roomId) {
     appRef = app;
     const list = roomKanjiList(roomId);
     if (!list.length || !EXTRA.kanji) {
-      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>한자</h2></div></div><p class="notice">콘텐츠 준비 중이에요. 한자 자료 파일을 불러오지 못했어요.</p></section>';
+      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>한자</h2></div></div><p class="notice">자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요. 한자 자료 파일을 불러오지 못했어요.</p></section>';
       return;
     }
     const seen = list.filter(c => (st.get("kanji")[c] || {}).seen).length;
@@ -55,13 +55,13 @@ export function createKanjiView(id, roomId) {
     if (ui.mode === "quiz") { renderQuiz(box); return; }
     if (ui.mode === "review") { renderReview(box); return; }
     box.innerHTML =
-      '<p class="notice">한자 정보는 AI가 작성했고 아직 <b>검수 필요</b> 상태예요. 어원과 학습용 연상 이야기는 따로 표시했어요. 단어 화면에서도 단어 아래의 한자 버튼을 누르면 같은 창이 열려요.</p>' +
+      '<p class="notice">단어 화면에서도 단어 아래의 한자 버튼을 누르면 같은 창이 열려요. 자료 정보는 각 한자 창 맨 아래에 있어요.</p>' +
       '<div class="filters"><div class="field search"><label for="k-q">검색</label><input id="k-q" type="search" placeholder="한자, 한국 한자음·뜻, 읽기로 찾기" value="' + esc(ui.q) + '"></div></div>' +
       '<div class="toolbar">' + [["all", "전체"], ["unseen", "아직 안 본 한자"], ["seen", "살펴본 한자"], ["fav", "즐겨찾기"]].map(([k, l]) =>
         '<button type="button" class="chip" data-kf="' + k + '" aria-pressed="' + (ui.filter === k) + '">' + l + "</button>").join("") + "</div>" +
       '<div class="kanji-grid" id="k-grid"></div>' +
       '<article class="card-box"><h3>이 방 단어 목록에 나오는 다른 한자 <small class="hint" id="k-other-n"></small></h3>' +
-        '<p class="hint">상세 정보는 준비 중이에요. 누르면 이 한자가 쓰인 단어를 볼 수 있어요.</p><div class="kanji-others" id="k-others"></div></article>';
+        '<p class="hint">누르면 이 한자가 쓰인 단어를 볼 수 있어요.</p><div class="kanji-others" id="k-others"></div></article>';
     app.querySelector("#k-q").oninput = e => { ui.q = e.target.value.trim(); drawGrid(app); };
     drawGrid(app);
     const others = otherKanji();

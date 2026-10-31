@@ -32,9 +32,9 @@ export function badges(item) {
   const src = item.source || {};
   if (src.type === "official") out.push('<span class="badge ok">공식 자료</span>');
   else if (src.type === "pdf") out.push('<span class="badge">' + esc(src.label || "내 PDF") + "</span>");
-  else out.push('<span class="badge ai">AI 생성 연습문제</span>');
+  else out.push('<span class="badge">' + (item.options ? "자체 제작 문제" : "학습 자료") + "</span>");
   if (src.url) out.push('<a class="badge" href="' + esc(src.url) + '" target="_blank" rel="noopener">출처</a>');
-  if (item.review !== "verified") out.push('<span class="badge warn">검수 필요</span>');
+  // 검수 상태는 자료(review 값)에 그대로 두고, 화면에는 '검수 필요' 표시를 따로 하지 않는다
   return '<span class="badges">' + out.join("") + "</span>";
 }
 

@@ -832,3 +832,18 @@ a:not(.btn):not(.tab):not(.room):not(.room-switch):hover { background: var(--ink
 .week-bar.zero { display: none; }
 .srs-help { font-size: 12.5px; }
 @media (max-width: 420px) { .grades { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- 고도화 A: 다크 모드 버튼 · 별표 ---------- */
+header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+.theme-toggle {
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 999px;
+  padding: 8px 14px; min-height: 40px; font-size: 14px; font-weight: 600; white-space: nowrap;
+}
+.theme-toggle:hover { border-color: var(--ink); }
+@media (max-width: 480px) { header.site { grid-template-columns: 1fr; } .theme-toggle { justify-self: start; order: -1; } }
+/* 별표·표시 버튼: 손가락으로 누를 때 파란 하이라이트나 초점 테두리가 남지 않게 (키보드로 이동할 때만 테두리) */
+.mark, .seg, .chip, .kj, .opt { -webkit-tap-highlight-color: transparent; }
+.mark:focus:not(:focus-visible) { outline: none; }
+.mark.star { color: var(--muted); }
+.mark.star[aria-pressed="true"] { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); }
+.kd:focus { outline: none; }

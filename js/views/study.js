@@ -81,19 +81,20 @@ export function createVocabView(cfg) {
   function render(app) {
     const all = items();
     if (!all.length) {
-      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>단어</h2></div></div><p class="notice">콘텐츠 준비 중이에요. 단어 자료 파일을 불러오지 못했어요.</p></section>';
+      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>단어</h2></div></div><p class="notice">자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요. 단어 자료 파일을 불러오지 못했어요.</p></section>';
       return;
     }
     const hasCore = !!coreData();
+    if (ui.mode === "compare" && !(hasCore && (coreData().confusables || []).length)) ui.mode = "list";
     app.innerHTML =
       '<section class="panel">' +
         '<div class="panel-head"><div><h2>단어</h2><p id="vocab-sub"></p></div>' +
           '<div class="toolbar"><div class="progress"><strong id="known-count">0</strong> / ' + all.length + ' 외움 · 복습 필요 <strong id="due-count">0</strong></div>' +
           '<div class="bar" aria-hidden="true"><span id="known-bar" style="width:0%"></span></div></div></div>' +
         '<div class="segmented" role="tablist" aria-label="단어 학습 방식">' +
-          seg(ui, "list", "단어장") + seg(ui, "cards", "플래시카드") + seg(ui, "quiz", "퀴즈") + seg(ui, "compare", "헷갈리는 단어") +
+          seg(ui, "list", "단어장") + seg(ui, "cards", "플래시카드") + seg(ui, "quiz", "퀴즈") + ((coreData() && (coreData().confusables || []).length) ? seg(ui, "compare", "헷갈리는 단어") : "") +
         "</div>" +
-        (hasCore ? "" : '<p class="notice">단어의 일본어 표기와 읽기는 시험 대비 교재의 단어 목록을 참고했어요. 한국어 뜻은 AI가 새로 써서 <b>검수 필요</b> 상태이고, 예문은 <b>자료 준비 중</b>이에요.</p>') +
+        (hasCore ? "" : '<p class="notice">단어의 표기와 읽기는 일본어 사전(JMdict)과 대조했어요. 한국어 뜻은 자체 제작 학습 자료예요.</p>') +
         '<div id="mode" class="stack"></div>' +
       "</section>";
     app.onclick = e => {
@@ -224,7 +225,7 @@ export function createVocabView(cfg) {
         (open
           ? (v.reading && v.reading !== v.word ? '<span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
             '<span class="meaning">' + esc(v.meaning) + "</span>" +
-            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : '<span class="ex">예문: <span class="badge">자료 준비 중</span></span>') +
+            (ex ? '<span class="ex"><span class="jp" lang="ja">' + esc(ex.ja) + "</span>" + esc(ex.ko) + "</span>" : "") +
             (e.core
               ? '<span class="rels">' + rel("유의어", v.synonyms) + rel("반의어", v.antonyms) + rel("자주 쓰는 표현", v.collocations) + "</span>" +
                 (v.usage ? '<span class="usage">' + esc(v.usage) + "</span>" : "") +
@@ -363,7 +364,7 @@ export function createVocabView(cfg) {
   /* ---------- 헷갈리는 단어 ---------- */
   function renderCompare(el) {
     const list = (coreData() && coreData().confusables) || [];
-    if (!list.length) { el.innerHTML = '<p class="notice">콘텐츠 준비 중이에요. 이 방의 헷갈리는 단어 비교 자료가 아직 없어요.</p>'; return; }
+    if (!list.length) { el.innerHTML = '<p class="notice">자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요. 이 방의 헷갈리는 단어 비교 자료가 아직 없어요.</p>'; return; }
     el.innerHTML = '<div class="compare-list">' + list.map(c =>
       '<article class="compare">' +
         '<div class="compare-head"><h3>' + esc(c.title) + "</h3>" + badges(c) + "</div>" +
@@ -417,11 +418,11 @@ export function createGrammarView(cfg) {
   function render(app) {
     const all = items();
     if (!all.length) {
-      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>문법</h2></div></div><p class="notice">콘텐츠 준비 중이에요. 문법 자료 파일을 불러오지 못했어요.</p></section>';
+      app.innerHTML = '<section class="panel"><div class="panel-head"><div><h2>문법</h2></div></div><p class="notice">자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요. 문법 자료 파일을 불러오지 못했어요.</p></section>';
       return;
     }
     const subs = {
-      learn: coreData() ? "문형을 펼치면 상세 설명과 예문이 나와요. 기본 문법과 참고 목록 문형을 한곳에 모았어요." : "문형과 뜻을 보고, 공부한 문형에 표시해요. 설명·예문은 자료 준비 중이에요.",
+      learn: coreData() ? "문형을 펼치면 상세 설명과 예문이 나와요. 기본 문법과 참고 목록 문형을 한곳에 모았어요." : "문형과 뜻을 보고, 공부한 문형에 표시해요.",
       cards: "문형을 보고 뜻을 떠올린 뒤, 기억한 정도를 골라요.",
       quiz: "이 방의 문법 범위에서 문제를 풀어요. 틀린 문제는 오답 노트에 저장돼요.",
     };
@@ -433,7 +434,7 @@ export function createGrammarView(cfg) {
         '<div class="segmented" role="tablist" aria-label="문법 학습 방식">' +
           seg(ui, "learn", "문법 학습") + seg(ui, "cards", "플래시카드") + seg(ui, "quiz", "문법 퀴즈") +
         "</div>" +
-        (coreData() ? "" : '<p class="notice">문형 표기는 시험 대비 교재의 문형 목록을 참고했어요. 뜻은 AI가 새로 써서 <b>검수 필요</b> 상태이고, 접속 형태와 예문은 <b>자료 준비 중</b>이에요.</p>') +
+        (coreData() ? "" : '<p class="notice">문형과 뜻을 익히고, 문법 퀴즈로 확인해 보세요. 뜻은 자체 제작 학습 자료예요.</p>') +
         '<div id="mode" class="stack"></div>' +
       "</section>";
     app.onclick = e => {
@@ -534,8 +535,7 @@ export function createGrammarView(cfg) {
           (g.caution ? "<div><dt>사용 시 주의사항</dt><dd>" + esc(g.caution) + "</dd></div>" : "") +
           (g.examPoint ? "<div><dt>시험에서 이렇게 물어볼 수 있어요</dt><dd>" + esc(g.examPoint) + "</dd></div>" : "") +
         "</dl>" + badges(g).replace(/<\/span>$/, alsoBadge(e) + "</span>")
-      : "<dl><div><dt>설명 · 접속 형태 · 예문</dt><dd><span class=\"badge\">자료 준비 중</span></dd></div>" +
-          "<div><dt>실린 목록</dt><dd>" + listBadges(g) + "</dd></div></dl>";
+      : "<dl><div><dt>자료 정보</dt><dd>" + listBadges(g) + "</dd></div></dl>";
     return '<div class="g-item" id="' + g.id + '">' +
       '<div><div class="g-pattern" lang="ja">' + esc(g.pattern) + "</div>" +
         (g.reading && !e.core ? '<div class="g-conn" lang="ja">' + esc(g.reading) + "</div>" : "") +

@@ -17,7 +17,7 @@ export const coreUnits = data => data.units.filter(u => !u.track);
 function render(app) {
   const data = EXTRA.n3basics;
   if (!data) {
-    app.innerHTML = '<section class="panel"><h2>기초 과정</h2><p class="notice">콘텐츠 준비 중이에요. 기초 과정 자료 파일을 불러오지 못했어요.</p></section>';
+    app.innerHTML = '<section class="panel"><h2>기초 과정</h2><p class="notice">자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요. 기초 과정 자료 파일을 불러오지 못했어요.</p></section>';
     return;
   }
   const units = coreUnits(data);
@@ -29,7 +29,7 @@ function render(app) {
       '<div class="panel-head"><div><h2>기초 과정</h2>' +
         "<p>히라가나·가타카나부터 기본 문장, 동사·형용사 활용까지 N3 공부에 꼭 필요한 바탕을 빠르게 익혀요.</p></div>" +
         '<div class="progress">히라가나 <strong>' + h.done + "</strong>/" + h.total + " · 가타카나 <strong>" + k.done + "</strong>/" + k.total + " · 단원 <strong>" + done + "</strong>/" + units.length + "</div></div>" +
-      '<p class="notice"><b>자체 제작 학습 자료</b> · AI가 새로 쓴 설명과 연습 문제예요. 공식 JLPT 자료가 아니고, 아직 <b>검수 필요</b> 상태예요.</p>' +
+      '<p class="notice"><b>자체 제작 학습 자료</b>예요. 실제 시험 형식은 홈의 「JLPT 공식 문제 예시」에서 볼 수 있어요.</p>' +
       '<div class="segmented" role="tablist" aria-label="기초 과정">' +
         seg("hira", "히라가나") + seg("kata", "가타카나") + seg("mix", "문자 통합 학습") + seg("units", "핵심 단원") + seg("pending", "단어·한자") +
       "</div>" +
@@ -84,7 +84,7 @@ function renderUnit(el, app, data) {
     '<div class="toolbar unit-nav"><button type="button" class="link-btn" id="back">← 단원 목록</button><span class="progress">단원 <strong>' + (idx + 1) + '</strong> / ' + coreUnits(data).length + '</span></div>' +
     '<article class="card-box">' +
       '<div class="q-top"><h3>' + (idx + 1) + ". " + esc(u.title) + "</h3>" +
-        '<span class="badges"><span class="badge ai">자체 제작 · AI 작성</span><span class="badge warn">검수 필요</span></span></div>' +
+        '<span class="badges"><span class="badge">학습 자료</span></span></div>' +
       '<p class="hint">목표: ' + esc(u.goal) + "</p>" +
       '<h4 class="step">① 개념</h4><ul class="points">' + u.points.map(p => "<li>" + esc(p) + "</li>").join("") + "</ul>" +
       '<h4 class="step">② 예문</h4><ul class="examples">' + u.examples.map((x, i) =>

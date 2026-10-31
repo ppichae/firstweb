@@ -152,10 +152,9 @@ function draw() {
     '<div class="kd-head"><div class="kd-char" lang="ja">' + esc(ch) + "</div>" +
       '<div class="kd-title">' +
         (info
-          ? '<div class="kd-ko">' + (info.ko ? (info.ko.hun ? esc(info.ko.hun) + " " : "<small class=\"hint\">(뜻 미확인)</small> ") + "<b>" + esc(info.ko.eum) + "</b>" : "한국 한자음 없음") + "</div>" +
-            '<div class="kd-mean">' + esc(info.meaning) + "</div>" +
-            '<span class="badges"><span class="badge ai">AI 작성</span><span class="badge warn">검수 필요</span></span>'
-          : '<div class="kd-ko">상세 정보 준비 중</div><p class="hint">아직 상세 자료가 없는 한자예요. 이 방 단어 목록에서 쓰인 단어만 보여 드려요.</p>') +
+          ? '<div class="kd-ko">' + (info.ko ? (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b>" : "") + "</div>" +
+            '<div class="kd-mean">' + esc(info.meaning) + "</div>"
+          : '<p class="hint">아래 단어들로 이 한자를 익혀 보세요.</p>') +
       "</div>" +
       '<div class="kd-actions"><button type="button" class="mark star" data-kfav aria-pressed="' + !!rec.fav + '" aria-label="즐겨찾기">' + (rec.fav ? "★" : "☆") + "</button>" +
       '<button type="button" class="btn ghost sm" data-close>닫기</button></div>' +
@@ -163,8 +162,8 @@ function draw() {
 
   const wordBox = word
     ? '<div class="kd-word"><span class="hint">누른 단어</span> <b lang="ja">' + esc(word) + "</b>" + (reading ? ' <span lang="ja">(' + esc(reading) + ")</span>" : "") +
-      (inWord ? '<div>이 단어에서 <b lang="ja">' + esc(ch) + "</b>의 읽기: <b class=\"rd-in\" lang=\"ja\">" + esc(inWord[1]) + "</b> <small class=\"hint\">(음독·훈독 자료로 자동으로 맞춘 결과)</small></div>"
-        : '<div class="hint">한자별 읽기는 단어 속 모든 한자의 자료가 있고 한 가지로만 맞춰질 때 보여 드려요.</div>') + "</div>"
+      (inWord ? '<div>이 단어에서 <b lang="ja">' + esc(ch) + "</b>의 읽기: <b class=\"rd-in\" lang=\"ja\">" + esc(inWord[1]) + "</b></div>"
+        : "") + "</div>"
     : "";
 
   const body = info
@@ -176,15 +175,17 @@ function draw() {
       '<section class="kd-sec"><h4>모양</h4><dl class="kd-dl">' +
         '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" +
         "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식" + (info.strokesCheck ? " · KanjiVG 획순 데이터와 일치" : "") + ")</small></dd></div>" +
-        "<div><dt>구성 요소</dt><dd>" + (info.components.length ? info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") : '<span class="hint">확인 필요</span>') + "</dd></div>" +
-        "<div><dt>형성 원리</dt><dd>" + (info.formation ? esc(info.formation) : '<span class="hint">확인 필요</span>') + "</dd></div></dl></section>" +
-      '<section class="kd-sec"><h4>어원과 연상</h4>' +
-        '<div class="kd-box origin"><div class="kd-box-label">어원 설명 <span class="badge warn">검수 필요</span></div>' +
-          (info.origin ? "<p>" + esc(info.origin) + "</p>" : '<p class="hint">확실한 자료를 확인하지 못해서 비워 두었어요.</p>') + "</div>" +
-        (info.mnemonic
-          ? '<div class="kd-box story"><div class="kd-box-label">학습용 창작 이야기 <span class="badge ai">실제 어원 아님</span></div><p>' + esc(info.mnemonic) + "</p></div>"
-          : "") +
-      "</section>"
+        // 구성 요소·형성 원리는 근거가 확인된 경우(…Source)에만 보여 준다
+        (info.components.length && info.componentsSource ? "<div><dt>구성 요소</dt><dd>" + info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") + "</dd></div>" : "") +
+        (info.formation && info.formationSource ? "<div><dt>형성 원리</dt><dd>" + esc(info.formation) + "</dd></div>" : "") +
+      "</dl></section>" +
+      // 어원은 출처가 확인된 것만 '어원 이야기'로, 기억을 돕는 이야기는 '연상 이야기'로 보여 준다
+      ((info.origin && info.originSource) || info.mnemonic
+        ? '<section class="kd-sec"><h4>기억하기</h4>' +
+            (info.origin && info.originSource ? '<div class="kd-box origin"><div class="kd-box-label">어원 이야기</div><p>' + esc(info.origin) + '</p><small class="hint">출처: ' + esc(info.originSource) + "</small></div>" : "") +
+            (info.mnemonic ? '<div class="kd-box story"><div class="kd-box-label">연상 이야기</div><p>' + esc(info.mnemonic) + "</p></div>" : "") +
+          "</section>"
+        : "")
     : "";
 
   const related =
@@ -194,25 +195,25 @@ function draw() {
           (words.length > 12 ? '<p class="hint">나머지 ' + (words.length - 12) + "개는 단어 화면에서 이 한자로 검색해 보세요.</p>" : "")
         : '<p class="hint">이 방 단어 목록에는 이 한자가 쓰인 단어가 없어요.</p>') +
     "</section>" +
-    '<section class="kd-sec"><h4>예문</h4>' +
-      (exs.length ? '<ul class="kd-ex">' + exs.map(x => '<li><span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></li>").join("") + "</ul>"
-        : '<p class="hint">예문 준비 중이에요.</p>') +
-    "</section>";
+    (exs.length ? '<section class="kd-sec"><h4>예문</h4><ul class="kd-ex">' + exs.map(x => '<li><span class="jp block" lang="ja">' + esc(x.ja) + '</span><span class="ko">' + esc(x.ko) + "</span></li>").join("") + "</ul></section>" : "");
 
-  const links = info
+  const links = info && (info.similar.length || sameRad.length)
     ? '<section class="kd-sec"><h4>함께 보면 좋은 한자</h4><dl class="kd-dl">' +
-        "<div><dt>비슷한 모양</dt><dd>" + (info.similar.length ? linkChips(info.similar) : '<span class="hint">없음</span>') + "</dd></div>" +
-        "<div><dt>같은 부수 (자료에 있는 한자)</dt><dd>" + (sameRad.length ? linkChips(sameRad) : '<span class="hint">없음</span>') + "</dd></div></dl></section>"
+        (info.similar.length ? "<div><dt>비슷한 모양</dt><dd>" + linkChips(info.similar) + "</dd></div>" : "") +
+        (sameRad.length ? "<div><dt>같은 부수</dt><dd>" + linkChips(sameRad) + "</dd></div>" : "") + "</dl></section>"
     : "";
 
+  // 자료 정보: 화면 맨 아래에 작게 (어디서 가져왔고 무엇과 대조했는지)
+  const naver = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(ch);
   const foot =
+    '<p class="kd-foot">자료 정보 · ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나오는 한자예요(JLPT는 공식 한자 급수 목록을 공개하지 않아요)." +
+      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기·한국 한자음: KANJIDIC2와 대조" : "", "뜻 설명·연상 이야기: 자체 제작 학습 자료"].filter(Boolean).join(" · ") : "") +
+      '<br><a href="' + naver + '" target="_blank" rel="noopener">네이버 한자사전에서 보기</a></p>';
 
-    '<p class="kd-foot">학습 수준: ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나와요. JLPT는 공식 한자 급수 목록을 공개하지 않아요." +
-      (info ? "<br>검수 상태: <b>검수 필요</b> (AI 작성). 확인한 항목: " + [info.strokesCheck ? "획수(KanjiVG)" : "", info.readingsCheck ? "음독·훈독·한국 한자음(KANJIDIC2와 대조)" : ""].filter(Boolean).join(", ") + ". 아직 확인하지 않은 항목: 뜻(훈)·구성 요소·어원·연상 이야기." : "") + "</p>";
-
-  const strokes = '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes">' + (info ? "" : '<p class="hint">획순 데이터 준비 중이에요.</p>') + "</div></section>";
+  const strokes = info ? '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes"></div></section>' : "";
   stopStrokes();
   const write = info ? '<section class="kd-sec"><h4>직접 써 보기 <small class="hint">연습 ' + (rec.written || 0) + '회</small></h4><div id="kd-write"><button type="button" class="btn ghost sm" data-open-write>쓰기 판 열기</button></div></section>' : "";
-  dialog.innerHTML = '<div class="kd">' + head + wordBox + strokes + write + body + related + links + foot + "</div>";
+  // 창을 열 때 첫 버튼(별표)에 초점이 가서 테두리가 생기지 않도록, 창 본문에 먼저 초점을 둔다
+  dialog.innerHTML = '<div class="kd" tabindex="-1" autofocus>' + head + wordBox + strokes + write + body + related + links + foot + "</div>";
   if (info) mountStrokePlayer(dialog.querySelector("#kd-strokes"), info.strokeRef);
 }

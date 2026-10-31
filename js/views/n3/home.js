@@ -47,7 +47,7 @@ function render(app) {
       '<div class="home-top">' +
         ddayTileHTML(n3store) +
         '<article class="tile todo-tile"><span class="tile-label">지금 할 일</span><ul class="todo">' +
-          '<li><a href="#n3/basics">' + (nextUnit ? "다음 기초 단원" : "기초 단원") + "</a><strong>" + (nextUnit ? esc(nextUnit.title) : units.length ? "모두 완료" : "준비 중") + "</strong></li>" +
+          '<li><a href="#n3/basics">' + (nextUnit ? "다음 기초 단원" : "기초 단원") + "</a><strong>" + (nextUnit ? esc(nextUnit.title) : units.length ? "모두 완료" : "—") + "</strong></li>" +
           '<li><a href="#n3/vocab" data-goto="cards">복습할 단어</a><strong>' + n3vocab.reviewWordIds().length + "개</strong></li>" +
           '<li><a href="#n3/notes">다시 풀 오답</a><strong>' + openNotes + "개</strong></li>" +
         "</ul></article>" +
@@ -72,21 +72,18 @@ function render(app) {
 
       '<div class="courses">' +
         course("A", "기초 과정 (N5·N4)", "#n3/basics", [
-          ["핵심 단원", units.length ? unitsDone + " / " + units.length + " 완료" : "준비 중"],
-          ["히라가나 기본 글자", hp ? hp.done + " / " + hp.total + " 익힘" : "준비 중"],
-          ["가타카나 기본 글자", kp ? kp.done + " / " + kp.total + " 익힘" : "준비 중"],
-          ["N5·N4 단어 · 기초 한자", "콘텐츠 준비 중"],
+          ["핵심 단원", units.length ? unitsDone + " / " + units.length + " 완료" : "—"],
+          ["히라가나 기본 글자", hp ? hp.done + " / " + hp.total + " 익힘" : "—"],
+          ["가타카나 기본 글자", kp ? kp.done + " / " + kp.total + " 익힘" : "—"],
         ]) +
         course("B", "N3 집중 과정", "#n3/vocab", [
-          ["단어", n3vocab.total() ? n3vocab.studiedCount() + " / " + n3vocab.total() + " 학습" : "콘텐츠 준비 중"],
-          ["문법", n3grammar.total() ? n3grammar.studiedCount() + " / " + n3grammar.total() + " 공부함" : "콘텐츠 준비 중"],
-          ["한자", kanjiSet.length ? kanjiSet.filter(c => (n3store.get("kanji")[c] || {}).seen).length + " / " + kanjiSet.length + " 살펴봄" : "콘텐츠 준비 중"],
-          ["독해 · 청해", "콘텐츠 준비 중"],
+          ["단어", n3vocab.total() ? n3vocab.studiedCount() + " / " + n3vocab.total() + " 학습" : "—"],
+          ["문법", n3grammar.total() ? n3grammar.studiedCount() + " / " + n3grammar.total() + " 공부함" : "—"],
+          ["한자", kanjiSet.length ? kanjiSet.filter(c => (n3store.get("kanji")[c] || {}).seen).length + " / " + kanjiSet.length + " 살펴봄" : "—"],
         ]) +
         course("C", "시험 대비 과정", "#n3/exam", [
           ["연습 테스트", tests.length ? tests.length + "회 · 최고 " + best + "%" : "아직 없음"],
           ["다시 풀 오답", openNotes + "개"],
-          ["실전 구성 모의고사", "콘텐츠 준비 중"],
         ]) +
       "</div>" +
       examCardHTML(EXAM_INFO_N3, "N3") +

@@ -23,7 +23,8 @@ function render(app) {
   app.innerHTML =
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>청해</h2><p>음성을 듣고 답을 고르세요. 스크립트와 해석은 필요할 때만 펼쳐 보세요.</p></div></div>' +
-      '<p class="notice">' + esc(DB.listening.meta.note) + "</p>" +
+      // 자료 파일의 안내문(meta.note)은 그대로 두고, 화면에는 같은 내용을 자체 제작 자료 표현으로 보여 준다
+      '<p class="notice">스크립트는 연습용으로 새로 쓴 자체 제작 대화예요. 음성 파일이 없는 문제는 브라우저의 일본어 음성 읽기(기계 음성)로 들려줘요. 실제 시험 음성과는 속도·억양이 달라요.</p>' +
       '<div class="toolbar">' + [["all", "전체"], ...Object.entries(types)].map(([k, l]) =>
         '<button type="button" class="chip" data-ltype="' + k + '" aria-pressed="' + (ui.type === k) + '">' + esc(l) + "</button>").join("") + "</div>" +
       '<div class="picker">' + items.map(it =>

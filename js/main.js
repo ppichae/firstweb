@@ -4,6 +4,9 @@ import { store } from "./store.js";
 import { esc } from "./util.js";
 import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
 import { trackRoom } from "./tracker.js";
+import { initTheme } from "./theme.js";
+
+initTheme();
 
 // 메뉴 순서는 rooms.js의 각 방 views에 있다. 맨 앞 화면이 그 방의 첫 화면이다
 
@@ -45,8 +48,10 @@ function drawRoom(room) {
   tablist.innerHTML = (room ? room.views.filter(v => !v.hidden).map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
     "</a>").join("") : "");   // 메뉴는 한글만 표시한다
-  roomSwitch.textContent = room ? "방 바꾸기" : "급수 선택";
-  roomSwitch.toggleAttribute("aria-current", !room);
+  // 급수 선택 화면에서는 같은 화면으로 가는 버튼이 필요 없어서 숨긴다. 방 안에서만 '방 바꾸기'로 보인다
+  roomSwitch.textContent = "방 바꾸기";
+  roomSwitch.hidden = !room;
+  document.querySelector("nav.tabs").hidden = !room;
 }
 
 async function route() {

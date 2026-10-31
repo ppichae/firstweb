@@ -19,7 +19,7 @@ function createN3Skill(id, label, dataKey, kind) {
         '<div class="panel-head"><div><h2>' + label + "</h2><p>" + (kind === "reading" ? "지문을 읽고 문제를 풀어요. 해석은 다 푼 뒤에 펼쳐 볼 수 있어요." : "음성을 듣고 문제를 풀어요. 스크립트와 해석은 다 푼 뒤에 펼쳐 볼 수 있어요.") + "</p></div></div>" +
         (items.length
           ? '<div class="picker">' + items.map(x =>
-              '<button type="button" class="pick" data-open="' + esc(x.id) + '" aria-pressed="' + (ui.open === x.id) + '"><span class="pick-type">' + esc(x.type) + '</span><span class="pick-title">' + esc(x.title) + '</span><span class="pick-meta">' + esc(x.status || "검수 필요") + "</span></button>").join("") + "</div>" +
+              '<button type="button" class="pick" data-open="' + esc(x.id) + '" aria-pressed="' + (ui.open === x.id) + '"><span class="pick-type">' + esc(x.type) + '</span><span class="pick-title">' + esc(x.title) + '</span><span class="pick-meta">' + esc(x.difficulty || "") + "</span></button>").join("") + "</div>" +
             '<div id="sk-item" class="stack"></div>'
           : '<article class="card-box pending"><h3>자료 준비 중</h3><p class="hint">N3 ' + label + " 자료가 아직 없어요. 임시 내용으로 채우지 않았어요. 자료는 data/n3/" + (kind === "reading" ? "reading" : "listening") + ".json에 정해진 형식으로 추가하면 이 화면에 바로 나타나요.</p></article>") +
       "</section>";
@@ -38,7 +38,7 @@ function createN3Skill(id, label, dataKey, kind) {
     box.innerHTML =
       '<article class="' + (kind === "reading" ? "passage" : "listen") + '">' +
         '<div class="q-top"><h3>' + esc(it.title) + '</h3><span class="badges"><span class="badge">' + esc(src.label || "출처 미기재") + "</span>" +
-          '<span class="badge ' + (it.status === "검수 완료" ? "ok" : "warn") + '">' + esc(it.status || "검수 필요") + "</span></span></div>" +
+          (it.status === "검수 완료" ? '<span class="badge ok">검수 완료</span>' : '<span class="badge">학습 자료</span>') + "</span></div>" +
         (kind === "reading"
           ? (it.text || []).map(p => '<p class="jp" lang="ja">' + esc(p) + "</p>").join("")
           : '<p class="hint">' + esc(it.situation || "") + "</p>" +

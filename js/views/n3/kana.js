@@ -96,11 +96,11 @@ function renderTable(box, data, script, table) {
 /* ---------- 규칙 수업 (촉음·장음 등): 개념 → 예문 → 확인 퀴즈 ---------- */
 function renderLesson(box, data, id) {
   const u = data.units.find(x => x.id === id);
-  if (!u) { box.innerHTML = '<p class="notice">콘텐츠 준비 중이에요.</p>'; return; }
+  if (!u) { box.innerHTML = '<p class="notice">자료를 불러오지 못했어요. 새로고침해 주세요.</p>'; return; }
   const r = n3store.get("basics")[id] || {};
   box.innerHTML =
     '<article class="card-box"><div class="q-top"><h3>' + esc(u.title) + "</h3>" +
-      '<span class="badges">' + (r.done ? '<span class="badge ok">완료 · ' + r.best + "/" + u.quiz.length + "</span>" : "") + '<span class="badge ai">자체 제작 · AI 작성</span><span class="badge warn">검수 필요</span></span></div>' +
+      '<span class="badges">' + (r.done ? '<span class="badge ok">완료 · ' + r.best + "/" + u.quiz.length + "</span>" : "") + '<span class="badge">학습 자료</span></span></div>' +
       '<p class="hint">목표: ' + esc(u.goal) + "</p>" +
       '<h4 class="step">① 개념</h4><ul class="points">' + u.points.map(p => "<li>" + esc(p) + "</li>").join("") + "</ul>" +
       '<h4 class="step">② 예문</h4><ul class="examples">' + u.examples.map((x, i) =>
@@ -246,7 +246,7 @@ export function renderMixed(el, app, data, ui) {
         const c = allCells(data).find(x => x[0] === base);
         return '<div class="compare-col"><div class="word sm" lang="ja">' + esc(ch) + '</div><div class="reading">' + esc(c ? sound(c) : "") + "</div></div>";
       }).join("") + '</div><p class="compare-point"><b>구별 포인트</b> ' + esc(p.tip) + "</p></article>").join("") + "</div>" +
-      '<p class="hint">구별 포인트는 AI가 작성했고 검수 필요 상태예요.</p>';
+      '';
   } else {
     const prog = n3store.get("kanaProgress");
     const weak = allCells(data).filter(c => ["hira", "kata"].some(s => { const r = (prog[s] || {})[c[0]]; return r && r.wrong > 0 && !mastered(s, c[0]); }));
@@ -284,7 +284,7 @@ function renderWords(box, data) {
   const words = data.kanaWords || [];
   const pool = shuffle(words).slice(0, 8);
   box.innerHTML =
-    '<p class="hint">가나로 쓴 쉬운 단어를 읽어 보세요. 단어 목록은 AI가 고른 학습용이고 검수 필요 상태예요.</p>' +
+    '<p class="hint">가나로 쓴 쉬운 단어를 읽어 보세요. 누르면 소리를 들을 수 있어요.</p>' +
     '<p class="p-state" id="voice-msg" role="status"></p>' +
     '<div class="kana-words">' + words.map(w => '<button type="button" class="kana-word" data-say="' + esc(w.w) + '"><span lang="ja">' + esc(w.w) + "</span><small>" + esc(w.r + " (" + w.ko + ") · " + w.m) + "</small></button>").join("") + "</div>" +
     '<h4 class="step">단어 읽기 퀴즈 <span class="score" id="kw-score"></span></h4><div class="quiz" id="kw-quiz"></div>';

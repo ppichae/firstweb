@@ -31,10 +31,9 @@ export function listBadges(it) {
     const name = s ? s.publisher.split(" (")[0] + " " + s.level : id;
     out.push('<span class="badge" title="' + esc((s ? s.title : id) + " — " + secs) + '">목록: ' + esc(name) + "</span>");
   });
-  if (it.meaningOrigin === "AI_GENERATED") out.push('<span class="badge ai">뜻: AI 작성</span>');
+  // 뜻을 누가 썼는지(meaningOrigin)와 검수 상태(status)는 자료에 남기고, 화면에는 출처와 사전 대조 결과만 작게 보여 준다
   if (readingChecked(it.id)) out.push(checkedBadge(it.id));
-  if (it.status !== "VERIFIED") out.push('<span class="badge warn">' + esc(STATUS[it.status] || it.status) + "</span>");
-  else out.push('<span class="badge ok">검수 완료</span>');
+  if (it.status === "VERIFIED") out.push('<span class="badge ok">검수 완료</span>');
   return '<span class="badges">' + out.join("") + "</span>";
 }
 
@@ -61,10 +60,10 @@ export function buildQuestion(v, type, set, pool, idPrefix = "gen") {
     kind: kinds[type], prompt,
     options: opts.map(o => o[field]),
     answer: opts.indexOf(v),
-    explanation: "「" + head(v) + "」" + (v.reading && v.reading !== head(v) ? "(" + v.reading + ")" : "") + "은 '" + v.meaning + "'라는 뜻이에요. (뜻은 AI가 작성했고 검수 전이에요)",
+    explanation: "「" + head(v) + "」" + (v.reading && v.reading !== head(v) ? "(" + v.reading + ")" : "") + "은 '" + v.meaning + "'라는 뜻이에요.",
     wrongReasons: opts.map(o => o === v ? ""
       : type === "reverse" ? "「" + o[field] + "」는 '" + o.meaning + "'라는 뜻이에요."
-      : "「" + o[field] + "」는 「" + head(o) + "」의 " + (field === "meaning" ? "뜻" : "읽기") + "예요."),
+      : "「" + o[field] + "」는 「" + head(o) + "」의 " + (field === "meaning" ? "뜻이에요." : "읽기예요.")),
     source: { type: "ai" }, review: "needs-review",
   };
 }
