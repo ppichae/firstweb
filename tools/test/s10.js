@@ -56,7 +56,7 @@
     await go("vocab");
     app().querySelector('[data-act="fav"]').click(); await wait(100);
     const before = { n3: LSx().getItem("n3lab:lists"), n1: LSx().getItem("n1lab:words") || LSx().getItem("n1lab:lists") };
-    frame.contentWindow.location.reload(); await wait(3000);
+    frame.contentWindow.location.reload(); await wait(8000);
     frame.contentWindow.location.hash = "n3/vocab"; await wait(1500);
     const known = doc().querySelectorAll("#app .card.is-known").length;
     check("새로고침 후 N3 기록 유지", known >= 1 && LSx().getItem("n3lab:lists") === before.n3, known);

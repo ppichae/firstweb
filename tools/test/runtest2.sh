@@ -12,7 +12,9 @@ W=${2:-1440}; H=${3:-1000}; HASH=${4:-}
   printf 'f.addEventListener("load",()=>{const w=f.contentWindow; w.addEventListener("error",e=>errors.push("ERR "+e.message)); w.addEventListener("unhandledrejection",e=>errors.push("REJ "+(e.reason&&e.reason.message)));},{once:true});\n'
   printf 'localStorage.clear();\n'
   if [ -n "$PRE" ]; then cat "$PRE"; printf '\n'; fi
-  printf 'f.src="index.html%s";\n' "$HASH"
+  # 로그인 잠금을 끄고 기존 기능을 테스트한다 (주소에 ?가 이미 있으면 그대로 둔다. AUTHQ= 로 끌 수 있다)
+  case "$HASH" in "?"*) Q="";; *) Q="${AUTHQ-?auth=off}";; esac
+  printf 'f.src="index.html%s%s";\n' "$Q" "$HASH"
   printf 'setTimeout(async()=>{const w=f.contentWindow,document=w.document,window=w,location=w.location,localStorage=w.localStorage;try{const r=await (\n'
   cat "$1"
   printf '\n);window.parent.document.getElementById("out").textContent=(errors.length?errors.join("\\n")+"\\n":"")+r;}catch(e){window.parent.document.getElementById("out").textContent="TEST CRASH "+e.stack+"\\n"+errors.join("\\n");}},2500);\n'

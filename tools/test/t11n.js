@@ -5,7 +5,7 @@
   const log = [];
   const check = (name, ok, extra) => log.push((ok ? "PASS " : "FAIL ") + name + (extra !== undefined ? " → " + extra : ""));
   try {
-    const base = location.href.split("#")[0].replace(/index\.html$/, "");
+    const base = location.origin + location.pathname.replace(/index\.html$/, "");
     const { store } = await window.eval('import("' + base + 'js/store.js")');
     location.hash = "grammar"; await wait(1500); document.querySelector("[data-mode=quiz]").click(); await wait(200);
     $$(".q")[0].querySelector('[data-o="1"]').click(); await wait(30);

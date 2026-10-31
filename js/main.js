@@ -118,8 +118,11 @@ async function start() {
   }
   store.migrateLegacy(DB.vocab.items);
   // 로그인 연결(설정이 비어 있으면 아무 일도 하지 않는다). 연결에 실패해도 사이트는 멈추지 않고 로그인 화면에서 알린다
-  try { await initAuth(() => { drawAccount(); route(); }); } catch (e) { console.error("로그인 기능을 불러오지 못했어요.", e); }
-  drawAccount();
+  const authReady = initAuth(() => { drawAccount(); route(); })
+    .catch(e => console.error("로그인 기능을 불러오지 못했어요.", e))
+    .then(drawAccount);
+  // 잠금이 켜져 있으면 로그인 여부를 알아야 하므로 기다린다. 꺼져 있으면 기다리지 않고 바로 화면을 그린다
+  if (gateActive()) await authReady;
   // Google 로그인을 마치고 돌아왔으면, 로그인 전에 보려던 화면으로 보낸다
   if (signedIn() && peekNext() && !location.hash.slice(1)) location.replace("#" + takeNext());
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });

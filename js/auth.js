@@ -59,8 +59,12 @@ export function userLabel() {
   return m.full_name || m.name || u.email || "로그인한 사용자";
 }
 
+// 자동 테스트용: 이 컴퓨터의 테스트 서버(localhost)에서 ?auth=off를 붙였을 때만 잠금을 끈다 (실제 사이트에서는 통하지 않는다)
+const testBypass = () => (location.hostname === "localhost" || location.hostname === "127.0.0.1") &&
+  new URLSearchParams(location.search).get("auth") === "off";
+
 // 문이 잠겨 있는가: 연결됐거나 미리보기일 때만 잠근다
-export const gateActive = () => authConfigured() || authPreview();
+export const gateActive = () => !testBypass() && (authConfigured() || authPreview());
 
 export async function signInWithGoogle() {
   if (!client) throw new Error("로그인 기능이 아직 연결되지 않았어요.");
