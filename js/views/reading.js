@@ -5,7 +5,7 @@ import { store, n3store } from "../store.js";
 import { esc, badges } from "../util.js";
 import { mountQuestion } from "../quiz.js";
 import { jpText, rubyHTML, furiToggleHTML } from "../examples.js";
-import { sayBtn } from "../speech.js";
+import { sayBtn, Player, getJaVoices, stopAll, VOICE_HELP } from "../speech.js";
 import { award } from "../game.js";
 
 const levelDots = n => "●".repeat(n) + "○".repeat(Math.max(0, 3 - n));
@@ -84,6 +84,7 @@ export function createReadingView(cfg) {
       '<div class="reading-layout">' +
         '<article class="passage">' +
           '<div class="passage-label"><span>' + esc(p.typeLabel) + " · 예상 풀이 시간 " + p.minutes + "분</span>" + badges(p) +
+            '<button type="button" class="link-btn" id="play-all">▶ 지문 전체 듣기</button>' +
             '<button type="button" class="link-btn" id="toggle-trans" aria-expanded="false">해석 보기</button></div>' +
           p.texts.map(t => (t.label ? '<h4 class="text-label">' + esc(t.label) + "</h4>" : "") +
             t.paragraphs.map(par => '<p class="' + paraClass(p) + '" lang="ja">' + jpText(par) + " " + sayBtn(par.replace(/\[\[|\]\]/g, ""), "이 문단 듣기") + "</p>").join("")).join("") +
@@ -95,6 +96,18 @@ export function createReadingView(cfg) {
         '<div class="quiz" id="quiz"></div>' +
       "</div>";
 
+    // 지문 전체 듣기: 문단을 「。」 단위로 나눠 차례로 읽는다 (다시 누르면 멈춤)
+    const pbtn = el.querySelector("#play-all");
+    let reader = null;
+    pbtn.onclick = async () => {
+      if (reader && reader.state === "playing") { reader.stop(); return; }
+      const voices = await getJaVoices();
+      if (!voices.length) { window.alert("이 기기에서 일본어 음성을 찾지 못했어요.\n" + VOICE_HELP); return; }
+      const lines = p.texts.flatMap(t => t.paragraphs).flatMap(par => par.replace(/\[\[|\]\]/g, "").split(/(?<=。)|\n/))
+        .map(s => s.trim()).filter(Boolean).map(ja => ({ sp: "ナ", ja }));
+      reader = new Player(lines, voices, st => { if (st === "line") return; pbtn.textContent = st === "playing" ? "■ 듣기 멈추기" : "▶ 지문 전체 듣기"; });
+      reader.play();
+    };
     const trans = el.querySelector("#trans");
     const tbtn = el.querySelector("#toggle-trans");
     tbtn.onclick = () => {
@@ -136,7 +149,7 @@ export function createReadingView(cfg) {
   }
 
   return {
-    id: cfg.id, label: "독해", jp: "読解", needs: cfg.needs, render, leave: () => clearInterval(timer),
+    id: cfg.id, label: "독해", jp: "読解", needs: cfg.needs, render, leave: () => { clearInterval(timer); stopAll(); },
     open(id) { ui.type = "all"; ui.current = id; location.hash = cfg.id; },
   };
 }

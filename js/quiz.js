@@ -15,7 +15,7 @@ export function mountQuestion(el, q, opts = {}) {
     el.innerHTML =
       '<div class="q-top"><span class="q-num">' + esc(opts.label || ("問" + (opts.number || 1))) +
         (q.kind ? " · " + esc(q.kind) : "") + "</span>" + badges(q) + "</div>" +
-      '<div class="q-text" lang="ja">' + multiline(q.prompt) + "</div>" +
+      '<div class="q-text" lang="ja">' + (q.promptHTML || multiline(q.prompt)) + "</div>" +   // promptHTML: 후리가나·발음 버튼이 붙은 문제 (안전하게 만든 HTML)
       '<div class="opts' + (wide ? " wide" : "") + '">' +
         q.options.map((o, j) => {
           let cls = "opt";
@@ -64,3 +64,22 @@ export function feedbackHTML(q, picked, saved = false) {
 }
 
 export const areaLabel = a => AREAS[a] || a;
+
+// 여러 문제를 한 화면에 늘어놓는 퀴즈의 맨 아래 막대: 점수와 '새 문제' 버튼 (맨 위로 올라가지 않아도 이어서 풀 수 있게)
+// box 끝에 붙이고, 답할 때마다 update(맞힌 수, 푼 수)를 부른다
+export function endBar(box, total, onNew, newLabel = "새 문제 풀기") {
+  const bar = document.createElement("div");
+  bar.className = "end-bar";
+  bar.innerHTML = '<span class="end-msg" role="status"></span><button type="button" class="btn ghost">' + esc(newLabel) + "</button>";
+  box.appendChild(bar);
+  bar.querySelector("button").onclick = onNew;
+  const msg = bar.querySelector(".end-msg");
+  return {
+    update(right, done) {
+      const all = done >= total;
+      msg.textContent = all ? "다 풀었어요 · " + right + " / " + total + " 정답" : done + " / " + total + " 풂";
+      bar.classList.toggle("done", all);
+      bar.querySelector("button").className = "btn" + (all ? "" : " ghost");
+    },
+  };
+}

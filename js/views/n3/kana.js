@@ -2,7 +2,7 @@
 // 진도는 n3store의 "kanaProgress"(퀴즈)와 "kanaWritten"(쓰기)에 문자 종류별로 따로 남긴다.
 import { n3store } from "../../store.js";
 import { esc, shuffle, today } from "../../util.js";
-import { mountQuestion } from "../../quiz.js";
+import { mountQuestion, endBar } from "../../quiz.js";
 import { getJaVoices, say, stopAll, VOICE_HELP } from "../../speech.js";
 import { strokeRefOf } from "../../strokes.js";
 import { mountWritePad } from "../../writing.js";
@@ -149,6 +149,9 @@ function renderQuiz(box, data, ui, opts) {
     const quiz = box.querySelector("#k-quiz"), score = box.querySelector("#k-score");
     const results = new Map();
     quiz.innerHTML = ""; score.textContent = "";
+    // 맨 아래 막대: 다 풀면 점수와 '새 문제' (새 문제를 받으면 첫 문제로 이동)
+    const oldBar = box.querySelector(".end-bar"); if (oldBar) oldBar.remove();
+    const bar = endBar(box, chosen.length, () => { start(); quiz.scrollIntoView({ block: "start", behavior: "smooth" }); }, "새 문제 10개");
     shuffle(chosen).forEach((c, i) => {
       const s = opts.forceScript ? opts.forceScript(c) : pick(c);
       const others = [];
@@ -170,6 +173,7 @@ function renderQuiz(box, data, ui, opts) {
           record(s, c[0], ok); award(ok ? "kana" : "wrong");
           results.set(i, ok);
           score.textContent = [...results.values()].filter(Boolean).length + " / " + chosen.length + " 정답";
+          bar.update([...results.values()].filter(Boolean).length, results.size);
         },
       });
     });
@@ -261,6 +265,7 @@ function renderWhich(box, data) {
   const pool = shuffle(cells(data, "basic")).slice(0, 10);
   box.innerHTML = '<div class="toolbar"><span class="score" id="w-score"></span><button type="button" class="link-btn" id="w-new">새 문제</button></div><div class="quiz" id="w-quiz"></div>';
   const results = new Map();
+  const bar = endBar(box, pool.length, () => { renderWhich(box, data); box.scrollIntoView({ block: "start", behavior: "smooth" }); }, "새 문제 10개");
   pool.forEach((c, i) => {
     const s = Math.random() < 0.5 ? "hira" : "kata";
     const holder = document.createElement("div");
@@ -271,7 +276,7 @@ function renderWhich(box, data) {
       options: ["히라가나", "가타카나"], answer: s === "hira" ? 0 : 1,
       explanation: show(c, s) + "는 " + SCRIPTS[s] + "예요. 같은 소리의 " + SCRIPTS[s === "hira" ? "kata" : "hira"] + "는 " + show(c, s === "hira" ? "kata" : "hira") + "예요. 소리: " + sound(c),
       source: { type: "ai" }, review: "needs-review",
-    }, { label: "구별 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#w-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; } });
+    }, { label: "구별 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#w-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
   });
   box.querySelector("#w-new").onclick = () => renderWhich(box, data);
 }
@@ -285,6 +290,7 @@ function renderWords(box, data) {
     '<div class="kana-words">' + words.map(w => '<button type="button" class="kana-word" data-say="' + esc(w.w) + '"><span lang="ja">' + esc(w.w) + "</span><small>" + esc(w.r + " (" + w.ko + ") · " + w.m) + "</small></button>").join("") + "</div>" +
     '<h4 class="step">단어 읽기 퀴즈 <span class="score" id="kw-score"></span></h4><div class="quiz" id="kw-quiz"></div>';
   const results = new Map();
+  const bar = endBar(box, pool.length, () => { renderWords(box, data); box.querySelector("#kw-quiz").scrollIntoView({ block: "start", behavior: "smooth" }); }, "새 단어 8개");
   pool.forEach((w, i) => {
     const others = shuffle(words.filter(o => o !== w)).slice(0, 3);
     const opt = shuffle([w, ...others]);
@@ -294,7 +300,7 @@ function renderWords(box, data) {
       id: "n3-kana-word-" + w.w, area: "basics", generated: true, kind: "단어 읽기", prompt: w.w,
       options: opt.map(o => o.r + " (" + o.ko + ")"), answer: opt.indexOf(w),
       explanation: w.w + "는 " + w.r + " (" + w.ko + "), 뜻은 '" + w.m + "'예요.", source: { type: "ai" }, review: "needs-review",
-    }, { label: "단어 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#kw-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; } });
+    }, { label: "단어 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#kw-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
   });
   box.onclick = e => { const k = e.target.closest("[data-say]"); if (k && !e.target.closest(".q")) speak(k.dataset.say, box.querySelector("#voice-msg")); };
 }

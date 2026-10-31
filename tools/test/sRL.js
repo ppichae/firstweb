@@ -52,13 +52,15 @@
     check("휴대폰 폭: N3 청해 넘치지 않음", noOverflow());
     // N1 독해: 밑줄 기호가 그대로 보이지 않음
     location.hash = "reading"; await until(() => $$(".pick").length >= 7);
-    check("N1 독해: 지문 7개 그대로", $$(".pick").length === 7);
+    check("N1 독해: 지문 19개 (기존 7 + 새 12)", $$(".pick").length === 19, $$(".pick").length);
+    check("N1 독해: 지문 전체 듣기 버튼", !!$("#play-all"));
+    check("N1 독해: 기존 지문에도 핵심 단어", !!$(".aid"));
     let bracket = false;
     for (const b of $$(".pick")) { b.click(); await wait(150); if ($(".passage").textContent.includes("[[")) bracket = true; }
     check("N1 독해: [[ ]] 기호가 보이지 않고 밑줄로", !bracket && $$("u.ul-mark").length >= 0);
     // N1 청해
     location.hash = "listening"; await until(() => $$(".pick").length >= 7);
-    check("N1 청해: 문항 7개 그대로", $$(".pick").length === 7);
+    check("N1 청해: 문항 19개 (기존 7 + 새 12)", $$(".pick").length === 19, $$(".pick").length);
     // 단어장 발음 버튼
     location.hash = "vocab"; await until(() => $(".card-face"), 10000);
     $(".card-face").click(); await wait(200);

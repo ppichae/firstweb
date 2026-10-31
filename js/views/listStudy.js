@@ -2,6 +2,7 @@
 // 단어·문법 화면(study.js)과 N3 시험 대비 화면(n3/practice.js)이 함께 쓴다.
 import { sourceById, EXTRA } from "../data.js";
 import { esc, shuffle } from "../util.js";
+import { sayBtn } from "../speech.js";
 
 export const LIST_POS = {
   noun: "명사", "noun-suru": "명사 · する동사", verb: "동사", "i-adj": "い형용사", "na-adj": "な형용사",
@@ -13,6 +14,17 @@ const hasKanji = s => /[一-鿿々]/.test(s);
 
 // 단어는 word, 문형은 pattern에 표기가 들어 있다
 const head = it => it.word || it.pattern;
+
+// 단어 위에 읽기(후리가나)를 단다. 앞뒤의 같은 가나(送り仮名 등)는 빼고 한자 부분에만 단다. 예: 食べる/たべる → 食(た)べる
+export function wordRubyHTML(word, reading) {
+  if (!reading || !hasKanji(word) || word === reading) return esc(word);
+  let a = 0, b = 0;
+  while (a < word.length && a < reading.length && word[a] === reading[a] && !hasKanji(word[a])) a++;
+  while (b < word.length - a && b < reading.length - a && word[word.length - 1 - b] === reading[reading.length - 1 - b] && !hasKanji(word[word.length - 1 - b])) b++;
+  const base = word.slice(a, word.length - b), rt = reading.slice(a, reading.length - b);
+  if (!base || !rt) return esc(word);
+  return esc(word.slice(0, a)) + "<ruby>" + esc(base) + "<rt>" + esc(rt) + "</rt></ruby>" + esc(word.slice(word.length - b));
+}
 
 // 읽기를 사전(JMdict)과 대조해 일치한 단어인지 (data/review/checks.json)
 export function readingChecked(id) {
@@ -58,6 +70,8 @@ export function buildQuestion(v, type, set, pool, idPrefix = "gen") {
   return {
     id: idPrefix + "-" + type + "-" + v.id, area: set.area, generated: true, wordId: v.id,
     kind: kinds[type], prompt,
+    // 뜻 고르기: 단어에 후리가나와 발음 버튼 (읽기 고르기는 읽기가 정답이라 붙이지 않는다)
+    promptHTML: type === "meaning" && v.word ? "「" + wordRubyHTML(v.word, v.reading) + "」の意味は？ " + sayBtn(v.reading || v.word, "단어 발음 듣기") : null,
     options: opts.map(o => o[field]),
     answer: opts.indexOf(v),
     explanation: "「" + head(v) + "」" + (v.reading && v.reading !== head(v) ? "(" + v.reading + ")" : "") + "은 '" + v.meaning + "'라는 뜻이에요.",

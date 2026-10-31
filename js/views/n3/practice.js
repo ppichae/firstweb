@@ -7,6 +7,8 @@ import { mountQuestion, feedbackHTML } from "../../quiz.js";
 import { runQuiz } from "../../quizRunner.js";
 import { LIST_POS } from "../listStudy.js";
 import { buildQuestion } from "../listStudy.js";
+import { pickItems } from "../../pick.js";
+import { furiToggleHTML } from "../../examples.js";
 import { award } from "./game.js";
 
 const SETS = { vocab: { area: "vocab", dataKey: "n3vocab" }, grammar: { area: "grammar", dataKey: "n3grammar" } };
@@ -50,7 +52,8 @@ function pool(setKey, type) {
 function make(key, count) {
   const [setKey, type] = key.split(":");
   const all = pool(setKey, "meaning");
-  return shuffle(pool(setKey, type)).slice(0, count).map(v => {
+  const lists = n3store.get("lists") || {};
+  return pickItems(pool(setKey, type), count, { attempts: n3store.get("attempts"), weak: v => ((lists[v.id] || {}).wrong || 0) > 0 }).map(v => {
     const q = buildQuestion(v, type, SETS[setKey], all, "n3");
     q.typeKey = key;
     return q;
@@ -89,7 +92,7 @@ function renderDrill(el) {
   el.innerHTML =
     '<div class="toolbar">' + DRILLS.map(([k, l]) =>
       '<button type="button" class="chip" data-drill="' + k + '" aria-pressed="' + (ui.drill === k) + '">' + l + "</button>").join("") + "</div>" +
-    '<div class="toolbar"><button type="button" class="link-btn" id="d-new">새 문제 10개</button></div>' +
+    '<div class="toolbar">' + furiToggleHTML() + '<button type="button" class="link-btn" id="d-new">새 문제 10개</button></div>' +
     '<div class="quiz" id="d-quiz"></div>';
   // 한 문제씩 풀고, 답한 뒤에는 그 단어·문형의 학습 정보를 보여 준다
   const start = () => {

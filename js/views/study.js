@@ -8,8 +8,12 @@ import { runQuiz } from "../quizRunner.js";
 import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
 import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
-import { examplesFor, exampleHTML, plainOf, EXAMPLE_KEYS } from "../examples.js";
+import { examplesFor, exampleHTML, plainOf, EXAMPLE_KEYS, furiToggleHTML } from "../examples.js";
 import { sayBtn } from "../speech.js";
+import { pickItems } from "../pick.js";
+
+// 문형을 소리로 읽을 글: 〜 기호는 빼고, 「A／B」처럼 여러 형태면 첫 번째만
+const patternSpeech = p => String(p || "").replace(/[〜～~]/g, "").split(/[／/]/)[0].trim();
 
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
@@ -317,6 +321,7 @@ export function createVocabView(cfg) {
     if (!types.some(t => t[0] === ui.quizType)) ui.quizType = "meaning";
     el.innerHTML =
       '<div class="toolbar">' + chipRow("qt", types, ui.quizType) +
+        furiToggleHTML() +
         '<button type="button" class="link-btn" id="new-set">새 문제</button>' +
       "</div>" +
       '<p class="hint" id="quiz-note"></p>' +
@@ -327,11 +332,13 @@ export function createVocabView(cfg) {
       else {
         let pool = items();
         if (ui.quizType === "reading") pool = pool.filter(v => /[一-鿿々]/.test(v.word) && v.reading);
-        qs = shuffle(pool).slice(0, 10).map(v => buildQuestion(v, ui.quizType, { area: "vocab" }, items(), cfg.idPrefix));
+        // 틀린 단어·처음 보는 단어·오래전에 맞힌 단어를 섞고, 최근 퀴즈에 나온 단어는 되도록 피한다 (pick.js)
+        qs = pickItems(pool, 10, { attempts: st.get("attempts"), weak: v => (state(v.id).wrong || 0) > 0 && state(v.id).status !== "known" })
+          .map(v => buildQuestion(v, ui.quizType, { area: "vocab" }, items(), cfg.idPrefix));
       }
       el.querySelector("#quiz-note").innerHTML = ui.quizType === "exam"
         ? "한자 읽기 · 문맥 규정 · 바꿔 말하기 · 용법 유형의 연습문제예요."
-        : "단어장에서 무작위로 10개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요. '새 문제'를 누르면 다시 뽑아요.";
+        : "단어장에서 10개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요. 틀린 단어·처음 보는 단어·오래전에 맞힌 단어를 섞고, 최근 퀴즈에 나온 단어는 되도록 다시 내지 않아요.";
       // 한 문제씩 풀고, 답한 뒤에는 그 단어의 학습 정보(읽기·뜻·예문·헷갈린 단어)를 보여 준다
       runQuiz(el.querySelector("#quiz"), qs.map(q => ({ q, extra: vocabExtra })), {
         store: st, label: "문제", onRestart: start, restartLabel: "새 문제 10개",
@@ -559,7 +566,7 @@ export function createGrammarView(cfg) {
         "</dl>" + badges(g).replace(/<\/span>$/, alsoBadge(e) + "</span>")
       : "<dl><div><dt>자료 정보</dt><dd>" + listBadges(g) + "</dd></div></dl>";
     return '<div class="g-item" id="' + g.id + '">' +
-      '<div><div class="g-pattern" lang="ja">' + esc(g.pattern) + "</div>" +
+      '<div><div class="g-pattern" lang="ja">' + esc(g.pattern) + " " + sayBtn(patternSpeech(g.pattern), "문형 발음 듣기") + "</div>" +
         (g.reading && !e.core ? '<div class="g-conn" lang="ja">' + esc(g.reading) + "</div>" : "") +
         kanjiRowHTML(g.pattern, g.reading) +
         '<div class="g-actions">' +
@@ -575,7 +582,7 @@ export function createGrammarView(cfg) {
   }
 
   /* ---------- 답한 뒤 보여 주는 문법 학습 정보 ---------- */
-  const patternLine = g => '<div class="lb-word"><b lang="ja">' + esc(g.pattern) + "</b>" +
+  const patternLine = g => '<div class="lb-word"><b lang="ja">' + esc(g.pattern) + "</b>" + sayBtn(patternSpeech(g.pattern), "문형 발음 듣기") +
     (g.reading ? ' <span class="reading" lang="ja">' + esc(g.reading) + "</span>" : "") +
     ' <span class="lb-mean">' + esc(g.meaning) + "</span></div>";
 
@@ -665,7 +672,7 @@ export function createGrammarView(cfg) {
     el.innerHTML =
       '<div class="toolbar">' + chipRow("gq", types, ui.quiz) + "</div>" +
       '<div class="toolbar"><span class="hint">범위</span>' + chipRow("gscope", scopes, ui.scope) + "</div>" +
-      '<div class="toolbar"><button type="button" class="link-btn" id="reset">' + (ui.quiz === "exam" ? "다시 풀기" : "새 문제") + "</button></div>" +
+      '<div class="toolbar">' + furiToggleHTML() + '<button type="button" class="link-btn" id="reset">' + (ui.quiz === "exam" ? "다시 풀기" : "새 문제") + "</button></div>" +
       '<p class="hint" id="gq-note"></p>' +
       '<div class="quiz" id="quiz"></div>';
     const start = () => {
@@ -676,7 +683,8 @@ export function createGrammarView(cfg) {
         note.textContent = "빈칸 채우기 · 문장 배열 · 문맥 · 유사 문법 구별 유형의 연습문제예요.";
       } else {
         const pool = items().filter(g => ui.scope === "all" || (ui.scope === "studied" ? state(g.id).studied : state(g.id).fav));
-        qs = shuffle(pool).slice(0, 10).map(g => buildQuestion(g, ui.quiz, { area: "grammar" }, items(), cfg.idPrefix));
+        qs = pickItems(pool, 10, { attempts: st.get("attempts"), weak: g => (state(g.id).wrong || 0) > 0 })
+          .map(g => buildQuestion(g, ui.quiz, { area: "grammar" }, items(), cfg.idPrefix));
         note.innerHTML = pool.length
           ? "선택한 범위의 문형 " + pool.length + "개에서 " + Math.min(10, pool.length) + "개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요."
           : "이 범위에 문형이 없어요. '문법 학습'에서 공부했어요·즐겨찾기를 표시하거나 '전체 문형'을 골라 주세요.";
