@@ -5,7 +5,7 @@ import { esc } from "./util.js";
 import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
 import { trackRoom } from "./tracker.js";
 import { initTheme } from "./theme.js";
-import { initAuth, gateActive, signedIn, rememberNext, takeNext } from "./auth.js";
+import { initAuth, gateActive, signedIn, rememberNext, takeNext, peekNext, userLabel, signOut } from "./auth.js";
 import { loginView } from "./views/login.js";
 
 initTheme();
@@ -91,6 +91,20 @@ async function route() {
   view.render(app);
 }
 
+// 오른쪽 위: 로그인한 계정 이름과 로그아웃 버튼 (로그인하지 않았으면 숨긴다)
+const accountBox = document.getElementById("auth-user");
+function drawAccount() {
+  if (!accountBox) return;
+  accountBox.hidden = !signedIn();
+  if (!signedIn()) { accountBox.innerHTML = ""; return; }
+  accountBox.innerHTML = "<b>" + esc(userLabel()) + '</b><button type="button" class="theme-toggle" id="sign-out">로그아웃</button>';
+  accountBox.querySelector("#sign-out").onclick = async () => {
+    await signOut();
+    drawAccount();
+    location.replace("#login");
+  };
+}
+
 // 다른 화면에서 메뉴를 다시 그리라고 요청할 때 쓴다
 export const rerender = route;
 
@@ -104,7 +118,10 @@ async function start() {
   }
   store.migrateLegacy(DB.vocab.items);
   // 로그인 연결(설정이 비어 있으면 아무 일도 하지 않는다). 연결에 실패해도 사이트는 멈추지 않고 로그인 화면에서 알린다
-  try { await initAuth(() => route()); } catch (e) { console.error("로그인 기능을 불러오지 못했어요.", e); }
+  try { await initAuth(() => { drawAccount(); route(); }); } catch (e) { console.error("로그인 기능을 불러오지 못했어요.", e); }
+  drawAccount();
+  // Google 로그인을 마치고 돌아왔으면, 로그인 전에 보려던 화면으로 보낸다
+  if (signedIn() && peekNext() && !location.hash.slice(1)) location.replace("#" + takeNext());
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
   route();
 }

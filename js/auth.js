@@ -14,6 +14,9 @@ export const authPreview = () => new URLSearchParams(location.search).get("auth"
 
 let client = null;
 let session = null;
+let loginError = "";   // Google에서 로그인을 취소하거나 실패하고 돌아왔을 때의 안내
+
+export const takeLoginError = () => { const e = loginError; loginError = ""; return e; };
 
 // 사이트를 열 때 한 번 부른다. 연결 전에는 아무 일도 하지 않는다
 export async function initAuth(onChange) {
@@ -24,11 +27,25 @@ export async function initAuth(onChange) {
   });
   const { data } = await client.auth.getSession();
   session = data.session;
+  // Google에서 돌아올 때 주소에 붙은 일회용 코드(?code=…)를 처리한 뒤 주소창에서 지운다
+  const q = new URLSearchParams(location.search);
+  if (q.has("code") || q.has("error")) {
+    if (q.has("error")) loginError = q.get("error_description") || q.get("error");
+    ["code", "error", "error_code", "error_description", "state"].forEach(k => q.delete(k));
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash);
+  }
   client.auth.onAuthStateChange((_event, s) => { session = s; if (onChange) onChange(); });
 }
 
 export const signedIn = () => !!session;
 export const currentUser = () => (session ? session.user : null);
+// 화면에 보일 이름: Google 이름 → 이메일 순
+export function userLabel() {
+  const u = currentUser();
+  if (!u) return "";
+  const m = u.user_metadata || {};
+  return m.full_name || m.name || u.email || "로그인한 사용자";
+}
 
 // 문이 잠겨 있는가: 연결됐거나 미리보기일 때만 잠근다
 export const gateActive = () => authConfigured() || authPreview();

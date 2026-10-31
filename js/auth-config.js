@@ -5,6 +5,7 @@
 export const AUTH_CONFIG = {
   supabaseUrl: "",
   publishableKey: "",
-  // 로그인을 마치고 돌아올 주소. Supabase의 Redirect URLs에도 같은 주소를 등록해야 한다
-  redirectTo: "https://ppichae.github.io/firstweb/",
+  // 로그인을 마치고 돌아올 주소: 지금 열린 사이트 주소(실제 사이트 또는 테스트 서버).
+  // Supabase의 Redirect URLs에 등록된 주소(https://ppichae.github.io/firstweb/, http://localhost:8765/)만 허용된다
+  redirectTo: location.origin + location.pathname,
 };

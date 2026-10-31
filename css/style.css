@@ -879,7 +879,11 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
   padding: 8px 14px; min-height: 40px; font-size: 14px; font-weight: 600; white-space: nowrap;
 }
 .theme-toggle:hover { border-color: var(--ink); }
-@media (max-width: 480px) { header.site { grid-template-columns: 1fr; } .theme-toggle { justify-self: start; order: -1; } }
+/* 오른쪽 위: 로그인한 계정 · 로그아웃 · 다크 모드 */
+.site-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.auth-user { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); }
+.auth-user b { color: var(--fg); font-weight: 600; max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) { header.site { grid-template-columns: 1fr; } .site-actions { justify-content: flex-start; order: -1; } }
 /* 별표·표시 버튼: 손가락으로 누를 때 파란 하이라이트나 초점 테두리가 남지 않게 (키보드로 이동할 때만 테두리) */
 .mark, .seg, .chip, .kj, .opt { -webkit-tap-highlight-color: transparent; }
 .mark:focus:not(:focus-visible) { outline: none; }
