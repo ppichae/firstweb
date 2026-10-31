@@ -1,0 +1,7 @@
+# 비밀 정보가 담길 수 있는 파일은 GitHub에 올리지 않는다
+.env
+.env.*
+*.local
+supabase/.temp/
+*.pem
+*.p8
