@@ -11,7 +11,7 @@
     await go("home");
     check("N1 경험치 1회 환산(19 XP), 원래 기록 그대로", LS("n1lab:game").xp === 19 && LS("n1lab:attempts").length === 3 && LS("n1lab:game").convertedFrom.attempts === 3, JSON.stringify(LS("n1lab:game")));
     const g = $(".growth");
-    check("N1 홈 성장 칸", g && g.textContent.includes("Lv 1") && g.textContent.includes("첫 장을 연 학습자") && g.textContent.includes("19 XP") && g.textContent.includes("오늘의 작은 목표"), g && g.textContent.slice(0, 120));
+    check("N1 홈 성장 칸", g && g.textContent.includes("Lv 1") && g.textContent.includes("입문") && g.textContent.includes("19 XP") && g.textContent.includes("오늘의 작은 목표"), g && g.textContent.slice(0, 120));
     check("대표 배지(첫 문제)", g.querySelectorAll(".medal").length >= 1 && g.textContent.includes("첫 문제"));
     check("메뉴에 배지 탭은 없음", !tabs().includes("배지"), tabs());
     g.querySelector('a[href="#badges"]').click(); await wait(1300);
@@ -59,7 +59,7 @@
     await go("n3");
     check("N3 경험치 그대로(120)", LS("n3lab:game").xp === 120, LS("n3lab:game").xp);
     const g3 = $(".growth");
-    check("N3 성장 칸 Lv3 오니기리", g3 && g3.textContent.includes("Lv 3") && g3.textContent.includes("오니기리") && g3.textContent.includes("글자 퀴즈 5개"), g3 && g3.textContent.slice(0, 100));
+    check("N3 성장 칸 Lv4 새싹 (120 XP, 레벨 50 표)", g3 && g3.textContent.includes("Lv 4") && g3.textContent.includes("새싹") && g3.textContent.includes("글자 퀴즈 5개"), g3 && g3.textContent.slice(0, 100));
     g3.querySelector('a[href="#n3/badges"]').click(); await wait(1300);
     check("N3 배지: 받을 수 없는 배지는 숨김", $$(".medal-item.pending").length === 0 && app().textContent.includes("히라가나 완료") && !app().textContent.includes("준비 중"));
     await go("n3/kanji");

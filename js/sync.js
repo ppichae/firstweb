@@ -109,6 +109,7 @@ export function change(room, key, prev, next) {
   if (spec.kind === "obj" && spec.localFields) {   // 경험치 환산 기록처럼 이 기기에만 두는 칸
     const loc = {}; spec.localFields.forEach(f => { if (next && next[f] !== undefined) loc[f] = next[f]; });
     S.snap[room][key + ":local"] = loc;
+    save([[K("snap", room, key + ":local"), loc]]);   // 하루 한 번 규칙(todayKeys)이 새로고침 뒤에도 이어지게 바로 저장한다
   }
   if (!add.length) return;
   S.outbox.push(...add);

@@ -138,7 +138,7 @@ export function createReadingView(cfg) {
       return mountQuestion(box, qq, {
         number: i + 1, wide: true, store: cfg.st,
         onAnswer: ok => {
-          if (cfg.roomId === "n3") award("n3", ok ? "correct" : "wrong");
+          if (cfg.roomId === "n3") award("n3", ok ? "correct" : "wrong", q.id);
           results.set(q.id, ok);
           score.textContent = [...results.values()].filter(Boolean).length + " / " + p.questions.length + " 정답";
           if (results.size === p.questions.length) { clearInterval(timer); timerEl.classList.add("done"); }

@@ -106,7 +106,7 @@ function renderUnit(el, app, data) {
       label: "확인 " + (i + 1), store: n3store, wide: true,
       onAnswer: ok => {
         results.set(i, ok);
-        award(ok ? "correct" : "wrong");
+        award(ok ? "correct" : "wrong", full.id);
         const right = [...results.values()].filter(Boolean).length;
         el.querySelector("#u-score").textContent = right + " / " + u.quiz.length;
         if (results.size === u.quiz.length) finish(right);

@@ -72,7 +72,7 @@ export function createVocabView(cfg) {
   const bucket = id => (isCore(id) ? "words" : "lists");
   const state = id => st.get(bucket(id))[id] || {};
   const setState = (id, fn) => { const b = bucket(id); st.update(b, w => { fn(w[id] || (w[id] = {})); }); };
-  const emit = kind => { if (cfg.onEvent) cfg.onEvent(kind); };
+  const emit = (kind, key) => { if (cfg.onEvent) cfg.onEvent(kind, key); };   // key: 하루 한 번만 경험치를 주기 위한 항목 id
 
   // 복습이 필요한 단어: 간격 반복 일정이 오늘 이전이거나, '몰라요'로 표시한 단어
   const needsReview = id => { const s = state(id); return s.status === "unknown" || (!!s.srs && s.srs.due <= today()); };
@@ -310,7 +310,7 @@ export function createVocabView(cfg) {
       });
       st.logActivity("cards");
       st.logActivity("words");
-      emit("card");
+      emit("card", id);
       if (grade === "again") session.queue.push(id);
       session.done++;
       session.flipped = false;
@@ -354,7 +354,7 @@ export function createVocabView(cfg) {
           st.logActivity("words");
           if (ok && wid && items().some(v => v.id === wid)) setState(wid, s => { s.right = (s.right || 0) + 1; });
           if (!ok && wid) { markWordWrong(wid); updateCounts(document); }
-          emit(ok ? "correct" : "wrong");
+          emit(ok ? "correct" : "wrong", it.q.id);
         },
       });
     };
@@ -447,7 +447,7 @@ export function createGrammarView(cfg) {
   const bucket = id => (isCore(id) ? "grammar" : "lists");
   const state = id => st.get(bucket(id))[id] || {};
   const setState = (id, fn) => { const b = bucket(id); st.update(b, g => { fn(g[id] || (g[id] = {})); }); };
-  const emit = kind => { if (cfg.onEvent) cfg.onEvent(kind); };
+  const emit = (kind, key) => { if (cfg.onEvent) cfg.onEvent(kind, key); };   // key: 하루 한 번만 경험치를 주기 위한 항목 id
   const studiedCount = () => items().filter(g => state(g.id).studied).length;
 
   function render(app) {
@@ -655,7 +655,7 @@ export function createGrammarView(cfg) {
       const id = session.queue.shift();
       setState(id, s => { s.srs = schedule(s.srs, gr.dataset.grade); });
       st.logActivity("cards");
-      emit("card");
+      emit("card", id);
       if (gr.dataset.grade === "again") session.queue.push(id);
       session.done++;
       session.flipped = false;
@@ -700,7 +700,7 @@ export function createGrammarView(cfg) {
       runQuiz(el.querySelector("#quiz"), qs.map(q => ({ q, extra: grammarExtra })), {
         store: st, label: "문제", onRestart: start, restartLabel: ui.quiz === "exam" ? "처음부터 다시" : "새 문제 10개",
         empty: "이 범위에 문형이 없어요.",
-        onAnswer: (it, ok) => emit(ok ? "correct" : "wrong"),
+        onAnswer: (it, ok) => emit(ok ? "correct" : "wrong", it.q.id),
       });
     };
     el.onclick = e => {

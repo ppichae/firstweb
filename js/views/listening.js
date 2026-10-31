@@ -96,7 +96,7 @@ export function renderItem(el, item, opts = {}) {
     mountQuestion(box, Object.assign({ area: "listening" }, q, n3 ? { generated: true, kind: "listening" } : {}), {
       number: opts.number || i + 1, wide: true, mode: opts.mode, record: opts.record, store: opts.st,
       onAnswer: (ok, choice) => {
-        if (n3 && opts.record !== false) award("n3", ok ? "correct" : "wrong");
+        if (n3 && opts.record !== false) award("n3", ok ? "correct" : "wrong", q.id);
         // 답을 고른 뒤에는 스크립트·해석·핵심 표현을 볼 수 있게 한다
         const tools = el.querySelector(".listen-tools"); if (tools) tools.hidden = false;
         const aid = el.querySelector(".l-aid"); if (aid) aid.hidden = false;

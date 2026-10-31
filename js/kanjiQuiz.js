@@ -82,7 +82,7 @@ function recordKanji(roomId, ch, ok) {
     ok ? q.right++ : q.wrong++;
     q.last = today();
   });
-  if (roomId === "n3") award("n3", ok ? "correct" : "wrong");   // N1은 문제 기록 때 자동으로 경험치를 준다
+  if (roomId === "n3") award("n3", ok ? "correct" : "wrong", "kq:" + ch);   // N1은 문제 기록 때 자동으로 경험치를 준다
 }
 
 // 획순 문제: 앞의 획을 그려 두고, 다음 획을 그림 보기 4개 중에서 고른다

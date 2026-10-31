@@ -1039,3 +1039,22 @@ u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decorat
 .end-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 .end-bar.done { border-color: var(--ink); background: var(--ink-soft); }
 .end-msg { font-weight: 600; }
+
+/* 레벨 50: 레벨 살펴보기 · 레벨 업 알림 */
+.lv-pick { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; margin-top: 8px; }
+.lv-card { display: flex; gap: 12px; align-items: center; min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.lv-card.now { border-color: var(--ink); background: var(--ink-soft); }
+.lv-card > div { display: grid; gap: 2px; min-width: 0; }
+.lv-stages { list-style: none; padding: 0; margin: 12px 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.lv-stages li { display: grid; gap: 2px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; min-width: 0; }
+.lv-stages li.now { border-color: var(--ink); }
+.lv-stages small { color: var(--muted); font-size: 12px; }
+@media (max-width: 640px) {
+  .lv-pick { grid-template-columns: 1fr 1fr; }
+  .lv-pick .lv-card { grid-column: 1 / -1; grid-row: 1; }
+  .lv-stages { grid-template-columns: 1fr; }
+}
+.lvup-toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 50;
+  background: var(--fg); color: var(--bg); border-radius: 12px; padding: 12px 18px; font-size: 15px; transition: opacity .25s, transform .25s; max-width: calc(100% - 32px); }
+.lvup-toast.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .lvup-toast { transition: none; } }

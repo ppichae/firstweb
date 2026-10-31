@@ -4,7 +4,7 @@
 import { store, n3store } from "./store.js";
 import { EXTRA, QUESTIONS } from "./data.js";
 import { today, esc, fmtDate } from "./util.js";
-import { levelOf, XP_TEXT } from "./game.js";
+import { levelOf, levelInfo, MAX_LV, STAGES, XP_TEXT } from "./game.js";
 import { noteEntries } from "./stats.js";
 import { streakOf, summaryOf } from "./summary.js";
 import { vocabStudied } from "./views/vocab.js";
@@ -43,7 +43,9 @@ function defs(roomId) {
   const common = [
     ["lv3", "level", "⭐", "레벨 3", "레벨 3에 올랐어요", f.lv >= 3],
     ["lv5", "level", "🌟", "레벨 5", "레벨 5에 올랐어요", f.lv >= 5],
-    ["lv10", "level", "👑", "최고 레벨", "레벨 10에 올랐어요", f.lv >= 10],
+    ["lv10", "level", "👑", "레벨 10", "레벨 10에 올랐어요", f.lv >= 10],
+    ["lv25", "level", "🎖️", "레벨 25", "레벨 25에 올랐어요", f.lv >= 25],
+    ["lv50", "level", "🏆", "최고 레벨", "레벨 50에 올랐어요", f.lv >= 50],
     ["first", "study", "✏️", "첫 문제", "문제를 처음 풀었어요", f.attempts >= 1],
     ["w50", "study", "📗", "단어 50", "학습한 단어가 50개가 되었어요(외웠어요·퀴즈 정답·카드에서 알았어요)", f.words >= 50],
     ["w200", "study", "📚", "단어 200", "단어 200개를 공부했어요", f.words >= 200],
@@ -155,6 +157,7 @@ export function createBadgesView(id, roomId, homeId) {
               (roomId === "n1" ? "N1 레벨은 고급 어휘·문법·독해·청해 심화 학습량 기준이에요." : "N3 레벨은 기초를 다지고 중급으로 들어가는 학습량 기준이에요.") + " 두 급수의 레벨 숫자는 서로 같은 실력을 뜻하지 않아요.</p>" +
             (roomId === "n1" && (store.get("game") || {}).convertedFrom ? '<p class="hint">N1 방은 예전 기록(푼 문제·카드 복습)을 처음 한 번 경험치로 바꿔 넣었어요.</p>' : "") +
           "</article>" +
+          '<article class="card-box" id="lv-view">' + levelViewHTML(roomId, viewing[roomId] || lv.lv, lv) + "</article>" +
           '<article class="card-box"><h3>오늘의 작은 목표</h3><ul class="goals">' + goals.map(g =>
             '<li class="' + (g.done ? "done" : "") + '"><span>' + (g.done ? "✅ " : "⬜ ") + esc(g.label) + "</span><b>" + g.n + " / " + g.need + "</b></li>").join("") + "</ul></article>" +
           CATS.map(([c, label]) => {
@@ -165,6 +168,35 @@ export function createBadgesView(id, roomId, homeId) {
               '<small class="m-state">' + (b.got ? "받은 날 " + fmtDate(b.at) : "아직 못 받음") + "</small></li>").join("") + "</ul></article>";
           }).join("") +
         "</section>";
+      // 이전·다음 레벨 보기
+      app.onclick = e => {
+        const b = e.target.closest("[data-lvgo]");
+        if (!b) return;
+        viewing[roomId] = Number(b.dataset.lvgo);
+        app.querySelector("#lv-view").innerHTML = levelViewHTML(roomId, viewing[roomId], levelOf(roomId));
+        const f = app.querySelector('#lv-view [data-lvgo="' + b.dataset.lvgo + '"]') || app.querySelector("#lv-view [data-lvgo]");
+        if (f) f.focus();
+      };
     },
+    leave() { viewing[roomId] = null; },
   };
+}
+
+// 레벨 전체 보기: 고른 레벨 하나의 칭호·필요 경험치와, 다섯 단계 한눈에 보기
+const viewing = { n1: null, n3: null };
+function levelViewHTML(roomId, n, cur) {
+  const info = levelInfo(roomId, n);
+  const state = n < cur.lv ? "지나온 레벨이에요" : n === cur.lv ? "지금 레벨이에요" : "앞으로 " + Math.max(0, info.from - cur.xp) + " XP 더 모으면 돼요";
+  return '<div class="q-top"><h3>레벨 살펴보기</h3><span class="hint">Lv 1 ~ ' + MAX_LV + "</span></div>" +
+    '<div class="lv-pick">' +
+      '<button type="button" class="btn ghost sm" data-lvgo="' + (n - 1) + '"' + (n <= 1 ? " disabled" : "") + ">← 이전 레벨</button>" +
+      '<div class="lv-card' + (n === cur.lv ? " now" : "") + '"><span class="lv-emoji" aria-hidden="true">' + info.emoji + "</span>" +
+        '<div><div class="lv-title">Lv ' + n + " · " + esc(info.title) + '</div><small class="hint">' + info.stage + "단계 · 누적 " + info.from + " XP부터" + (info.to ? " (다음 레벨까지 " + (info.to - info.from) + " XP)" : " · 최고 레벨") + "</small>" +
+        '<small class="hint lv-state">' + state + "</small></div></div>" +
+      '<button type="button" class="btn ghost sm" data-lvgo="' + (n + 1) + '"' + (n >= MAX_LV ? " disabled" : "") + ">다음 레벨 →</button>" +
+    "</div>" +
+    '<ol class="lv-stages">' + STAGES[roomId].map(([emoji, title], i) => {
+      const a = i * 10 + 1, b = i * 10 + 10;
+      return '<li class="' + (cur.lv >= a && cur.lv <= b ? "now" : "") + '"><button type="button" class="link-btn" data-lvgo="' + a + '">' + emoji + " " + esc(title) + "</button><small>Lv " + a + "~" + b + " · " + levelInfo(roomId, a).from + " XP~</small></li>";
+    }).join("") + "</ol>";
 }

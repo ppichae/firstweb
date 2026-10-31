@@ -110,7 +110,7 @@ function renderLesson(box, data, id) {
     mountQuestion(holder, Object.assign({ id: "n3-basic-" + id + "-" + i, area: "basics", generated: true, kind: u.track === "kata" ? "가타카나 규칙" : "히라가나 규칙", source: { type: "ai" }, review: "needs-review" }, q), {
       label: "확인 " + (i + 1), store: n3store, wide: true,
       onAnswer: ok => {
-        results.set(i, ok); award(ok ? "correct" : "wrong");
+        results.set(i, ok); award(ok ? "correct" : "wrong", "n3-basic-" + id + "-" + i);
         const right = [...results.values()].filter(Boolean).length;
         box.querySelector("#l-score").textContent = right + " / " + u.quiz.length;
         if (results.size === u.quiz.length) {
@@ -170,7 +170,7 @@ function renderQuiz(box, data, ui, opts) {
       mountQuestion(holder, item, {
         label: SCRIPTS[s] + " " + (i + 1), store: n3store,
         onAnswer: ok => {
-          record(s, c[0], ok); award(ok ? "kana" : "wrong");
+          record(s, c[0], ok); award(ok ? "kana" : "wrong", item.id);
           results.set(i, ok);
           score.textContent = [...results.values()].filter(Boolean).length + " / " + chosen.length + " 정답";
           bar.update([...results.values()].filter(Boolean).length, results.size);
@@ -208,7 +208,7 @@ function renderWrite(box, data, script, ui) {
   mountWritePad(box.querySelector("#wpad"), strokeRefOf(ch), {
     onPractice: () => {
       n3store.update("kanaWritten", w => { const s = w[script] || (w[script] = {}); s[cur] = (s[cur] || 0) + 1; });
-      award("kana");
+      award("kana", "w:" + script + ":" + cur);
       const h = box.querySelector(".write-head .hint");
       if (h) h.textContent = sound(list.find(c => c[0] === cur)) + " · 연습 " + ((n3store.get("kanaWritten")[script] || {})[cur] || 0) + "회";
       const b = box.querySelector('[data-wchar="' + cur + '"]'); if (b) b.classList.add("done");
@@ -276,7 +276,7 @@ function renderWhich(box, data) {
       options: ["히라가나", "가타카나"], answer: s === "hira" ? 0 : 1,
       explanation: show(c, s) + "는 " + SCRIPTS[s] + "예요. 같은 소리의 " + SCRIPTS[s === "hira" ? "kata" : "hira"] + "는 " + show(c, s === "hira" ? "kata" : "hira") + "예요. 소리: " + sound(c),
       source: { type: "ai" }, review: "needs-review",
-    }, { label: "구별 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#w-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
+    }, { label: "구별 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong", "n3-kana-which-" + s + "-" + c[0]); results.set(i, ok); box.querySelector("#w-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
   });
   box.querySelector("#w-new").onclick = () => renderWhich(box, data);
 }
@@ -300,7 +300,7 @@ function renderWords(box, data) {
       id: "n3-kana-word-" + w.w, area: "basics", generated: true, kind: "단어 읽기", prompt: w.w,
       options: opt.map(o => o.r + " (" + o.ko + ")"), answer: opt.indexOf(w),
       explanation: w.w + "는 " + w.r + " (" + w.ko + "), 뜻은 '" + w.m + "'예요.", source: { type: "ai" }, review: "needs-review",
-    }, { label: "단어 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong"); results.set(i, ok); box.querySelector("#kw-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
+    }, { label: "단어 " + (i + 1), store: n3store, onAnswer: ok => { award(ok ? "kana" : "wrong", "n3-kana-word-" + w.w); results.set(i, ok); box.querySelector("#kw-score").textContent = [...results.values()].filter(Boolean).length + " / " + pool.length + " 정답"; bar.update([...results.values()].filter(Boolean).length, results.size); } });
   });
   box.onclick = e => { const k = e.target.closest("[data-say]"); if (k && !e.target.closest(".q")) speak(k.dataset.say, box.querySelector("#voice-msg")); };
 }

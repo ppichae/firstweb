@@ -6,7 +6,7 @@ import { createGrammarView } from "./study.js";
 import { award } from "../game.js";
 
 const g = createGrammarView({ id: "grammar", roomId: "n1", st: store, core: () => DB.grammar, extraKey: "n1grammar", idPrefix: "gen",
-  onEvent: kind => { if (kind === "card") award("n1", "card"); } });
+  onEvent: (kind, key) => { if (kind === "card") award("n1", "card", key); } });
 
 export const grammarStudied = g.studiedCount;
 export const grammarTotal = g.total;

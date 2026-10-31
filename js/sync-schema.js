@@ -8,7 +8,7 @@
 //   list    : 쌓이는 기록(문제 풀이·모의고사·연습 테스트). 하나하나 고유 번호로 합친다
 //   local   : 이 기기에만 두는 기록(동기화하지 않음)
 
-const STUDY = { status: "set", fav: "set", studied: "set", srs: "set", wrong: "counter" };
+const STUDY = { status: "set", fav: "set", studied: "set", srs: "set", wrong: "counter", right: "counter", cardOk: "max" };   // right: 퀴즈 정답 횟수, cardOk: 카드에서 알았어요·쉬워요를 고른 마지막 날
 
 export const SCHEMA = {
   words:        { kind: "map", fields: STUDY },
@@ -23,7 +23,7 @@ export const SCHEMA = {
   attempts:     { kind: "list", event: "attempt" },
   mocks:        { kind: "list", event: "mock" },
   tests:        { kind: "list", event: "test" },
-  game:         { kind: "obj", fields: { xp: "counter" }, localFields: ["convertedFrom", "convertedAt"] },
+  game:         { kind: "obj", fields: { xp: "counter" }, localFields: ["convertedFrom", "convertedAt", "todayKeys"] },   // todayKeys: 오늘 경험치를 준 항목(하루 한 번 규칙, 이 기기에만)
   examDate:     { kind: "value" },
   goal:         { kind: "value" },
   sprint:       { kind: "value" },

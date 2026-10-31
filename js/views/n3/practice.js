@@ -98,7 +98,7 @@ function renderDrill(el) {
   const start = () => {
     runQuiz(el.querySelector("#d-quiz"), make(ui.drill, 10).map(q => ({ q, extra: n3Extra })), {
       store: n3store, label: "연습", onRestart: start, restartLabel: "새 문제 10개",
-      onAnswer: (it, ok) => award(ok ? "correct" : "wrong"),
+      onAnswer: (it, ok) => award(ok ? "correct" : "wrong", it.q.id),
     });
   };
   el.onclick = e => {
@@ -183,7 +183,7 @@ function finish(el, app) {
   test.qs.forEach((q, i) => {
     const pick = test.picks[i];
     n3store.recordAttempt(q, pick === null ? -1 : pick, "test");
-    award(pick === q.answer ? "correct" : "wrong");
+    award(pick === q.answer ? "correct" : "wrong", q.id);
     const b = byType[q.typeKey] || (byType[q.typeKey] = { total: 0, correct: 0 });
     b.total++; if (pick === q.answer) b.correct++;
   });
@@ -223,7 +223,7 @@ function renderResult(el, app) {
       wrongIdx.forEach((i, n) => {
         const holder = document.createElement("div");
         box.appendChild(holder);
-        mountQuestion(holder, test.qs[i], { label: "다시 풀기 " + (n + 1), store: n3store, mode: "review", onAnswer: ok => award(ok ? "correct" : "wrong") });
+        mountQuestion(holder, test.qs[i], { label: "다시 풀기 " + (n + 1), store: n3store, mode: "review", onAnswer: ok => award(ok ? "correct" : "wrong", test.qs[i].id) });
       });
       e.target.closest("#r-redo").remove();
     }

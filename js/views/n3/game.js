@@ -7,8 +7,8 @@ import { award as awardRoom, levelOf, XP_RULES } from "../../game.js";
 export { XP_RULES };
 
 // 학습 행동 하나를 기록하고 경험치를 더한다
-export function award(kind) {
-  awardRoom("n3", kind);
+export function award(kind, key) {
+  awardRoom("n3", kind, key);
   if (kind === "correct" || kind === "wrong" || kind === "kana") n3store.logActivity("questions");
 }
 

@@ -66,7 +66,7 @@ function mountRetry(app, n) {
   box.appendChild(holder);
   mountQuestion(holder, Object.assign({}, n.q, { area: n.area }), {
     label: "다시 풀기", mode: "review", wide: true, store: n3store,
-    onAnswer: ok => { retrying.delete(n.qid); award(ok ? "correct" : "wrong"); },
+    onAnswer: ok => { retrying.delete(n.qid); award(ok ? "correct" : "wrong", n.qid); },
   });
 }
 
