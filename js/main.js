@@ -7,6 +7,11 @@ import { trackRoom } from "./tracker.js";
 import { initTheme } from "./theme.js";
 import { initAuth, gateActive, signedIn, rememberNext, takeNext, peekNext, userLabel, signOut } from "./auth.js";
 import { loginView } from "./views/login.js";
+import { profileView } from "./views/profile.js";
+import { createPartnerView } from "./views/partner.js";
+import { loadProfile, myProfile, resetAccount } from "./account.js";
+
+const partnerView = createPartnerView();
 
 initTheme();
 
@@ -33,6 +38,8 @@ function resolve(id) {
   id = ALIASES[id] || id;
   if (id === "rooms") return { room: null, view: roomsView };
   if (id === "login") return { room: null, view: loginView };
+  if (id === "profile") return { room: null, view: profileView };
+  if (id === "partner") return { room: null, view: partnerView };
   for (const room of Object.values(ROOMS)) {
     const view = room.views.find(v => v.id === id);
     if (view) return { room, view };
@@ -67,6 +74,12 @@ async function route() {
     location.replace("#login");
     return;
   }
+  // 처음 로그인해서 아직 프로필(닉네임·급수)이 없으면 프로필 설정부터 한다
+  if (gateActive() && signedIn() && myProfile() === null && view !== profileView && view !== loginView) {
+    if (wantedId) rememberNext(wantedId);
+    location.replace("#profile");
+    return;
+  }
   // 로그인을 마치고 돌아오면 가려던 화면(없으면 마지막 방)으로 보낸다
   if (view === loginView && signedIn()) { location.replace("#" + (takeNext() || "")); return; }
   // 이전 화면의 정리 작업(음성·타이머 멈추기)을 하고, 걸어 둔 클릭·입력 처리를 지운다
@@ -97,9 +110,12 @@ function drawAccount() {
   if (!accountBox) return;
   accountBox.hidden = !signedIn();
   if (!signedIn()) { accountBox.innerHTML = ""; return; }
-  accountBox.innerHTML = "<b>" + esc(userLabel()) + '</b><button type="button" class="theme-toggle" id="sign-out">로그아웃</button>';
+  const p = myProfile();
+  accountBox.innerHTML = (p ? '<a class="theme-toggle" href="#partner">🤝 공부 파트너</a>' : "") +
+    "<b>" + esc(p ? p.nickname : userLabel()) + '</b><button type="button" class="theme-toggle" id="sign-out">로그아웃</button>';
   accountBox.querySelector("#sign-out").onclick = async () => {
     await signOut();
+    resetAccount();
     drawAccount();
     location.replace("#login");
   };
@@ -118,11 +134,14 @@ async function start() {
   }
   store.migrateLegacy(DB.vocab.items);
   // 로그인 연결(설정이 비어 있으면 아무 일도 하지 않는다). 연결에 실패해도 사이트는 멈추지 않고 로그인 화면에서 알린다
-  const authReady = initAuth(() => { drawAccount(); route(); })
+  // 로그인·로그아웃하면 프로필을 다시 불러온 뒤 화면을 다시 그린다
+  const authReady = initAuth(async () => { resetAccount(); await loadProfile(); drawAccount(); route(); })
     .catch(e => console.error("로그인 기능을 불러오지 못했어요.", e))
     .then(drawAccount);
   // 잠금이 켜져 있으면 로그인 여부를 알아야 하므로 기다린다. 꺼져 있으면 기다리지 않고 바로 화면을 그린다
   if (gateActive()) await authReady;
+  if (signedIn()) { await loadProfile(); drawAccount(); }
+  window.addEventListener("account-changed", drawAccount);
   // Google 로그인을 마치고 돌아왔으면, 로그인 전에 보려던 화면으로 보낸다
   if (signedIn() && peekNext() && !location.hash.slice(1)) location.replace("#" + takeNext());
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });

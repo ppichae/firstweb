@@ -1,6 +1,6 @@
 // 로그인 화면: Google 계정으로 로그인한다
 // Supabase가 아직 연결되지 않았으면 버튼을 누를 수 없게 두고 '준비 중'이라고 솔직하게 알린다 (로그인된 것처럼 꾸미지 않는다)
-import { authConfigured, authPreview, signedIn, signInWithGoogle, peekNext, peekLoginError, clearLoginError } from "../auth.js";
+import { authConfigured, authPreview, signedIn, signInWithGoogle, peekNext, peekLoginError, clearLoginError, usingTestProject, signInTestAccount } from "../auth.js";
 
 // Google 로고 (Google 로그인 버튼 안내에 맞춘 G 모양)
 const G_LOGO = '<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
@@ -27,6 +27,11 @@ function render(app) {
           : '<p class="login-state" id="login-state"><span class="badge warn">준비 중</span> 로그인 기능을 아직 연결하지 않았어요. 지금은 버튼을 눌러도 로그인되지 않아요.</p>') +
         (!ready && !preview ? '<a class="btn ghost login-skip" href="#rooms">지금은 로그인 없이 공부하기</a>' : "") +
         (preview ? '<p class="hint">미리보기 모드예요. 로그인이 연결된 뒤처럼 학습 화면을 잠가서 흐름만 보여 줘요.</p>' : "") +
+        (usingTestProject()
+          ? '<form class="test-login" id="test-login"><b>테스트 계정 (테스트 서버 전용)</b>' +
+              '<input id="tl-email" type="email" placeholder="이메일" autocomplete="off"><input id="tl-pass" type="password" placeholder="비밀번호" autocomplete="off">' +
+              '<button class="btn ghost" type="submit">테스트 계정으로 로그인</button></form>'
+          : "") +
         '<p class="hint login-note">로그인에는 이름·이메일·프로필 사진만 쓰여요. 기존에 이 브라우저에 저장된 학습 기록은 지워지지 않아요.</p>' +
       "</div>" +
     "</section>";
@@ -37,6 +42,13 @@ function render(app) {
     box.textContent = "로그인을 마치지 못했어요. 다시 시도해 주세요. 등록된 Google 계정만 로그인할 수 있어요. (" + returned + ")";
     box.hidden = false;
   }
+  const tl = app.querySelector("#test-login");
+  if (tl) tl.onsubmit = async e => {
+    e.preventDefault();
+    const box = app.querySelector("#login-error");
+    try { await signInTestAccount(app.querySelector("#tl-email").value, app.querySelector("#tl-pass").value); }
+    catch (err) { box.textContent = "테스트 계정 로그인 실패: " + (err.message || "오류"); box.hidden = false; }
+  };
   if (ready) btn.onclick = async () => {
     btn.disabled = true;
     clearLoginError();

@@ -1,13 +1,19 @@
 // 로그인 상태와 '로그인해야 학습 화면에 들어갈 수 있는' 문(게이트)을 관리한다
 // 아직 Supabase가 연결되지 않았으면(auth-config.js가 비어 있으면) 로그인은 '준비 중'이고 문도 열어 둔다.
 // 그래서 지금은 기존처럼 로그인 없이 공부할 수 있다. 연결된 뒤에는 로그인 전 학습 화면이 잠긴다.
-import { AUTH_CONFIG } from "./auth-config.js";
+import { AUTH_CONFIG as REAL_CONFIG, TEST_AUTH_CONFIG } from "./auth-config.js";
 
 // Supabase 자바스크립트 도구: 설정이 채워졌을 때만 불러온다 (지금은 불러오지 않는다)
 const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
 const NEXT_KEY = "jlpt:afterLogin";
 
+const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+// 테스트 서버에서 ?sb=test면 테스트용 프로젝트에 연결한다 (실제 사이트에서는 항상 실제용)
+export const usingTestProject = () => isLocal && new URLSearchParams(location.search).get("sb") === "test";
+const AUTH_CONFIG = usingTestProject() ? TEST_AUTH_CONFIG : REAL_CONFIG;
+
 export const authConfigured = () => !!(AUTH_CONFIG.supabaseUrl && AUTH_CONFIG.publishableKey);
+export const getClient = () => client;
 
 // 주소에 ?auth=preview를 붙이면, 로그인이 연결된 뒤처럼 문을 잠가서 화면 흐름만 미리 볼 수 있다 (로그인은 되지 않는다)
 export const authPreview = () => new URLSearchParams(location.search).get("auth") === "preview";
@@ -73,6 +79,15 @@ export async function signInWithGoogle() {
 }
 
 export async function signOut() { if (client) await client.auth.signOut(); session = null; }
+
+// 테스트 계정 로그인: 테스트 서버에서 테스트용 프로젝트(?sb=test)에 연결했을 때만. 계정이 없으면 만든다
+export async function signInTestAccount(email, password) {
+  if (!client || !usingTestProject()) throw new Error("테스트 서버의 테스트용 프로젝트에서만 쓸 수 있어요.");
+  let { data, error } = await client.auth.signInWithPassword({ email, password });
+  if (error && /invalid login/i.test(error.message)) ({ data, error } = await client.auth.signUp({ email, password }));
+  if (error) throw error;
+  if (data && data.session) session = data.session;
+}
 
 // 로그인 화면으로 보내기 전에, 가려던 화면을 기억해 두었다가 로그인 뒤에 그 화면으로 보낸다
 export function rememberNext(id) { try { sessionStorage.setItem(NEXT_KEY, id); } catch (e) { /* 기억하지 못하면 첫 화면으로 간다 */ } }

@@ -9,3 +9,11 @@ export const AUTH_CONFIG = {
   // Supabase의 Redirect URLs에 등록된 주소(https://ppichae.github.io/firstweb/, http://localhost:8765/)만 허용된다
   redirectTo: location.origin + location.pathname,
 };
+
+// 테스트용 프로젝트(firstweb-test): 이 컴퓨터의 테스트 서버(localhost)에서 주소에 ?sb=test를 붙였을 때만 쓴다.
+// 실제 사이트에서는 절대 쓰이지 않는다. 테스트 계정은 이메일·비밀번호로 만든다.
+export const TEST_AUTH_CONFIG = {
+  supabaseUrl: "https://mgtkbuenrgrbgclkizpb.supabase.co",
+  publishableKey: "sb_publishable_8LfEkT3qCp0G1bdDts-TOQ_fVcluKFH",
+  redirectTo: location.origin + location.pathname,
+};
