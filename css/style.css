@@ -923,3 +923,31 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .ex-own .ko { color: var(--muted); font-size: 13.5px; }
 .ex-note { font-size: 13px; color: var(--fg); background: var(--bg); border-radius: 8px; padding: 6px 10px; margin-top: 2px; }
 .card .ex .ex-ja { font-size: 14.5px; }
+
+/* 로그인 화면 */
+.login-panel { justify-items: center; }
+.login-card {
+  width: min(440px, 100%); display: grid; gap: 14px; justify-items: center; text-align: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 32px 24px;
+}
+.login-card h2 { margin: 0; }
+.login-mark {
+  width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center;
+  background: var(--ink-soft); color: var(--ink); font-family: var(--font-jp); font-size: 34px; font-weight: 700;
+}
+.login-lede { margin: 0; color: var(--muted); }
+.login-card .notice { text-align: left; width: 100%; }
+/* Google 로그인 버튼: 흰 바탕 + 회색 테두리 + G 로고 (Google 버튼 안내 모양) */
+.google-btn {
+  width: 100%; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  border: 1px solid #747775; border-radius: 999px; background: #FFFFFF; color: #1F1F1F;
+  font: 600 15px/1 var(--font-body); padding: 0 20px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.google-btn:hover:not(:disabled) { background: #F2F2F2; }
+.google-btn:disabled { opacity: .55; cursor: not-allowed; }
+.g-logo { width: 20px; height: 20px; flex: 0 0 auto; }
+.login-state, .login-error { margin: 0; font-size: 13.5px; }
+.login-state { color: var(--muted); }
+.login-error { color: var(--bad); }
+.login-skip { width: 100%; }
+.login-note { margin: 0; }

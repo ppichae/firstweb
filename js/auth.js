@@ -1,0 +1,49 @@
+// 로그인 상태와 '로그인해야 학습 화면에 들어갈 수 있는' 문(게이트)을 관리한다
+// 아직 Supabase가 연결되지 않았으면(auth-config.js가 비어 있으면) 로그인은 '준비 중'이고 문도 열어 둔다.
+// 그래서 지금은 기존처럼 로그인 없이 공부할 수 있다. 연결된 뒤에는 로그인 전 학습 화면이 잠긴다.
+import { AUTH_CONFIG } from "./auth-config.js";
+
+// Supabase 자바스크립트 도구: 설정이 채워졌을 때만 불러온다 (지금은 불러오지 않는다)
+const SUPABASE_JS = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+const NEXT_KEY = "jlpt:afterLogin";
+
+export const authConfigured = () => !!(AUTH_CONFIG.supabaseUrl && AUTH_CONFIG.publishableKey);
+
+// 주소에 ?auth=preview를 붙이면, 로그인이 연결된 뒤처럼 문을 잠가서 화면 흐름만 미리 볼 수 있다 (로그인은 되지 않는다)
+export const authPreview = () => new URLSearchParams(location.search).get("auth") === "preview";
+
+let client = null;
+let session = null;
+
+// 사이트를 열 때 한 번 부른다. 연결 전에는 아무 일도 하지 않는다
+export async function initAuth(onChange) {
+  if (!authConfigured()) return;
+  const { createClient } = await import(SUPABASE_JS);
+  client = createClient(AUTH_CONFIG.supabaseUrl, AUTH_CONFIG.publishableKey, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" },
+  });
+  const { data } = await client.auth.getSession();
+  session = data.session;
+  client.auth.onAuthStateChange((_event, s) => { session = s; if (onChange) onChange(); });
+}
+
+export const signedIn = () => !!session;
+export const currentUser = () => (session ? session.user : null);
+
+// 문이 잠겨 있는가: 연결됐거나 미리보기일 때만 잠근다
+export const gateActive = () => authConfigured() || authPreview();
+
+export async function signInWithGoogle() {
+  if (!client) throw new Error("로그인 기능이 아직 연결되지 않았어요.");
+  const { error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo: AUTH_CONFIG.redirectTo } });
+  if (error) throw error;
+}
+
+export async function signOut() { if (client) await client.auth.signOut(); session = null; }
+
+// 로그인 화면으로 보내기 전에, 가려던 화면을 기억해 두었다가 로그인 뒤에 그 화면으로 보낸다
+export function rememberNext(id) { try { sessionStorage.setItem(NEXT_KEY, id); } catch (e) { /* 기억하지 못하면 첫 화면으로 간다 */ } }
+export function takeNext() {
+  try { const id = sessionStorage.getItem(NEXT_KEY); sessionStorage.removeItem(NEXT_KEY); return id; } catch (e) { return null; }
+}
+export function peekNext() { try { return sessionStorage.getItem(NEXT_KEY); } catch (e) { return null; } }

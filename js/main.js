@@ -5,6 +5,8 @@ import { esc } from "./util.js";
 import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
 import { trackRoom } from "./tracker.js";
 import { initTheme } from "./theme.js";
+import { initAuth, gateActive, signedIn, rememberNext, takeNext } from "./auth.js";
+import { loginView } from "./views/login.js";
 
 initTheme();
 
@@ -30,6 +32,7 @@ const ALIASES = { "n1/lists": "vocab", "n3/more": "n3/reading" };
 function resolve(id) {
   id = ALIASES[id] || id;
   if (id === "rooms") return { room: null, view: roomsView };
+  if (id === "login") return { room: null, view: loginView };
   for (const room of Object.values(ROOMS)) {
     const view = room.views.find(v => v.id === id);
     if (view) return { room, view };
@@ -39,8 +42,8 @@ function resolve(id) {
   return { room: null, view: roomsView };
 }
 
-function drawRoom(room) {
-  const info = room || roomsView;
+function drawRoom(room, view) {
+  const info = room || (view && view.docTitle ? view : roomsView);   // 방 밖의 화면(급수 선택·로그인)은 그 화면의 제목을 쓴다
   document.title = info.docTitle;
   header.eyebrow.textContent = info.eyebrow;
   header.title.innerHTML = info.title;
@@ -56,12 +59,22 @@ function drawRoom(room) {
 
 async function route() {
   const token = ++routeToken;
-  const { room, view } = resolve(location.hash.slice(1));
+  const wantedId = location.hash.slice(1);
+  const { room, view } = resolve(wantedId);
+  // 로그인이 연결된 뒤에는 로그인 전 학습 화면을 잠근다. 가려던 화면은 기억해 두고 로그인 화면으로 보낸다
+  if (gateActive() && !signedIn() && view !== loginView) {
+    if (wantedId) rememberNext(wantedId);
+    location.replace("#login");
+    return;
+  }
+  // 로그인을 마치고 돌아오면 가려던 화면(없으면 마지막 방)으로 보낸다
+  if (view === loginView && signedIn()) { location.replace("#" + (takeNext() || "")); return; }
   // 이전 화면의 정리 작업(음성·타이머 멈추기)을 하고, 걸어 둔 클릭·입력 처리를 지운다
   if (currentView && currentView.leave) currentView.leave();
   currentView = view;
   app.onclick = app.oninput = app.onchange = app.onsubmit = null;
-  if (room !== currentRoom) { drawRoom(room); currentRoom = room; }
+  const roomKey = room ? room.id : view.id;
+  if (roomKey !== currentRoom) { drawRoom(room, view); currentRoom = roomKey; }
   if (room) rememberRoom(room.id);
   trackRoom(room ? room.st : null);
   tablist.querySelectorAll(".tab").forEach(t => {
@@ -90,6 +103,8 @@ async function start() {
     return;
   }
   store.migrateLegacy(DB.vocab.items);
+  // 로그인 연결(설정이 비어 있으면 아무 일도 하지 않는다). 연결에 실패해도 사이트는 멈추지 않고 로그인 화면에서 알린다
+  try { await initAuth(() => route()); } catch (e) { console.error("로그인 기능을 불러오지 못했어요.", e); }
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
   route();
 }
