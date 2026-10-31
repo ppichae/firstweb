@@ -4,7 +4,8 @@
 import { store, n3store } from "./store.js";
 import { esc, shuffle, today, pct } from "./util.js";
 import { mountQuestion } from "./quiz.js";
-import { kanjiInfo, roomKanjiList, wordsWith, splitReading } from "./kanji.js";
+import { kanjiInfo, roomKanjiList, wordsWith, splitReading, examplesWith } from "./kanji.js";
+import { runQuiz } from "./quizRunner.js";
 import { loadStrokes } from "./strokes.js";
 import { award } from "./game.js";
 
@@ -85,7 +86,7 @@ function recordKanji(roomId, ch, ok) {
 // 획순 문제: 앞의 획을 그려 두고, 다음 획을 그림 보기 4개 중에서 고른다
 async function mountOrderQ(el, roomId, info, n) {
   const data = await loadStrokes(info.strokeRef);
-  if (!data || data.strokes.length < 3) { el.remove(); return; }
+  if (!data || data.strokes.length < 3) { el.innerHTML = '<p class="hint">이 한자는 획순 문제를 만들 수 없어서 넘어가요.</p>'; if (el._onAnswer) el._onAnswer(true); return; }
   const total = data.strokes.length;
   const k = 1 + Math.floor(Math.random() * (total - 1));           // 0부터 센 정답 획 번호 (1번째 획은 너무 쉬워서 뺀다)
   const later = data.strokes.map((_, i) => i).filter(i => i > k);
@@ -116,12 +117,31 @@ async function mountOrderQ(el, roomId, info, n) {
     STORES[roomId].recordAttempt(q, pick, "practice");
     recordKanji(roomId, info.char, ok);
     el.querySelectorAll("[data-ko]").forEach((x, i) => { x.disabled = true; if (i === q.answer) x.classList.add("correct"); else if (i === pick) x.classList.add("wrong"); });
-    el.querySelector(".kq-fb").innerHTML = '<div class="fb"><div class="fb-verdict ' + (ok ? "good" : "bad") + '">' + (ok ? "정답이에요" : "오답이에요 · 오답 노트에 저장했어요") + "</div><p>" + esc(q.explanation) + "</p></div>";
+    el.querySelector(".kq-fb").innerHTML = '<div class="fb"><div class="fb-verdict ' + (ok ? "good" : "bad") + '">' + (ok ? "정답이에요" : "오답이에요 · 오답 노트에 저장했어요") + "</div><p>" + esc(q.explanation) + "</p></div>" + kanjiExtra(info, roomId);
     if (el._onAnswer) el._onAnswer(ok);
   };
 }
 
-// 퀴즈 10문제를 box 안에 만든다. pool: 출제할 한자(없으면 이 방 한자 전체)
+// 답한 뒤 보여 주는 한자 학습 정보: 한국 한자음·뜻, 음독·훈독, 이 방의 대표 단어(읽기·뜻), 예문, 연상 이야기
+export function kanjiExtra(info, roomId) {
+  const words = wordsWith(info.char, roomId);
+  // 단어 속 이 한자의 읽기까지 맞출 수 있는 단어를 먼저 보여 준다
+  const withSplit = words.map(v => ({ v, s: splitReading(v.word, v.reading) })).sort((a, b) => (b.s ? 1 : 0) - (a.s ? 1 : 0)).slice(0, 2);
+  const ex = examplesWith(info.char, roomId)[0];
+  return '<div class="learn-box"><div class="lb-title">학습 정보</div>' +
+    '<div class="lb-word"><b class="lb-kanji" lang="ja">' + esc(info.char) + "</b> " +
+      (info.ko ? '<span class="lb-mean">' + (info.ko.hun ? esc(info.ko.hun) + " " : "") + "<b>" + esc(info.ko.eum) + "</b></span>" : "") +
+      ' <small class="hint">' + esc(info.meaning) + "</small></div>" +
+    '<div class="lb-row"><span class="lb-label">음독</span><span lang="ja">' + (info.on.join("・") || "—") + "</span></div>" +
+    '<div class="lb-row"><span class="lb-label">훈독</span><span lang="ja">' + (info.kun.map(k => { const [a, b] = k.split("-"); return esc(a) + (b ? '<span class="okuri">' + esc(b) + "</span>" : ""); }).join("・") || "—") + "</span></div>" +
+    withSplit.map(({ v, s }) => '<div class="lb-row"><span class="lb-label">대표 단어</span><span><b lang="ja">' + esc(v.word) + '</b> <span class="reading" lang="ja">' + esc(v.reading) + "</span> " + esc(v.meaning) +
+      (s ? ' <small class="hint">(' + esc(info.char) + " = " + esc(s.find(p => p[0] === info.char)[1]) + ")</small>" : "") + "</span></div>").join("") +
+    (ex ? '<div class="lb-ex"><span class="jp" lang="ja">' + esc(ex.ja) + '</span><span class="ko">' + esc(ex.ko) + "</span></div>" : "") +
+    (info.mnemonic ? '<div class="lb-row lb-story"><span class="lb-label">연상 이야기</span><span>' + esc(info.mnemonic) + "</span></div>" : "") +
+    "</div>";
+}
+
+// 퀴즈 10문제를 한 문제씩 푼다. pool: 출제할 한자(없으면 이 방 한자 전체)
 export function runKanjiQuiz(box, roomId, type, pool, onDone) {
   const all = infos(roomId);
   const src = (pool && pool.length ? pool : all);
@@ -129,23 +149,18 @@ export function runKanjiQuiz(box, roomId, type, pool, onDone) {
   shuffle(src).forEach(info => {
     if (items.length >= 10) return;
     const t = type === "mix" ? KQ_TYPES[Math.floor(Math.random() * KQ_TYPES.length)][0] : type;
-    if (t === "order") { items.push({ order: true, info }); return; }
+    if (t === "order") {
+      items.push({ custom: (holder, done) => { holder._onAnswer = ok => done(ok); mountOrderQ(holder, roomId, info, items.indexOf(it) + 1); }, info });
+      const it = items[items.length - 1];
+      return;
+    }
     const q = build(roomId, t, info, all);
-    if (q) items.push({ q, info });
+    if (q) items.push({ q, info, wide: q.options.some(o => o.length > 10), extra: () => kanjiExtra(info, roomId) });
   });
-  box.innerHTML = '<div class="toolbar"><span class="score" id="kq-score"></span></div><div class="quiz" id="kq-list"></div>' +
-    (items.length ? "" : '<p class="empty">이 조건으로 만들 수 있는 문제가 없어요. 다른 유형을 골라 보세요.</p>');
-  const list = box.querySelector("#kq-list"), score = box.querySelector("#kq-score");
-  const results = new Map();
-  const done = (i, ok) => { results.set(i, ok); score.textContent = [...results.values()].filter(Boolean).length + " / " + items.length + " 정답"; if (onDone && results.size === items.length) onDone(); };
-  items.forEach((it, i) => {
-    const holder = document.createElement("div");
-    list.appendChild(holder);
-    if (it.order) { holder._onAnswer = ok => done(i, ok); mountOrderQ(holder, roomId, it.info, i + 1); return; }
-    mountQuestion(holder, it.q, {
-      label: "한자 " + (i + 1), store: STORES[roomId], wide: it.q.options.some(o => o.length > 10),
-      onAnswer: ok => { recordKanji(roomId, it.info.char, ok); done(i, ok); },
-    });
+  runQuiz(box, items, {
+    store: STORES[roomId], label: "한자", empty: "이 조건으로 만들 수 있는 문제가 없어요. 다른 유형을 골라 보세요.",
+    onRestart: () => runKanjiQuiz(box, roomId, type, pool, onDone), restartLabel: "새 문제 10개",
+    onAnswer: (it, ok) => { if (!it.custom) recordKanji(roomId, it.info.char, ok); },
   });
 }
 

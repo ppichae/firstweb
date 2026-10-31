@@ -3,7 +3,8 @@ import { esc, multiline, badges, AREAS } from "./util.js";
 import { store } from "./store.js";
 import { grammarById } from "./data.js";
 
-// q: 문제 자료, opts: { number, record(기록 여부), mode, onAnswer(correct, choice), wide, label, store(기록할 방, 기본은 N1) }
+// q: 문제 자료, opts: { number, record(기록 여부), mode, onAnswer(correct, choice), wide, label, store(기록할 방, 기본은 N1),
+//                     extra(q, picked) → 답한 뒤 해설 아래에 덧붙일 학습 정보(HTML) }
 export function mountQuestion(el, q, opts = {}) {
   let picked = null;
 
@@ -24,7 +25,7 @@ export function mountQuestion(el, q, opts = {}) {
             '><span class="n">' + (j + 1) + '</span><span lang="ja">' + esc(o) + "</span></button>";
         }).join("") +
       "</div>" +
-      (done ? feedbackHTML(q, picked, opts.record !== false) : "");
+      (done ? feedbackHTML(q, picked, opts.record !== false) + (opts.extra ? opts.extra(q, picked) : "") : "");
   }
 
   el.onclick = e => {

@@ -4,6 +4,8 @@ import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
 import { esc, shuffle, pct, fmtDate, dateKey } from "../../util.js";
 import { mountQuestion, feedbackHTML } from "../../quiz.js";
+import { runQuiz } from "../../quizRunner.js";
+import { LIST_POS } from "../listStudy.js";
 import { buildQuestion } from "../listStudy.js";
 import { award } from "./game.js";
 
@@ -21,6 +23,23 @@ const ui = { mode: "drill", drill: DRILLS[0][0] };
 let test = null;      // 진행 중이거나 막 끝난 테스트
 let timer = null;
 
+
+// 답한 뒤 보여 주는 학습 정보: 정답 단어·문형의 읽기와 뜻, 오답이면 고른 보기의 주인
+function n3Extra(q, picked) {
+  const all = [...((EXTRA.n3vocab && EXTRA.n3vocab.items) || []), ...((EXTRA.n3grammar && EXTRA.n3grammar.items) || [])];
+  const head = v => v.word || v.pattern;
+  const line = v => '<div class="lb-word"><b lang="ja">' + esc(head(v)) + "</b>" + (v.reading && v.reading !== head(v) ? ' <span class="reading" lang="ja">' + esc(v.reading) + "</span>" : "") +
+    ' <span class="lb-mean">' + esc(v.meaning) + "</span>" + (v.pos ? ' <small class="hint">' + esc(LIST_POS[v.pos] || v.pos) + "</small>" : "") + "</div>";
+  const v = all.find(x => x.id === q.wordId);
+  if (!v) return "";
+  let wrong = "";
+  if (picked !== null && picked !== undefined && picked !== q.answer) {
+    const t = q.options[picked];
+    const o = all.find(x => x !== v && (x.meaning === t || x.reading === t || head(x) === t));
+    if (o) wrong = '<div class="lb-row lb-wrong"><span class="lb-label">내가 고른 보기</span>' + line(o) + "</div>";
+  }
+  return '<div class="learn-box"><div class="lb-title">학습 정보</div>' + line(v) + wrong + "</div>";
+}
 function pool(setKey, type) {
   const d = EXTRA[SETS[setKey].dataKey];
   let items = (d && d.items) || [];
@@ -70,23 +89,13 @@ function renderDrill(el) {
   el.innerHTML =
     '<div class="toolbar">' + DRILLS.map(([k, l]) =>
       '<button type="button" class="chip" data-drill="' + k + '" aria-pressed="' + (ui.drill === k) + '">' + l + "</button>").join("") + "</div>" +
-    '<div class="toolbar"><span class="score" id="d-score"></span><button type="button" class="link-btn" id="d-new">새 문제 10개</button></div>' +
+    '<div class="toolbar"><button type="button" class="link-btn" id="d-new">새 문제 10개</button></div>' +
     '<div class="quiz" id="d-quiz"></div>';
+  // 한 문제씩 풀고, 답한 뒤에는 그 단어·문형의 학습 정보를 보여 준다
   const start = () => {
-    const qs = make(ui.drill, 10);
-    const quiz = el.querySelector("#d-quiz"), score = el.querySelector("#d-score");
-    const results = new Map();
-    quiz.innerHTML = ""; score.textContent = "";
-    qs.forEach((q, i) => {
-      const box = document.createElement("div");
-      quiz.appendChild(box);
-      mountQuestion(box, q, {
-        label: "연습 " + (i + 1), store: n3store,
-        onAnswer: ok => {
-          results.set(i, ok); award(ok ? "correct" : "wrong");
-          score.textContent = [...results.values()].filter(Boolean).length + " / " + qs.length + " 정답";
-        },
-      });
+    runQuiz(el.querySelector("#d-quiz"), make(ui.drill, 10).map(q => ({ q, extra: n3Extra })), {
+      store: n3store, label: "연습", onRestart: start, restartLabel: "새 문제 10개",
+      onAnswer: (it, ok) => award(ok ? "correct" : "wrong"),
     });
   };
   el.onclick = e => {

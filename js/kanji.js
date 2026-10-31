@@ -79,7 +79,7 @@ function roomWords(roomId) {
 }
 export const wordsWith = (ch, roomId) => roomWords(roomId).filter(v => (v.word || "").includes(ch));
 
-function examplesWith(ch, roomId) {
+export function examplesWith(ch, roomId) {
   if (roomId !== "n1") return [];
   const out = [];
   [...((DB.vocab && DB.vocab.items) || []), ...((DB.grammar && DB.grammar.items) || [])].forEach(it =>

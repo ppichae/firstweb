@@ -847,3 +847,31 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .mark.star { color: var(--muted); }
 .mark.star[aria-pressed="true"] { color: var(--warn); border-color: var(--warn); background: var(--warn-soft); }
 .kd:focus { outline: none; }
+
+/* ---------- 고도화 B: 한 문제씩 푸는 퀴즈 · 학습 정보 ---------- */
+.qr-head { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.qr-head b { color: var(--fg); font-size: 16px; }
+.qr-bar { flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.qr-bar span { display: block; height: 100%; background: var(--ink); transition: width .25s; }
+.qr-score { font-weight: 600; color: var(--good); }
+.qr-q { min-width: 0; }
+.qr-nav { display: flex; justify-content: flex-end; min-height: 44px; }
+.qr-nav:empty { min-height: 0; }
+.qr-next { min-width: 160px; }
+@media (max-width: 520px) { .qr-next { width: 100%; } }
+.quiz > .qr-head, .quiz > .qr-q, .quiz > .qr-nav { scroll-margin-top: 80px; }
+.learn-box { display: grid; gap: 6px; padding: 12px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); font-size: 14.5px; }
+.lb-title { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.lb-word { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.lb-word b[lang="ja"] { font-size: 19px; }
+.lb-kanji { font-size: 26px !important; }
+.lb-mean { font-weight: 600; }
+.lb-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.lb-label { font-size: 12.5px; color: var(--muted); }
+.lb-wrong { border-top: 1px dashed var(--line); padding-top: 6px; }
+.lb-wrong .lb-word b { color: var(--bad); }
+.lb-ex { display: grid; gap: 2px; border-left: 3px solid var(--line); padding-left: 10px; }
+.lb-ex .jp { font-size: 15.5px; }
+.lb-ex .ko { color: var(--muted); font-size: 13.5px; }
+.lb-story span:last-child { color: var(--fg); }
+@media (max-width: 420px) { .lb-row { grid-template-columns: 1fr; gap: 0; } }
