@@ -4,6 +4,7 @@
 import { store, n3store } from "../store.js";
 import { esc, today } from "../util.js";
 import { nameOf } from "../summary.js";
+import { syncActive } from "../sync.js";
 
 const ROOMS = {
   n1: { st: store, app: "jlpt-n1-goukaku", label: "N1", extraKeys: ["n1lab:mockDraft"] },
@@ -65,12 +66,18 @@ export function createBackupView(id, roomId) {
   function render(app) {
     const mocks = st.get("mocks") ? st.get("mocks").length : 0;
     const pend = ui.pending ? Object.keys(ui.pending) : [];
+    const synced = syncActive();
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>기록 관리</h2><p>학습 기록은 지금 쓰는 브라우저에만 저장돼요. 다른 브라우저나 기기와는 자동으로 공유되지 않아요.</p></div></div>' +
+        (synced
+          ? '<div class="panel-head"><div><h2>기록 관리</h2><p>학습 기록은 내 계정에 저장돼요. 다른 기기에서 로그인해도 이어서 공부할 수 있어요.</p></div></div>'
+          : '<div class="panel-head"><div><h2>기록 관리</h2><p>학습 기록은 지금 쓰는 브라우저에만 저장돼요. 다른 브라우저나 기기와는 자동으로 공유되지 않아요.</p></div></div>') +
         (ui.message ? '<p class="toast" role="status">' + esc(ui.message) + "</p>" : "") +
-        '<p class="notice"><b>실시간 동기화는 지원하지 않아요.</b> 이 사이트는 서버 없이 운영돼서, 기기끼리 기록이 자동으로 맞춰지지 않아요. ' +
-          "기기를 바꾸거나 '함께 보기'에서 상대 기록을 보려면 백업 파일을 내려받아 다른 기기에서 복원하세요.</p>" +
+        (synced
+          ? '<p class="notice">동기화 상태, 이 기기의 예전 기록 가져오기, 계정 백업은 <a href="#records">내 기록</a>에서 관리해요. ' +
+              "여기서 복원하면 백업 파일의 기록을 내 계정에 더해요(같은 기록은 두 번 들어가지 않고, 내 기록에서 취소할 수 있어요).</p>"
+          : '<p class="notice"><b>실시간 동기화는 지원하지 않아요.</b> 이 사이트는 서버 없이 운영돼서, 기기끼리 기록이 자동으로 맞춰지지 않아요. ' +
+              "기기를 바꾸거나 '함께 보기'에서 상대 기록을 보려면 백업 파일을 내려받아 다른 기기에서 복원하세요.</p>") +
         '<article class="card-box"><h3>지금 저장된 기록 · ' + esc(nameOf(roomId)) + " (" + room.label + " 방)</h3>" +
           '<p class="hint">' + counts({ attempts: st.get("attempts"), words: st.get("words"), lists: st.get("lists") }) +
           (roomId === "n1" ? " · 모의고사 " + mocks + "회" : " · 연습 테스트 " + st.get("tests").length + "회") +
@@ -83,18 +90,18 @@ export function createBackupView(id, roomId) {
             '<button type="button" class="btn ghost" data-export="all">전체(N1+N3)</button>' +
           "</div></article>" +
         '<article class="card-box"><h3>복원하기</h3>' +
-          "<p>백업 파일을 고르면, 파일에 들어 있는 방의 기록을 그 파일의 기록으로 바꿔요. 파일에 없는 방의 기록은 그대로 둬요.</p>" +
+          (synced ? "<p>백업 파일을 고르면, 파일에 들어 있는 기록을 내 계정에 더해요. 지금 기록은 지우지 않아요.</p>" : "<p>백업 파일을 고르면, 파일에 들어 있는 방의 기록을 그 파일의 기록으로 바꿔요. 파일에 없는 방의 기록은 그대로 둬요.</p>") +
           '<div class="field"><label for="b-file">백업 파일 선택</label><input id="b-file" type="file" accept=".json,application/json"></div>' +
           (ui.confirm === "import"
             ? '<div class="confirm-box"><p><b>이 파일에 들어 있는 기록</b></p><ul>' +
                 pend.map(r => "<li>" + ROOMS[r].label + " 방: " + esc(counts(ui.pending[r].data)) + "</li>").join("") + "</ul>" +
-                '<p class="confirm">복원하면 이 기기의 ' + pend.map(r => ROOMS[r].label).join("·") + " 기록이 파일 내용으로 바뀌어요. 되돌릴 수 없으니 먼저 지금 기록을 백업해 두세요.</p>" +
+                (synced ? '<p class="confirm">복원하면 이 파일의 기록이 내 계정에 더해져요. 나중에 내 기록 화면에서 이 가져오기만 취소할 수 있어요.</p>' : '<p class="confirm">복원하면 이 기기의 ' + pend.map(r => ROOMS[r].label).join("·") + " 기록이 파일 내용으로 바뀌어요. 되돌릴 수 없으니 먼저 지금 기록을 백업해 두세요.</p>") +
                 '<div class="toolbar"><button type="button" class="btn ghost" id="b-pre-backup">지금 기록 먼저 백업</button>' +
                 '<button type="button" class="btn" id="b-import-yes">복원하기</button><button type="button" class="link-btn" id="b-cancel">취소</button></div></div>'
             : "") +
         "</article>" +
         '<article class="card-box"><h3>이 방 기록 지우기</h3>' +
-          "<p>" + room.label + " 방의 풀이 기록, 오답 노트, 복습 일정" + (roomId === "n1" ? ", D-30 계획, 모의고사 결과" : ", 단원 진도, 경험치") + "를 지워요. 다른 방의 기록과 학습 자료는 그대로 남아요.</p>" +
+          "<p>" + (synced ? "내 계정에 저장된 " : "") + room.label + " 방의 풀이 기록, 오답 노트, 복습 일정" + (roomId === "n1" ? ", D-30 계획, 모의고사 결과" : ", 단원 진도, 경험치") + "를 지워요. 다른 방의 기록과 학습 자료는 그대로 남아요.</p>" +
           '<div class="toolbar">' + (ui.confirm === "reset"
             ? '<span class="confirm">정말 모두 지울까요? 되돌릴 수 없어요.</span><button type="button" class="btn danger" id="b-reset-yes">모두 지우기</button><button type="button" class="link-btn" id="b-cancel">취소</button>'
             : '<button type="button" class="btn ghost" id="b-reset">' + room.label + " 기록 지우기</button>") + "</div>" +
@@ -123,16 +130,25 @@ export function createBackupView(id, roomId) {
         exportRooms(rooms.length > 1 ? "all" : rooms[0]);
         app.querySelector("#b-pre-backup").textContent = "백업했어요 ✓";
       } else if (id === "b-import-yes") {
-        try {
-          const done = Object.keys(ui.pending).map(r => { ROOMS[r].st.importAll(ui.pending[r]); return ROOMS[r].label + "(" + counts(ui.pending[r].data) + ")"; });
-          ui.message = "백업 파일의 기록으로 복원했어요: " + done.join(", ");
-        } catch (err) { ui.message = "복원할 수 없어요: " + err.message; }
-        ui.pending = null; ui.confirm = null; render(app);
+        // 로그인한 계정에서는 서버에 '가져오기'로 올리므로 끝날 때까지 기다린다
+        (async () => {
+          try {
+            const done = [];
+            for (const r of Object.keys(ui.pending)) { await ROOMS[r].st.importAll(ui.pending[r]); done.push(ROOMS[r].label + "(" + counts(ui.pending[r].data) + ")"); }
+            ui.message = "백업 파일의 기록으로 복원했어요: " + done.join(", ");
+          } catch (err) { ui.message = "복원할 수 없어요: " + err.message; }
+          ui.pending = null; ui.confirm = null; render(app);
+        })();
       } else if (id === "b-reset") { ui.confirm = "reset"; render(app); }
       else if (id === "b-reset-yes") {
-        st.resetAll();
-        room.extraKeys.forEach(k => { try { localStorage.removeItem(k); } catch (err) { /* 무시 */ } });
-        ui.confirm = null; ui.message = room.label + " 방의 모든 기록을 지웠어요."; render(app);
+        (async () => {
+          try {
+            await st.resetAll();
+            room.extraKeys.forEach(k => { try { localStorage.removeItem(k); } catch (err) { /* 무시 */ } });
+            ui.message = room.label + " 방의 모든 기록을 지웠어요.";
+          } catch (err) { ui.message = "지우지 못했어요: " + err.message; }
+          ui.confirm = null; render(app);
+        })();
       } else if (id === "b-cancel") { ui.confirm = null; ui.pending = null; render(app); }
     };
   }

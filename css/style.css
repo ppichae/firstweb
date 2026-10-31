@@ -1003,3 +1003,11 @@ header.site { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
 .pt-good { border-color: var(--good); color: var(--good); background: var(--good-soft); }
 .pt-bad { border-color: var(--bad); color: var(--bad); background: var(--bad-soft); }
 .site-actions a.theme-toggle { text-decoration: none; display: inline-flex; align-items: center; }
+
+/* 동기화 표시 */
+.sync-chip {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 8px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; white-space: nowrap;
+}
+.sync-chip.warn { border-color: var(--warn); color: var(--warn); background: var(--warn-soft); }
+.rc-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }

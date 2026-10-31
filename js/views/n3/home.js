@@ -1,6 +1,7 @@
 // N3 방 · 홈: N1 홈과 같은 구성(D-Day · 지금 할 일 · 숫자 칸) + 4주 추천 일정 · 과정별 진행
 import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
+import { syncActive } from "../../sync.js";
 import { esc, pct } from "../../util.js";
 import { daysUntil, examCardHTML, EXAM_INFO_N3 } from "../../exam.js";
 import { noteEntries } from "../../stats.js";
@@ -87,7 +88,7 @@ function render(app) {
         ]) +
       "</div>" +
       examCardHTML(EXAM_INFO_N3, "N3") +
-      '<p class="hint">학습 기록은 N1 방과 따로 이 브라우저에 저장돼요. 경험치 기준은 「전체 배지 보기」에서 볼 수 있어요.</p>' +
+      '<p class="hint">학습 기록은 N1 방과 따로 ' + (syncActive() ? "내 계정에" : "이 브라우저에") + " 저장돼요. 경험치 기준은 「전체 배지 보기」에서 볼 수 있어요.</p>" +
     "</section>";
 
   app.onclick = e => {

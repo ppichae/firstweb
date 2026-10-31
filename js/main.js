@@ -9,9 +9,13 @@ import { initAuth, gateActive, signedIn, rememberNext, takeNext, peekNext, userL
 import { loginView } from "./views/login.js";
 import { profileView } from "./views/profile.js";
 import { createPartnerView } from "./views/partner.js";
+import { createRecordsView, backupDue } from "./views/records.js";
+import { startSync, stopSync, onSyncStatus, syncStatus } from "./sync.js";
+import { currentUser } from "./auth.js";
 import { loadProfile, myProfile, resetAccount } from "./account.js";
 
 const partnerView = createPartnerView();
+const recordsView = createRecordsView();
 
 initTheme();
 
@@ -40,6 +44,7 @@ function resolve(id) {
   if (id === "login") return { room: null, view: loginView };
   if (id === "profile") return { room: null, view: profileView };
   if (id === "partner") return { room: null, view: partnerView };
+  if (id === "records") return { room: null, view: recordsView };
   for (const room of Object.values(ROOMS)) {
     const view = room.views.find(v => v.id === id);
     if (view) return { room, view };
@@ -64,6 +69,15 @@ function drawRoom(room, view) {
   document.querySelector("nav.tabs").hidden = !room;
 }
 
+// 계정 기록 준비(동기화 시작). 준비하는 동안에는 학습 화면을 그리지 않는다 (이 기기의 예전 기록이 계정 기록처럼 보이거나 바뀌지 않게)
+let syncStarting = null;
+function beginSync() {
+  const p = startSync(currentUser().id).catch(e => console.error("동기화를 시작하지 못했어요.", e));
+  syncStarting = p;
+  p.then(() => { if (syncStarting === p) syncStarting = null; });
+  return p;
+}
+
 async function route() {
   const token = ++routeToken;
   const wantedId = location.hash.slice(1);
@@ -86,6 +100,11 @@ async function route() {
   if (currentView && currentView.leave) currentView.leave();
   currentView = view;
   app.onclick = app.oninput = app.onchange = app.onsubmit = null;
+  if (syncStarting && view !== loginView && view !== profileView) {
+    app.innerHTML = '<p class="loading">내 학습 기록을 불러오는 중이에요…</p>';
+    await syncStarting;
+    if (token !== routeToken) return;   // 기다리는 사이에 다른 화면으로 옮겨 갔다
+  }
   const roomKey = room ? room.id : view.id;
   if (roomKey !== currentRoom) { drawRoom(room, view); currentRoom = roomKey; }
   if (room) rememberRoom(room.id);
@@ -111,14 +130,41 @@ function drawAccount() {
   accountBox.hidden = !signedIn();
   if (!signedIn()) { accountBox.innerHTML = ""; return; }
   const p = myProfile();
-  accountBox.innerHTML = (p ? '<a class="theme-toggle" href="#partner">🤝 공부 파트너</a>' : "") +
+  accountBox.innerHTML = (p ? '<a class="sync-chip" id="sync-chip" href="#records"></a><a class="theme-toggle" href="#partner">🤝 공부 파트너</a>' : "") +
     "<b>" + esc(p ? p.nickname : userLabel()) + '</b><button type="button" class="theme-toggle" id="sign-out">로그아웃</button>';
+  drawSyncChip();
   accountBox.querySelector("#sign-out").onclick = async () => {
+    try { await flushBeforeLeave(); } catch (e) { return; }   // 로그아웃을 취소했다
     await signOut();
+    stopSync();
     resetAccount();
     drawAccount();
     location.replace("#login");
   };
+}
+
+// 오른쪽 위 동기화 표시: 보낼 기록·확인 필요·저장 문제·백업 권장을 알려 주고, 누르면 '내 기록'로 간다
+function drawSyncChip() {
+  const chip = document.getElementById("sync-chip");
+  if (!chip) return;
+  const s = syncStatus();
+  let text = "내 기록 ✓", warn = false;
+  if (!s.active) text = "내 기록";
+  else if (s.storageError) { text = "⚠ 저장 문제"; warn = true; }
+  else if (s.conflicts) { text = "확인 필요 " + s.conflicts; warn = true; }
+  else if (s.pending) text = "보내는 중 " + s.pending;
+  else if (backupDue()) text = "백업 권장";
+  chip.textContent = text;
+  chip.classList.toggle("warn", warn);
+  chip.title = s.lastSync ? "마지막으로 보낸 때: " + new Date(s.lastSync).toLocaleString() : "";
+}
+// 로그아웃 전에 보내지 않은 기록이 있으면 먼저 보내 본다(실패하면 알린다)
+async function flushBeforeLeave() {
+  const s = syncStatus();
+  if (!s.active || !s.pending) return;
+  await (await import("./sync.js")).flush();
+  const left = syncStatus().pending;
+  if (left && !confirm("아직 서버로 보내지 못한 기록이 " + left + "개 있어요. 이 기기에는 남아 있어서 다음에 로그인하면 보내져요. 그래도 로그아웃할까요?")) throw new Error("cancel");
 }
 
 // 다른 화면에서 메뉴를 다시 그리라고 요청할 때 쓴다
@@ -135,15 +181,30 @@ async function start() {
   store.migrateLegacy(DB.vocab.items);
   // 로그인 연결(설정이 비어 있으면 아무 일도 하지 않는다). 연결에 실패해도 사이트는 멈추지 않고 로그인 화면에서 알린다
   // 로그인·로그아웃하면 프로필을 다시 불러온 뒤 화면을 다시 그린다
-  const authReady = initAuth(async () => { resetAccount(); await loadProfile(); drawAccount(); route(); })
+  const authReady = initAuth(async () => {
+    resetAccount(); stopSync(); syncStarting = null;
+    await loadProfile();
+    if (signedIn() && myProfile()) beginSync();
+    drawAccount(); route();
+  })
     .catch(e => console.error("로그인 기능을 불러오지 못했어요.", e))
     .then(drawAccount);
   // 잠금이 켜져 있으면 로그인 여부를 알아야 하므로 기다린다. 꺼져 있으면 기다리지 않고 바로 화면을 그린다
   if (gateActive()) await authReady;
-  if (signedIn()) { await loadProfile(); drawAccount(); }
-  window.addEventListener("account-changed", drawAccount);
+  // 로그인했고 프로필이 있으면, 학습 기록을 계정과 맞춘 뒤(서버 기록 받아 오기) 화면을 그린다
+  if (signedIn()) {
+    await loadProfile();
+    if (myProfile()) beginSync();
+    drawAccount();
+  }
+  onSyncStatus(drawSyncChip);
+  window.addEventListener("account-changed", async () => {
+    if (signedIn() && myProfile() && !syncStatus().active && !syncStarting) beginSync();
+    drawAccount();
+  });
   // Google 로그인을 마치고 돌아왔으면, 로그인 전에 보려던 화면으로 보낸다
   if (signedIn() && peekNext() && !location.hash.slice(1)) location.replace("#" + takeNext());
+  window.addEventListener("sync-late", () => route());   // 서버 기록이 늦게 도착했을 때
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
   route();
 }
