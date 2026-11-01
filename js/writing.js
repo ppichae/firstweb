@@ -9,7 +9,8 @@ export async function mountWritePad(el, ref, opts = {}) {
   el.innerHTML = '<p class="hint">쓰기 판을 준비하는 중이에요…</p>';
   const data = await loadStrokes(ref);
   if (!el.isConnected) return null;
-  if (!data) { el.innerHTML = '<p class="hint">획순 데이터 준비 중이라 쓰기 가이드를 보여 드릴 수 없어요.</p>'; return null; }
+  // 획순 자료가 없으면 한자 창에서는 그 칸을 숨기고, 다른 곳에서는 짧게 알린다
+  if (!data) { const sec = el.closest(".kd-sec"); if (sec) sec.hidden = true; else el.innerHTML = '<p class="hint">이 글자는 쓰기 가이드 그림이 없어요.</p>'; return null; }
   const total = data.strokes.length;
   const st = { lines: [], cur: null, guide: true, compare: false, hint: false };
 
@@ -25,6 +26,7 @@ export async function mountWritePad(el, ref, opts = {}) {
           '<button type="button" class="btn ghost sm" data-wp="hint" aria-pressed="false">다음 획 보기</button>' +
           '<button type="button" class="btn ghost sm" data-wp="compare" aria-pressed="false">완성 모양과 비교</button>' +
         "</div>" +
+        '<p class="hint wp-hint" aria-live="polite" hidden></p>' +
         '<label class="sp-check"><input type="checkbox" data-wp-guide checked> 연한 가이드 글자 보기</label>' +
         '<div class="sp-controls"><button type="button" class="btn sm" data-wp="done">다 썼어요</button></div>' +
         '<p class="hint wp-msg" role="status"></p>' +
@@ -61,7 +63,13 @@ export async function mountWritePad(el, ref, opts = {}) {
     const paths = [...model.querySelectorAll(".ink path")];
     paths.forEach((p, i) => p.classList.toggle("hint-now", st.hint && i === st.lines.length));
     el.querySelector(".wp-n").textContent = st.lines.length;
-    el.querySelector('[data-wp="hint"]').setAttribute("aria-pressed", st.hint);
+    const hb = el.querySelector('[data-wp="hint"]');
+    hb.setAttribute("aria-pressed", st.hint);
+    hb.textContent = st.hint ? "다음 획 보기 ✓" : "다음 획 보기";
+    // 다음 획 보기가 켜져 있으면 몇 번째 획을 보여 주는지, 다 썼으면 끝났다고 알려 준다
+    const hl = el.querySelector(".wp-hint");
+    hl.hidden = !st.hint;
+    hl.textContent = !st.hint ? "" : st.lines.length < total ? "지금 " + (st.lines.length + 1) + "번째 획을 파란색으로 보여 주고 있어요 (전체 " + total + "획)" : "마지막 획까지 다 썼어요 ✓";
     el.querySelector('[data-wp="compare"]').setAttribute("aria-pressed", st.compare);
   }
   const point = e => {

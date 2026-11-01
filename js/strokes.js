@@ -42,12 +42,12 @@ let active = null;   // 한 번에 하나의 애니메이션만 움직인다
 
 export function stopStrokes() { if (active) active.pause(); }
 
-// el 안에 획순 플레이어를 만든다. 파일이 없으면 '획순 데이터 준비 중'
+// el 안에 획순 플레이어를 만든다. 파일이 없으면 칸을 숨긴다(한자 창) 또는 짧게 알린다
 export async function mountStrokePlayer(el, ref, opts = {}) {
   el.innerHTML = '<p class="hint">획순 데이터를 불러오는 중이에요…</p>';
   const data = await loadStrokes(ref);
   if (!el.isConnected) return null;
-  if (!data) { el.innerHTML = '<p class="hint">획순 데이터 준비 중이에요.</p>'; return null; }
+  if (!data) { const sec = el.closest(".kd-sec"); if (sec) sec.hidden = true; else el.innerHTML = '<p class="hint">이 글자는 획순 그림이 없어요.</p>'; return null; }
 
   const n = data.strokes.length;
   const st = { done: 0, partial: 0, playing: false, speed: 1, nums: !!opts.showNumbers, raf: 0, last: 0 };

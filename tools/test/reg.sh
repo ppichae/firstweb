@@ -18,6 +18,7 @@ r "sA" env BUDGET=200000 sh rs.sh sA.js 1440 1000 "#"
 r "sB" env BUDGET=400000 sh rs.sh sB.js 1440 1000
 r "sEx" env BUDGET=200000 sh rs.sh sEx.js 1440 1000
 r "sStats" env PRE=preStats.js BUDGET=200000 sh rs.sh sStats.js 1440 1000 "#n3"
+r "sKanjiUI 390 다크" env PRE=preKN3d.js BUDGET=250000 sh rs.sh sKanjiUI.js 390 844 "#n3"
 r "sRoad 390 다크" env PRE=preRoadD.js BUDGET=250000 sh rs.sh sRoad.js 390 844 "#n3"
 r "sWeek 390 다크" env PRE=preWeekD.js BUDGET=300000 sh rs.sh sWeek.js 390 844 "#n3"
 r "sExam 390 다크" env PRE=preExamD.js BUDGET=250000 sh rs.sh sExam.js 390 844 "#home"

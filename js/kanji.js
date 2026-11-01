@@ -19,7 +19,9 @@ const toHira = s => s.replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeA
 let infoMap = null, infoSig = "";
 function infoIndex() {
   const idx = (EXTRA.kanjiIndex && EXTRA.kanjiIndex.items) || [], com = (EXTRA.kanji && EXTRA.kanji.items) || [];
-  const sig = idx.length + "|" + com.length;
+  const parts = (EXTRA.kanjiParts && EXTRA.kanjiParts.items) || {};
+  const notes = (EXTRA.kanjiNotes && EXTRA.kanjiNotes.items) || {};
+  const sig = idx.length + "|" + com.length + "|" + Object.keys(parts).length + "|" + Object.keys(notes).length;
   if (infoMap && sig === infoSig) return infoMap;
   infoMap = new Map();
   idx.forEach(k => infoMap.set(k.char, {
@@ -27,6 +29,13 @@ function infoIndex() {
     meaning: "", radical: null, components: [], similar: [], strokesCheck: "KanjiVG 획 수", readingsCheck: "KANJIDIC2",
   }));
   com.forEach(k => { const b = infoMap.get(k.char); infoMap.set(k.char, b ? { ...k, ko: b.ko.eum ? b.ko : k.ko, alt: b.alt, lv: b.lv, kokuji: b.kokuji } : k); });
+  // 모양 부품: KRADFILE(EDRDG, CC BY-SA 4.0)에서 가져온 부수 검색용 분해
+  // 뜻 설명·연상 이야기(notes.json, 자체 제작)는 common.json에 없는 칸만 채운다
+  infoMap.forEach((v, ch) => {
+    v.parts = parts[ch] || [];
+    const n = notes[ch];
+    if (n) { if (!v.meaning && n.m) v.meaning = n.m; if (!v.mnemonic && n.s) v.mnemonic = n.s; }
+  });
   infoSig = sig;
   return infoMap;
 }
@@ -186,7 +195,7 @@ function draw() {
           : '<p class="hint">아래 단어들로 이 한자를 익혀 보세요.</p>') +
       "</div>" +
       '<div class="kd-actions"><button type="button" class="mark star" data-kfav aria-pressed="' + !!rec.fav + '" aria-label="즐겨찾기">' + (rec.fav ? "★" : "☆") + "</button>" +
-      '<button type="button" class="btn ghost sm" data-close>닫기</button></div>' +
+      '<button type="button" class="btn ghost sm kd-close" data-close>닫기</button></div>' +
     "</div>";
 
   const wordBox = word
@@ -199,11 +208,14 @@ function draw() {
     ? '<section class="kd-sec"><h4>읽기</h4><dl class="kd-dl">' +
         "<div><dt>음독 (音読み)</dt><dd>" + chips(info.on.map(esc), "on") + "</dd></div>" +
         "<div><dt>훈독 (訓読み)</dt><dd>" + chips(info.kun.map(kunHTML), "kun") + "</dd></div></dl>" +
-        (info.kun.length ? '<p class="hint">회색 글자는 오쿠리가나(한자 뒤에 붙는 가나)예요.</p>' : "") +
+        // 오쿠리가나 안내는 실제로 오쿠리가나가 있는 훈독이 있을 때만
+        (info.kun.some(k => k.includes("-")) ? '<p class="hint">회색 글자는 오쿠리가나(한자 뒤에 붙는 가나)예요.</p>' : "") +
         (info.note ? '<p class="kd-note">' + esc(info.note) + "</p>" : "") + "</section>" +
       '<section class="kd-sec"><h4>모양</h4><dl class="kd-dl">' +
         (info.radical ? '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" : "") +
         "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식" + (info.strokesCheck ? " · KanjiVG 획순 데이터와 일치" : "") + ")</small></dd></div>" +
+        // 모양 부품: KRADFILE의 분해 (부품이 이 사이트 한자면 눌러서 열 수 있다)
+        (info.parts && info.parts.length ? '<div><dt>모양 부품</dt><dd>' + info.parts.map(p => kanjiInfo(p) ? linkChips([p]) : '<span class="kj part" lang="ja">' + esc(p) + "</span>").join("") + '<small class="hint">한자를 이루는 모양 조각이에요</small></dd></div>' : "") +
         // 구성 요소·형성 원리는 근거가 확인된 경우(…Source)에만 보여 준다
         (info.components.length && info.componentsSource ? "<div><dt>구성 요소</dt><dd>" + info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") + "</dd></div>" : "") +
         (info.formation && info.formationSource ? "<div><dt>형성 원리</dt><dd>" + esc(info.formation) + "</dd></div>" : "") +
@@ -212,7 +224,7 @@ function draw() {
       ((info.origin && info.originSource) || info.mnemonic
         ? '<section class="kd-sec"><h4>기억하기</h4>' +
             (info.origin && info.originSource ? '<div class="kd-box origin"><div class="kd-box-label">어원 이야기</div><p>' + esc(info.origin) + '</p><small class="hint">출처: ' + esc(info.originSource) + "</small></div>" : "") +
-            (info.mnemonic ? '<div class="kd-box story"><div class="kd-box-label">연상 이야기</div><p>' + esc(info.mnemonic) + "</p></div>" : "") +
+            (info.mnemonic ? '<div class="kd-box story"><div class="kd-box-label">연상 이야기 <small class="hint">외우기 쉽게 만든 이야기예요</small></div><p>' + esc(info.mnemonic) + "</p></div>" : "") +
           "</section>"
         : "")
     : "";
@@ -236,7 +248,7 @@ function draw() {
   const naver = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(ch);
   const foot =
     '<p class="kd-foot">자료 정보 · ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나오는 한자예요(JLPT는 공식 한자 급수 목록을 공개하지 않아요)." +
-      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기: KANJIDIC2 (CC BY-SA 4.0)" : "", "한국어 훈음: 공개 한자 자료 대조", info.meaning || info.mnemonic ? "뜻 설명·연상 이야기: 자체 제작 학습 자료" : ""].filter(Boolean).join(" · ") : "") +
+      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기: KANJIDIC2 (CC BY-SA 4.0)" : "", "한국어 훈음: 공개 한자 자료 대조", info.parts && info.parts.length ? '모양 부품: KRADFILE (EDRDG, <a href="https://www.edrdg.org/edrdg/licence.html" target="_blank" rel="noopener">CC BY-SA 4.0</a>)' : "", info.meaning || info.mnemonic ? "뜻 설명·연상 이야기: 자체 제작 학습 자료" : ""].filter(Boolean).join(" · ") : "") +
       '<br><a href="' + naver + '" target="_blank" rel="noopener">네이버 한자사전에서 보기</a></p>';
 
   const strokes = info ? '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes"></div></section>' : "";
