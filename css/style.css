@@ -1063,3 +1063,7 @@ u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decorat
 .exam-nav { margin-bottom: 16px; }
 .exam-nav .seg { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .exam-nav .seg[aria-current="page"] { background: var(--ink-soft); color: var(--ink); }
+
+/* 홈 맨 위 '학습 ○주차' · D-Day 남은 시간 */
+.study-week { margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.countdown { font-variant-numeric: tabular-nums; font-weight: 600; opacity: 1; }

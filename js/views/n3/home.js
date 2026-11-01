@@ -12,6 +12,7 @@ import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { growthCardHTML } from "../../badges.js";
 import { n3SprintSummary } from "./sprint.js";
+import { studyWeekHTML } from "../../summary.js";
 import { weekCardHTML } from "../../weekchart.js";
 import { roomKanjiList } from "../../kanji.js";
 
@@ -47,6 +48,7 @@ function render(app) {
   app.innerHTML =
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>오늘의 학습</h2><p>처음부터 시작해도 괜찮아요. 기초 → N3 집중 → 시험 대비 순서를 추천하지만, 원하는 메뉴로 자유롭게 이동해도 돼요.</p></div></div>' +
+      studyWeekHTML(n3store, "N3") +
       '<div class="home-top">' +
         ddayTileHTML(n3store) +
         '<article class="tile todo-tile"><span class="tile-label">지금 할 일</span><ul class="todo">' +
@@ -67,7 +69,7 @@ function render(app) {
       statsHelpHTML("n3") +
       growthCardHTML("n3", "#n3/badges") +
       weekCardHTML(n3store) +
-      '<article class="card-box"><div class="q-top"><h3>4주 추천 일정</h3><span class="badge">안내용</span></div>' +
+      '<article class="card-box"><div class="q-top"><h3>4주 추천 일정 <small class="hint">시험일 기준</small></h3><span class="badge">안내용</span></div>' +
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
           '<li class="' + (w.n === week ? "now" : "") + '"><b>' + w.n + "주차 · " + esc(w.title) + "</b>" +

@@ -25,6 +25,7 @@ export const SCHEMA = {
   tests:        { kind: "list", event: "test" },
   game:         { kind: "obj", fields: { xp: "counter" }, localFields: ["convertedFrom", "convertedAt", "todayKeys"] },   // todayKeys: 오늘 경험치를 준 항목(하루 한 번 규칙, 이 기기에만)
   examDate:     { kind: "value" },
+  examTime:     { kind: "value" },   // 시험 시작 시각 "HH:MM" (정하지 않으면 시험일 0시 기준)
   goal:         { kind: "value" },
   sprint:       { kind: "value" },
   profile:      { kind: "local" },   // 닉네임은 계정 프로필(서버)로 옮겼다

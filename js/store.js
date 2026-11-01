@@ -20,6 +20,7 @@ const N1_DEFAULTS = {
   activity: {},    // 날짜 → { cards: 플래시카드 복습 수 }
   lists: {},       // PDF 단어·문형 목록 id → { status, fav, srs, wrong } (3단계에서 추가)
   examDate: null,  // 내가 정한 시험일 (없으면 공식 다음 시험일)
+  examTime: null,  // 내가 정한 시험 시작 시각 "HH:MM" (없으면 시험일 0시 기준으로 남은 시간을 센다)
   profile: null,   // { name: 화면에 보일 이름 }
   goal: null,      // { weeklyMinutes: 이번 주 목표 학습 시간(분) }
   cheers: [],      // 이 사람이 보낸 응원 메시지 { text, at }
@@ -146,6 +147,7 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   sprint: null,    // D-30 계획 설정 { examDate, minutes, startedAt }
   game: { xp: 0 }, // 경험치
   examDate: null,  // 내가 정한 시험일
+  examTime: null,  // 내가 정한 시험 시작 시각 "HH:MM"
   profile: null,
   goal: null,
   cheers: [],
