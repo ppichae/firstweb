@@ -1067,3 +1067,17 @@ u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decorat
 /* 홈 맨 위 '학습 ○주차' · D-Day 남은 시간 */
 .study-week { margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
 .countdown { font-variant-numeric: tabular-nums; font-weight: 600; opacity: 1; }
+
+/* N3 학습 로드맵 */
+.roadmap { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.road-stage { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--surface); display: grid; gap: 8px; }
+.road-stage.now { border-color: var(--ink); box-shadow: inset 4px 0 0 var(--ink); }
+.road-stage.done .q-top b { color: var(--good); }
+.road-stage .q-top h3 { margin: 0; }
+.road-stage .meter { grid-template-columns: minmax(0, 11em) minmax(0, 1fr) 6.5em auto; }
+.rec-list { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 8px; }
+.rec-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+@media (max-width: 640px) {
+  .road-stage .meter { grid-template-columns: minmax(0, 1fr) auto; }
+  .road-stage .meter .meter-track { grid-column: 1 / -1; grid-row: 2; }
+}

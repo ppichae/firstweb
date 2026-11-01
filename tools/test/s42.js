@@ -19,7 +19,7 @@
     check("급수 선택 화면", $("h2").textContent === "급수 선택" && $$(".room-name").map(r => r.textContent).join(",") === "N1 공부방,N3 공부방", $$(".room-name").map(r => r.textContent).join(","));
     check("급수 선택 화면에서 중복 버튼 숨김", document.getElementById("room-switch").hidden);
     $$(".room")[1].click(); await wait(1200);
-    check("N3 메뉴", tabs() === "홈|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs());
+    check("N3 메뉴", tabs() === "홈|로드맵|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs());
     check("N3 홈 성장 칸", !!$(".growth") && $(".growth").textContent.includes("Lv"));
     // 학습 시간: 15초마다 지금 방에 더한다
     document.body.dispatchEvent(new window.Event("pointerdown", { bubbles: true }));

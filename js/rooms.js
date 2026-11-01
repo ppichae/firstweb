@@ -13,6 +13,7 @@ import sprint from "./views/sprint.js";
 import mock from "./views/mock.js";
 import backup from "./views/backup.js";
 import n3home from "./views/n3/home.js";
+import n3roadmap from "./views/n3/roadmap.js";
 import n3basics from "./views/n3/basics.js";
 import n3practice, { n3MockView } from "./views/n3/practice.js";
 import n3notes from "./views/n3/notes.js";
@@ -40,7 +41,7 @@ export const ROOMS = {
     id: "n3", name: "N3 공부방", st: n3store, docTitle: "JLPT N3 合格!",
     eyebrow: "日本語能力試験 · N3", title: 'JLPT N3 <span lang="ja">合格!</span>',
     lede: "히라가나·가타카나와 N5·N4 기초부터 N3 단어·문법·한자, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
-    views: [n3home, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
+    views: [n3home, n3roadmap, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
   },
 };
 

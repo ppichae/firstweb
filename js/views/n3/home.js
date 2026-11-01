@@ -69,7 +69,7 @@ function render(app) {
       statsHelpHTML("n3") +
       growthCardHTML("n3", "#n3/badges") +
       weekCardHTML(n3store) +
-      '<article class="card-box"><div class="q-top"><h3>4주 추천 일정 <small class="hint">시험일 기준</small></h3><span class="badge">안내용</span></div>' +
+      '<article class="card-box"><div class="q-top"><h3>4주 추천 일정 <small class="hint">시험일 기준</small></h3><a href="#n3/roadmap">N5→N3 로드맵 보기 →</a></div>' +
         '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
         '<ol class="weeks">' + WEEKS.map(w =>
           '<li class="' + (w.n === week ? "now" : "") + '"><b>' + w.n + "주차 · " + esc(w.title) + "</b>" +

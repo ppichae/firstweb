@@ -13,7 +13,7 @@
   frame.contentWindow.addEventListener("error", e => errs.push(e.message));
   frame.contentWindow.addEventListener("unhandledrejection", e => errs.push("REJ " + (e.reason && e.reason.message)));
   const routes = ["rooms", "home", "vocab", "grammar", "kanji", "reading", "listening", "notes", "sprint", "mock", "together", "backup", "badges",
-    "n3", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/reading", "n3/listening", "n3/notes", "n3/exam", "n3/mock", "n3/together", "n3/backup", "n3/badges"];
+    "n3", "n3/roadmap", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/reading", "n3/listening", "n3/notes", "n3/exam", "n3/mock", "n3/together", "n3/backup", "n3/badges"];
   try {
     const dark = !!top.DARK;
     if (dark) doc().documentElement.setAttribute("data-theme", "dark");
