@@ -8,6 +8,7 @@ import { passageTextHTML } from "./reading.js";
 import { setupPlayer } from "./listening.js";
 import { stopAll } from "../speech.js";
 import { EXAM_INFO } from "../exam.js";
+import { examNavHTML } from "../examHub.js";
 
 const DRAFT_KEY = "n1lab:mockDraft";   // 풀고 있는 모의고사 (임시 저장)
 const PARTS = { 1: { name: "1부 · 언어지식(문자·어휘·문법)·독해", official: 110 }, 2: { name: "2부 · 청해", official: 55 } };
@@ -56,13 +57,16 @@ function render(app) {
   clearInterval(timer);
   stopAll();
   const d = loadDraft();
-  if (ui.review) return renderResult(app, ui.review);
+  // 시험 대비 안의 작은 메뉴는 문제를 푸는 동안에는 보이지 않게 한다
+  const nav = () => { const p = app.querySelector(".panel"); if (p) p.insertAdjacentHTML("afterbegin", examNavHTML("n1", "mock")); };
+  if (ui.review) { renderResult(app, ui.review); nav(); return; }
   if (d) {
     // 다른 화면에 가 있는 동안 시간이 끝났으면 자동 제출
     if (Date.now() >= d.deadline) { submitPart(app, d, true); return; }
     return renderExam(app, d);
   }
   renderIntro(app);
+  nav();
 }
 
 function renderIntro(app) {

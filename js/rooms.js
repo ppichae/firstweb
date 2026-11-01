@@ -14,7 +14,7 @@ import mock from "./views/mock.js";
 import backup from "./views/backup.js";
 import n3home from "./views/n3/home.js";
 import n3basics from "./views/n3/basics.js";
-import n3practice from "./views/n3/practice.js";
+import n3practice, { n3MockView } from "./views/n3/practice.js";
 import n3notes from "./views/n3/notes.js";
 import { n3Reading as n3reading } from "./views/reading.js";
 import { n3Listening as n3listening } from "./views/listening.js";
@@ -40,7 +40,7 @@ export const ROOMS = {
     id: "n3", name: "N3 공부방", st: n3store, docTitle: "JLPT N3 合格!",
     eyebrow: "日本語能力試験 · N3", title: 'JLPT N3 <span lang="ja">合格!</span>',
     lede: "히라가나·가타카나와 N5·N4 기초부터 N3 단어·문법·한자, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
-    views: [n3home, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
+    views: [n3home, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
   },
 };
 
@@ -62,8 +62,8 @@ function renderRooms(app) {
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>급수 선택</h2><p>공부할 급수를 골라 주세요. N1과 N3는 진도, 오답, 단어장, 학습 기록이 따로 저장돼요.</p></div></div>' +
       '<div class="rooms">' +
-        roomCard("n1", summaryOf("n1"), "고급 단어·문법·한자 · 독해 · 청해 · D-30 · 모의고사", last === "n1") +
-        roomCard("n3", summaryOf("n3"), "히라가나·가타카나부터 N5·N4 기초 · N3 단어·문법·한자 · 시험 대비", last === "n3") +
+        roomCard("n1", summaryOf("n1"), "고급 단어·문법·한자 · 독해 · 청해 · 시험 대비(D-30) · 모의고사", last === "n1") +
+        roomCard("n3", summaryOf("n3"), "히라가나·가타카나부터 N5·N4 기초 · N3 단어·문법·한자 · 시험 대비(D-30) · 모의고사", last === "n3") +
       "</div>" +
     "</section>";
 }

@@ -10,6 +10,8 @@ import { buildQuestion } from "../listStudy.js";
 import { pickItems } from "../../pick.js";
 import { furiToggleHTML } from "../../examples.js";
 import { award } from "./game.js";
+import { examNavHTML } from "../../examHub.js";
+import { renderN3Plan } from "./sprint.js";
 
 const SETS = { vocab: { area: "vocab", dataKey: "n3vocab" }, grammar: { area: "grammar", dataKey: "n3grammar" } };
 const DRILLS = [
@@ -20,7 +22,7 @@ const TEST = { minutes: 20, parts: [["vocab:reading", 12], ["vocab:meaning", 8],
 const hasKanji = s => /[一-鿿々]/.test(s);
 const typeLabel = key => (DRILLS.find(d => d[0] === key) || [key, key])[1];
 
-const ui = { mode: "drill", drill: DRILLS[0][0] };
+const ui = { mode: "plan", drill: DRILLS[0][0] };
 // 예전 '독해·청해·모의고사' 칸은 실제 자료가 생기면 다시 연다
 let test = null;      // 진행 중이거나 막 끝난 테스트
 let timer = null;
@@ -60,15 +62,23 @@ function make(key, count) {
   });
 }
 
+// 메뉴 두 곳에서 쓴다: '시험 대비'(D-30 계획 · 영역별 연습)와 '모의고사'(시간 제한 테스트 · 결과 기록)
+const PAGES = {
+  exam: { id: "n3/exam", title: "시험 대비", lede: "D-30 계획으로 매일 할 일을 확인하고, 영역별로 연습해요.", tabs: [["plan", "D-30 계획"], ["drill", "영역별 연습"]] },
+  mock: { id: "n3/mock", title: "모의고사", lede: "시간을 재며 풀어 본 뒤 약한 유형을 확인해요. 어휘·문형 문제로 만든 연습 테스트예요.", tabs: [["test", "모의고사 풀기"], ["history", "결과 기록"]] },
+};
+let page = "exam";
+
 function render(app) {
   const ready = EXTRA.n3vocab && EXTRA.n3grammar;
+  const P = PAGES[page];
+  if (!P.tabs.some(t => t[0] === ui.mode)) ui.mode = P.tabs[0][0];
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>시험 대비</h2><p>영역별로 연습하고, 시간을 재며 풀어 본 뒤 약한 유형을 확인해요.</p></div></div>' +
-      '<p class="notice"><b>자체 제작 연습 문제</b>예요. N3 단어·문형 목록으로 자동으로 만든 문제라 실제 JLPT 기출문제나 공식 문제 형식이 아니에요.</p>' +
-      '<div class="segmented" role="tablist" aria-label="시험 대비">' +
-        seg("drill", "영역별 연습") + seg("test", "시간 제한 테스트") + seg("history", "결과 기록") +
-      "</div>" +
+      examNavHTML("n3", P.id) +
+      '<div class="panel-head"><div><h2>' + P.title + "</h2><p>" + P.lede + "</p></div></div>" +
+      (ui.mode === "plan" ? "" : '<p class="notice"><b>자체 제작 연습 문제</b>예요. N3 단어·문형 목록으로 자동으로 만든 문제라 실제 JLPT 기출문제나 공식 문제 형식이 아니에요.</p>') +
+      '<div class="segmented" role="tablist" aria-label="' + P.title + '">' + P.tabs.map(([k, l]) => seg(k, l)).join("") + "</div>" +
       '<div id="mode" class="stack"></div>' +
     "</section>";
   app.onclick = e => {
@@ -78,8 +88,8 @@ function render(app) {
     ui.mode = s.dataset.mode; render(app);
   };
   const el = app.querySelector("#mode");
+  if (ui.mode === "plan") return renderN3Plan(el);
   if (!ready) { el.innerHTML = '<p class="notice">N3 단어·문형 자료를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>'; return; }
-  if (ui.mode === "pending") ui.mode = "drill";
   ({ drill: renderDrill, test: renderTest, history: renderHistory })[ui.mode](el, app);
 }
 
@@ -260,4 +270,6 @@ function renderHistory(el) {
 }
 
 
-export default { id: "n3/exam", label: "시험 대비", jp: "試験対策", needs: ["n3vocab", "n3grammar", "sources"], render, leave() { stopTimer(); test = null; } };
+const leave = () => { stopTimer(); test = null; };
+export default { id: "n3/exam", label: "시험 대비", jp: "試験対策", needs: ["n3vocab", "n3grammar", "sources"], render: app => { if (page !== "exam") { page = "exam"; ui.mode = "plan"; } render(app); }, leave };
+export const n3MockView = { id: "n3/mock", label: "모의고사", jp: "模試", needs: ["n3vocab", "n3grammar", "sources"], render: app => { if (page !== "mock") { page = "mock"; ui.mode = "test"; } render(app); }, leave };

@@ -14,7 +14,7 @@
   try {
     // 예전 기록이 있는 상태로 첫 화면 → N1 홈
     check("첫 화면 N1 홈", $("h2").textContent === "오늘의 학습" && document.title.includes("N1"), document.title);
-    check("N1 메뉴", tabs().join("|") === "홈|단어|문법|한자|독해|청해|오답 노트|D-30|모의고사|함께 보기|기록 관리", tabs().join("|"));
+    check("N1 메뉴", tabs().join("|") === "홈|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs().join("|"));
     check("방 바꾸기 보임(N1)", swVisible() && sw().textContent === "방 바꾸기");
     const tv = $$(".tiles .tile");
     check("N1 홈 단어 칸(기존 기록 유지)", tv[0].textContent.includes("2") && tv[0].textContent.includes("/ "), tv[0].textContent);
@@ -84,7 +84,7 @@
     check("N1 오답 노트(예전 기록 유지)", $$(".note").length >= 1, $$(".note").length);
     // N3
     await go("n3");
-    check("N3 메뉴", tabs().join("|") === "홈|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|함께 보기|기록 관리", tabs().join("|"));
+    check("N3 메뉴", tabs().join("|") === "홈|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs().join("|"));
     check("방 바꾸기 보임(N3)", swVisible());
     check("N3 홈 구조(D-Day·할 일·칸 4개)", !!$(".dday-tile") && !!$(".todo-tile") && $$(".tiles .tile").length === 4);
     check("N3 D-Day는 N1 설정과 별개", $(".dday-tile").textContent.includes("2026년") , $(".dday-tile .tile-label").textContent);

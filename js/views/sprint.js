@@ -10,6 +10,8 @@ import { unresolvedNotes } from "../stats.js";
 import { renderItem as mountListening } from "./listening.js";
 import { passageTextHTML } from "./reading.js";
 import { stopAll } from "../speech.js";
+import { examTarget } from "../dday.js";
+import { examNavHTML, afterExamHTML, mockSummaryHTML } from "../examHub.js";
 
 export const PHASES = [
   { key: "p1", from: 30, to: 22, name: "진단과 기초 다지기", goals: ["전체 실력 진단", "부족한 어휘와 문법 정리", "핵심 개념 학습"] },
@@ -146,11 +148,10 @@ function metricDone(metric, day) {
 }
 
 function withProgress(plan, s) {
-  const manual = (s.manual && s.manual[plan.day]) || {};
+  // 완료는 실제로 푼 문제·복습 기록으로만 정한다 (예전에 직접 완료 표시한 기록 s.manual은 지우지 않고 남겨 두지만 쓰지 않는다)
   plan.tasks.forEach(t => {
     t.done = metricDone(t.metric, plan.day);
-    t.manual = !!manual[t.id];
-    t.complete = t.manual || t.done >= t.target;
+    t.complete = t.done >= t.target;
     t.ratio = t.complete ? 1 : Math.min(1, t.done / t.target);
   });
   plan.completed = plan.tasks.filter(t => t.complete).length;
@@ -172,16 +173,24 @@ export function sprintSummary() {
 function render(app) {
   stopAll();
   const s = store.get("sprint");
-  if (!s || ui.editing) return renderSetup(app, s);
+  if (!s || ui.editing) { renderSetup(app, s); addNav(app); return; }
   if (ui.diag) return renderDiagnostic(app, s);
   const left = diffDays(today(), s.examDate);
-  if (left < 0) return renderFinished(app, s);
-  renderDaily(app, s, left);
+  if (left < 0) renderFinished(app, s);
+  else renderDaily(app, s, left);
+  addNav(app);
+}
+
+// 시험 대비 안의 작은 메뉴(D-30 계획 · 모의고사 · 오답 노트)를 화면 맨 위에 붙인다
+function addNav(app) {
+  const p = app.querySelector(".panel");
+  if (p) p.insertAdjacentHTML("afterbegin", examNavHTML("n1", "sprint"));
 }
 
 function renderSetup(app, s) {
   const exam = nextExam();
-  const v = s || { examDate: exam ? exam.date : addDays(today(), 30), minutes: 90, level: "base", strong: "vocab", weak: "listening", goal: "normal" };
+  const room = examTarget(store);   // 홈에서 정한 시험일이 있으면 그 날짜로 시작한다
+  const v = s || { examDate: room ? room.date : exam ? exam.date : addDays(today(), 30), minutes: 90, level: "base", strong: "vocab", weak: "listening", goal: "normal" };
   const opt = (obj, cur) => Object.entries(obj).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? " selected" : "") + ">" + esc(typeof l === "string" ? l : l.label) + "</option>").join("");
   app.innerHTML =
     '<section class="panel">' +
@@ -219,6 +228,7 @@ function renderSetup(app, s) {
       examDate: date, minutes: Number(val("#s-min")), level: val("#s-level"), goal: val("#s-goal"), strong: val("#s-strong"), weak: val("#s-weak"),
     });
     store.set("sprint", next);
+    store.set("examDate", date);   // 홈의 D-Day도 같은 시험일을 쓴다
     ui.editing = false;
     ui.diag = !next.diagnostic;
     render(app);
@@ -337,12 +347,10 @@ function renderDaily(app, s, left) {
             '<span class="task-check" aria-hidden="true">' + (t.complete ? "✓" : "") + "</span>" +
             '<div class="task-body"><div class="task-title">' + esc(t.title) + (t.focus ? ' <span class="badge ai">집중</span>' : "") + "</div>" +
               '<div class="task-detail">' + esc(t.detail) + "</div>" +
-              '<div class="task-meta">' + Math.min(t.done, t.target) + " / " + t.target + t.unit + " · 약 " + t.minutes + "분" +
-                (t.manual && t.done < t.target ? " · 직접 완료 표시함" : "") + "</div>" +
+              '<div class="task-meta">' + (t.complete ? "<b>완료</b> · " : "아직 완료 전 · ") + Math.min(t.done, t.target) + " / " + t.target + t.unit + " · 약 " + t.minutes + "분</div>" +
               '<span class="meter-track" aria-hidden="true"><span style="width:' + Math.round(t.ratio * 100) + '%"></span></span>' +
             "</div>" +
-            '<div class="task-actions"><button type="button" class="btn ghost sm" data-go="' + t.link + '">하러 가기</button>' +
-              '<button type="button" class="link-btn" data-manual="' + t.id + '" aria-pressed="' + t.manual + '">' + (t.manual ? "완료 표시 취소" : "완료로 표시") + "</button></div>" +
+            (t.complete ? "" : '<div class="task-actions"><button type="button" class="btn ghost sm" data-go="' + t.link + '">하러 가기</button></div>') +
           "</li>").join("") + "</ul>" +
         '<p class="hint">못 한 일은 내일로 쌓이지 않아요. 계획은 매일 그날의 복습량과 남은 날짜로 새로 만들어져요.</p>' +
       "</article>" +
@@ -364,6 +372,7 @@ function renderDaily(app, s, left) {
         "</article>" +
       "</div>" +
 
+      mockSummaryHTML(store.get("mocks"), "mock") +
       '<article class="card-box"><h3>진단 결과</h3>' +
         (s.diagnostic
           ? '<div class="meters">' + Object.entries(s.diagnostic).map(([a, r]) =>
@@ -397,7 +406,7 @@ function renderFinished(app, s) {
         '<button type="button" class="link-btn" id="sp-end">D-30 모드 끝내기</button>' +
       "</div>" +
       (exam ? "" : '<p class="hint">등록된 다음 시험 날짜가 없어요. <a href="https://www.jlpt.jp/" target="_blank" rel="noopener">공식 사이트</a>에서 일정을 확인한 뒤 날짜를 직접 입력하세요.</p>') +
-    "</div></section>";
+    "</div>" + mockSummaryHTML(store.get("mocks"), "mock") + afterExamHTML("n1") + "</section>";
   const next = app.querySelector("#sp-next");
   if (next) next.onclick = () => { store.update("sprint", sp => { sp.examDate = exam.date; sp.diagnostic = null; sp.diagSet = null; sp.manual = {}; sp.startedAt = today(); }); ui.diag = true; render(app); };
   app.querySelector("#sp-end").onclick = () => { store.set("sprint", null); render(app); };
@@ -407,20 +416,12 @@ function renderFinished(app, s) {
 function bindCommon(app) {
   app.onclick = e => {
     const go = e.target.closest("[data-go]");
-    const man = e.target.closest("[data-manual]");
     const id = e.target.id;
     if (go) {
       const to = go.dataset.go;
       if (to === "diag") { if (store.get("sprint").diagnostic) store.update("sprint", sp => { sp.diagSet = null; }); ui.diag = true; render(app); window.scrollTo(0, 0); }
       else if (to.startsWith("vocab:")) openVocabMode(to.split(":")[1]);
       else location.hash = to;
-    } else if (man) {
-      store.update("sprint", sp => {
-        sp.manual = sp.manual || {};
-        const d = sp.manual[today()] = sp.manual[today()] || {};
-        d[man.dataset.manual] = !d[man.dataset.manual];
-      });
-      render(app);
     } else if (id === "sp-edit") { ui.editing = true; render(app); }
     else if (id === "sp-reset") { ui.confirmReset = true; render(app); }
     else if (id === "sp-reset-no") { ui.confirmReset = false; render(app); }
@@ -428,4 +429,4 @@ function bindCommon(app) {
   };
 }
 
-export default { id: "sprint", label: "D-30", render, leave: () => { stopAll(); ui.confirmReset = false; } };
+export default { id: "sprint", label: "시험 대비", jp: "試験対策", render, leave: () => { stopAll(); ui.confirmReset = false; } };

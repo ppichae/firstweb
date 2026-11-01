@@ -11,6 +11,7 @@ import { unitDone, coreUnits, openBasics } from "./basics.js";
 import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { growthCardHTML } from "../../badges.js";
+import { n3SprintSummary } from "./sprint.js";
 import { weekCardHTML } from "../../weekchart.js";
 import { roomKanjiList } from "../../kanji.js";
 
@@ -36,6 +37,7 @@ function render(app) {
   const unitsDone = units.filter(u => unitDone(u.id)).length;
   const nextUnit = units.find(u => !unitDone(u.id));
   const openNotes = noteEntries(n3store).filter(n => !n.resolved).length;
+  const sprint = n3SprintSummary();
   const attempts = n3store.get("attempts");
   const correct = attempts.filter(a => a.correct).length;
   const kanjiSet = roomKanjiList("n3");
@@ -51,6 +53,7 @@ function render(app) {
           '<li><a href="#n3/basics">' + (nextUnit ? "다음 기초 단원" : "기초 단원") + "</a><strong>" + (nextUnit ? esc(nextUnit.title) : units.length ? "모두 완료" : "—") + "</strong></li>" +
           '<li><a href="#n3/vocab" data-goto="cards">복습할 단어</a><strong>' + n3vocab.reviewWordIds().length + "개</strong></li>" +
           '<li><a href="#n3/notes">다시 풀 오답</a><strong>' + openNotes + "개</strong></li>" +
+          '<li><a href="#n3/exam">D-30 오늘의 목표</a><strong>' + (sprint ? sprint.done + " / " + sprint.total + " 완료" : "시작 전") + "</strong></li>" +
         "</ul></article>" +
       "</div>" +
 

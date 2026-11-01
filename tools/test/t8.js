@@ -43,11 +43,9 @@
   check("예상 시간 ≤ 목표 시간 근처", (() => { const m = mins.match(/예상 (\d+)분 \/ 하루 목표 (\d+)분/); return m && +m[1] <= +m[2] * 1.1; })(), mins);
   // 진행률 자동 계산: 어휘 진단(diagnostic 모드)도 기록 → 오늘 어휘 문제 3개 반영
   const vocabTask = $$(".task").find(t => t.querySelector(".task-title").textContent.startsWith("어휘"));
-  check("어휘 진행률 자동", vocabTask && vocabTask.querySelector(".task-meta").textContent.startsWith("3 /"), vocabTask && vocabTask.querySelector(".task-meta").textContent);
-  // 완료로 표시
-  const doneBefore = $(".progress strong").textContent;
-  $("[data-manual]").click(); await wait(100);
-  check("직접 완료 표시", $(".progress strong").textContent !== doneBefore && $$(".task.complete").length >= 1, doneBefore + " → " + $(".progress strong").textContent);
+  check("어휘 진행률 자동", vocabTask && vocabTask.querySelector(".task-meta").textContent.includes("아직 완료 전 · 3 /"), vocabTask && vocabTask.querySelector(".task-meta").textContent);
+  // 직접 완료 버튼은 없고, 완료는 기록으로만 정해진다
+  check("완료로 표시 버튼 없음", !$("[data-manual]") && !document.getElementById("app").textContent.includes("완료로 표시"));
   check("내일 추천", $$(".home-grid .goal-list li").length >= 3);
   check("홈 요약 연동", true);
   location.hash = "home"; await wait(300);

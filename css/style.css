@@ -1058,3 +1058,8 @@ u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decorat
   background: var(--fg); color: var(--bg); border-radius: 12px; padding: 12px 18px; font-size: 15px; transition: opacity .25s, transform .25s; max-width: calc(100% - 32px); }
 .lvup-toast.on { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { .lvup-toast { transition: none; } }
+
+/* 시험 대비 안의 작은 메뉴 (D-30 계획 · 모의고사 · 오답 노트) */
+.exam-nav { margin-bottom: 16px; }
+.exam-nav .seg { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.exam-nav .seg[aria-current="page"] { background: var(--ink-soft); color: var(--ink); }

@@ -143,6 +143,7 @@ export const n3store = createStore("n3lab:", "jlpt-n3-room", {
   attempts: [],    // 문제 풀이 기록 (N1과 같은 모양)
   activity: {},    // 날짜 → { cards, questions }
   tests: [],       // 시간 제한 연습 테스트 결과
+  sprint: null,    // D-30 계획 설정 { examDate, minutes, startedAt }
   game: { xp: 0 }, // 경험치
   examDate: null,  // 내가 정한 시험일
   profile: null,

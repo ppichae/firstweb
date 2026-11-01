@@ -69,6 +69,7 @@
     $('[data-mode="quiz"]').click(); await wait(300);
     await solveAll("N3 단어", $("#quiz"), true);
     await go("n3/exam");
+    $('[data-mode="drill"]').click(); await wait(300);
     await solveAll("N3 영역별 연습", $("#d-quiz"), true);
     // 결과 화면 '새 문제'
     $("[data-qr=restart]").click(); await wait(300);
