@@ -6,7 +6,7 @@ import { summaryOf } from "../summary.js";
 import {
   myProfile, myCouple, loadCouple, partnerProfile, partnerSummary, pushSummary, createCode, myCodeState,
   requestWithCode, pendingRequests, respond, cancelRequest, unlink, listMessages, sendMessage, markRead,
-  deleteMessage, hideMessage, myId,
+  deleteMessage, myId,
 } from "../account.js";
 
 const REQUEST_TEXT = {
@@ -52,7 +52,7 @@ function summaryHTML(name, level, d, mine) {
   const mainKey = level === "N3" ? "n3" : "n1", otherKey = mainKey === "n1" ? "n3" : "n1";
   const r = (d.rooms || {})[mainKey] || {}, o = (d.rooms || {})[otherKey] || {};
   return '<article class="card-box pt-card">' +
-    '<div class="pt-head">' + avatar(name) + "<div><b>" + esc(name) + '</b> <span class="badge">' + esc(level) + "</span>" + (mine ? ' <small class="hint">(나)</small>' : "") + "</div></div>" +
+    '<div class="pt-head">' + avatar(name) + "<div><b>" + esc(name) + '</b> <span class="badge">' + esc(level) + "</span>" + (mine ? ' <small class="hint">(나)</small>' : ' <small class="hint">(연결된 파트너)</small>') + "</div></div>" +
     '<dl class="pt-stats">' +
       "<div><dt>" + esc(level) + " 진도</dt><dd>" + (r.progressPct ?? 0) + "% <small>" + (r.done ?? 0) + "/" + (r.total ?? 0) + "</small></dd></div>" +
       "<div><dt>총 공부 시간</dt><dd>" + timeText(d.totalMinutes) + "</dd></div>" +
@@ -101,7 +101,7 @@ export function createPartnerView() {
             return '<li class="' + (mine ? "mine" : "theirs") + '"><div class="pt-bubble">' + esc(m.body) + "</div>" +
               '<small class="hint">' + (mine ? "내가 보냄" : esc(pp ? pp.nickname : "파트너")) + " · " + hhmm(m.created_at) +
               (mine ? (m.read_at ? " · 읽음" : " · 안 읽음") : "") + "</small>" +
-              (mine ? '<button type="button" class="link-btn" data-del="' + m.id + '">지우기</button>' : '<button type="button" class="link-btn" data-hide="' + m.id + '">숨기기</button>') +
+              (mine ? '<button type="button" class="link-btn" data-del="' + m.id + '">지우기</button>' : "") +
               "</li>";
           }).join("") + "</ul>" : '<p class="empty">아직 주고받은 메시지가 없어요.</p>') +
         "</article>" +
@@ -129,12 +129,10 @@ export function createPartnerView() {
 
     app.innerHTML =
       '<section class="panel">' +
+        '<a class="btn ghost sm back-home" href="#' + (me.jlpt_level === "N3" ? "n3" : "home") + '">← 홈으로</a>' +
         '<div class="panel-head"><div><h2>공부 파트너</h2><p>상대에게는 닉네임·급수·학습 요약만 보여요.</p></div>' +
-          '<div class="toolbar"><a class="btn ghost" href="#profile">프로필 바꾸기</a><button type="button" class="btn ghost" id="pt-refresh">새로고침</button></div></div>' +
+          '<div class="toolbar"><a class="btn ghost sm" href="#profile">프로필 바꾸기</a><a class="btn ghost sm" href="#records">내 기록</a><button type="button" class="btn ghost sm" id="pt-refresh">새로고침</button></div></div>' +
         flash + body +
-        '<p class="hint">학습 요약은 계정에 저장된 기록(이 기기에서 아직 보내지 않은 기록 포함)으로 계산해요.</p>' +
-        '<p><a href="#records">내 기록(동기화·예전 기록 가져오기·백업) →</a></p>' +
-        '<p><a href="#' + (me.jlpt_level === "N3" ? "n3" : "home") + '">← ' + esc(me.jlpt_level) + " 공부방으로 돌아가기</a></p>" +
       "</section>";
     ui.msg = "";
 
@@ -154,7 +152,6 @@ export function createPartnerView() {
       else if (t.dataset.rej) act(() => respond(t.dataset.rej, false), "요청을 거절했어요.");
       else if (t.dataset.cancel) act(() => cancelRequest(t.dataset.cancel), "요청을 취소했어요.");
       else if (t.dataset.del) act(() => deleteMessage(t.dataset.del), "메시지를 지웠어요.");
-      else if (t.dataset.hide) act(() => hideMessage(t.dataset.hide), "메시지를 내 화면에서 숨겼어요.");
       else if (t.closest("#pt-unlink")) {
         if (confirm("공부 파트너 연결을 해제할까요? 서로의 학습 요약과 메시지를 바로 볼 수 없게 돼요. 학습 기록은 지워지지 않아요.")) act(unlink, "연결을 해제했어요.");
       }

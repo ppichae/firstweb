@@ -105,7 +105,7 @@ export async function listMessages() {
     .select("id, sender, receiver, body, created_at, read_at, hidden_by_receiver, original_at")
     .order("created_at", { ascending: false }).limit(50);
   if (error) throw error;
-  return (data || []).filter(m => !(m.receiver === me() && m.hidden_by_receiver));
+  return data || [];
 }
 
 export async function sendMessage(body) {
@@ -122,11 +122,6 @@ export async function markRead() {
 
 export async function deleteMessage(id) {
   const { error } = await db().from("encouragement_messages").delete().eq("id", id).eq("sender", me());
-  if (error) throw error;
-}
-
-export async function hideMessage(id) {
-  const { error } = await db().from("encouragement_messages").update({ hidden_by_receiver: true }).eq("id", id).eq("receiver", me());
   if (error) throw error;
 }
 

@@ -76,13 +76,13 @@ function renderIntro(app) {
   app.innerHTML =
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>실전 모의고사</h2></div></div>' +
-      '<article class="card-box"><h3>구성</h3>' +
+      '<details class="more-box"><summary>문제 구성 보기</summary>' +
         '<table class="mock-table"><thead><tr><th>구분</th><th>이 모의고사</th><th>실제 시험 시간</th></tr></thead><tbody>' +
           "<tr><td>1부 언어지식·독해</td><td>어휘 10 · 문법 10 · 독해 " + (set[1].length - 20) + "문제</td><td>" + EXAM_INFO.sections[0].minutes + "분</td></tr>" +
           "<tr><td>2부 청해</td><td>" + set[2].length + "문제</td><td>" + EXAM_INFO.sections[1].minutes + "분</td></tr>" +
         "</tbody></table>" +
-        '<p class="hint">문제는 모두 자체 제작 연습 문제이고, 실제 시험보다 문항 수가 적어요.</p>' +
-      "</article>" +
+      "</details>" +
+      '<p class="hint">문제는 모두 자체 제작 연습 문제이고, 실제 시험보다 문항 수가 적어요.</p>' +
       '<form class="card-box" id="mock-start"><h3>시간 설정</h3>' +
         '<label class="radio"><input type="radio" name="tm" value="fitted" checked> <span><b>문항 수에 맞춘 시간 (추천)</b> 1부 ' + fit[1] + "분 · 2부 " + fit[2] + "분</span></label>" +
         '<label class="radio"><input type="radio" name="tm" value="official"> <span><b>실제 시험 시간</b> 1부 110분 · 2부 55분 <small>(문항 수가 적어 시간이 많이 남아요)</small></span></label>' +

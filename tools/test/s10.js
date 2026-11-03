@@ -25,7 +25,10 @@
       const empty = !app().querySelector("h2");
       const over = de.scrollWidth > de.clientWidth;
       // 급수 선택 화면(rooms)에서는 '방 바꾸기' 버튼을 일부러 숨긴다 → 숨겨져 있어야 정상
-      const swBad = h === "rooms" ? !doc().getElementById("room-switch").hidden : (sw.right > de.clientWidth || sw.left < 0 || sw.width === 0);
+      // 휴대폰 폭에서는 방 바꾸기가 하단 메뉴의 더보기로 옮겨 간다
+      const narrowNav = W() <= 640 && h !== "rooms";
+      const mb = doc().querySelector(".m-bar").getBoundingClientRect();
+      const swBad = h === "rooms" ? !doc().getElementById("room-switch").hidden : narrowNav ? (mb.width === 0 || mb.right > de.clientWidth || mb.left < 0) : (sw.right > de.clientWidth || sw.left < 0 || sw.width === 0);
       if (empty || over || swBad) bad.push(h + (empty ? "(빈 화면)" : "") + (over ? "(가로 넘침)" : "") + (swBad ? "(방 바꾸기 잘림)" : ""));
     }
     check("모든 화면 " + routes.length + "개 열림·넘침 없음·버튼 보임 (" + W() + "px" + (dark ? ", 다크" : "") + ")", !bad.length, bad.join(", "));

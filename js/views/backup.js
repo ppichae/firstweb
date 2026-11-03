@@ -67,11 +67,12 @@ export function createBackupView(id, roomId) {
     const mocks = st.get("mocks") ? st.get("mocks").length : 0;
     const pend = ui.pending ? Object.keys(ui.pending) : [];
     const synced = syncActive();
+    const homeBtn = '<a class="btn ghost sm back-home" href="#' + (roomId === "n3" ? "n3" : "home") + '">← 홈으로</a>';
     app.innerHTML =
       '<section class="panel">' +
         (synced
-          ? '<div class="panel-head"><div><h2>기록 관리</h2></div></div>'
-          : '<div class="panel-head"><div><h2>기록 관리</h2></div></div>') +
+          ? '<div class="panel-head"><div><h2>기록 관리</h2></div>' + homeBtn + "</div>"
+          : '<div class="panel-head"><div><h2>기록 관리</h2></div>' + homeBtn + "</div>") +
         (ui.message ? '<p class="toast" role="status">' + esc(ui.message) + "</p>" : "") +
         (synced
           ? '<p class="notice">동기화와 계정 백업은 <a href="#records">내 기록</a>에서 관리해요.</p>'

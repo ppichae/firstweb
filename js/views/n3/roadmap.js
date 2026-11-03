@@ -95,7 +95,7 @@ function render(app) {
           '<div class="meters">' + s.items.map(i =>
             '<div class="meter"><span class="meter-name">' + esc(i.name) + '</span><span class="meter-track" aria-hidden="true"><span style="width:' + Math.round(i.ratio * 100) + '%"></span></span>' +
             '<span class="meter-val">' + i.done + " / " + i.total + "</span>" +
-            '<button type="button" class="link-btn" data-go="' + esc(i.go) + '" aria-label="' + esc(i.name + " 하러 가기") + '">하러 가기</button></div>').join("") + "</div>" +
+            '<button type="button" class="link-btn" data-go="' + esc(i.go) + '" aria-label="' + esc(i.name + " 하러 가기") + '">가기</button></div>').join("") + "</div>" +
         "</li>").join("") + "</ol>" +
       '<p class="hint">급수(N5·N4·N3)는 JLPT 시험 단계이고, 레벨(Lv)은 이 공부방에서 쌓은 공부량이에요. 레벨이 높다고 급수가 오르는 것은 아니에요.</p>' +
     "</section>";

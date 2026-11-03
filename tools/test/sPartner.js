@@ -78,6 +78,15 @@
     await login(B, "나테스트", "N1");
     await openPartner();
     check("받은 메시지 보임", !!$$(".pt-msgs li.theirs").find(li => li.textContent.includes("오늘도 화이팅!")));
+    check("받은 메시지에 숨기기 버튼 없음", !$("[data-hide]") && !app().textContent.includes("숨기기"));
+    check("맨 위에 홈으로 버튼", !!$(".panel > .back-home") && $(".panel").firstElementChild === $(".back-home"));
+    check("연결된 파트너 표시(닉네임·연결 표시)", $$(".pt-card")[1].textContent.includes("연결된 파트너") && $$(".pt-card")[1].textContent.includes("가테스트"), $$(".pt-card")[1].textContent.slice(0, 40));
+    // 예전에 숨긴 메시지도 다시 보인다
+    const acc = await window.eval('import("./js/account.js")'), au = await window.eval('import("./js/auth.js")');
+    const mid = (await acc.listMessages()).find(m => m.body === "오늘도 화이팅!").id;
+    const hid = await au.getClient().from("encouragement_messages").update({ hidden_by_receiver: true }).eq("id", mid);
+    check("테스트 준비: 메시지 숨김 표시", !hid.error, hid.error && hid.error.message);
+    check("예전에 숨긴 메시지도 다시 보임", (await acc.listMessages()).some(m => m.id === mid));
     check("파트너 급수 N3로 보임(서로 다른 급수 연결)", $$(".pt-card")[1].textContent.includes("가테스트") && $$(".pt-card")[1].textContent.includes("N3"));
     check("상대 화면에 오답·즐겨찾기 같은 개인 기록 없음", !/오답|즐겨찾기/.test($$(".pt-card")[1].textContent));
     await logout();

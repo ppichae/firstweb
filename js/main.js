@@ -2,6 +2,7 @@
 import { loadData, DB, ensureExtra } from "./data.js";
 import { store } from "./store.js";
 import { esc } from "./util.js";
+import { drawMobileNav, markMore } from "./mobileNav.js";
 import { ROOMS, roomsView, lastRoom, rememberRoom, hasN1Records } from "./rooms.js";
 import { trackRoom } from "./tracker.js";
 import { initTheme } from "./theme.js";
@@ -105,6 +106,7 @@ async function route() {
   }
   const roomKey = room ? room.id : view.id;
   if (roomKey !== currentRoom) { drawRoom(room, view); currentRoom = roomKey; }
+  drawMobileNav(room, view);
   if (room) rememberRoom(room.id);
   trackRoom(room ? room.st : null);
   tablist.querySelectorAll(".tab").forEach(t => {
@@ -154,6 +156,8 @@ function drawSyncChip() {
   else if (backupDue()) text = "백업 권장";
   chip.textContent = text;
   chip.classList.toggle("warn", warn);
+  chip.toggleAttribute("data-alert", warn || text === "백업 권장");
+  markMore(warn || text === "백업 권장");
   chip.title = s.lastSync ? "마지막으로 보낸 때: " + new Date(s.lastSync).toLocaleString() : "";
 }
 // 로그아웃 전에 보내지 않은 기록이 있으면 먼저 보내 본다(실패하면 알린다)

@@ -40,6 +40,7 @@ export function createRecordsView() {
 
     app.innerHTML =
       '<section class="panel">' +
+        '<div class="detail-nav"><a class="btn ghost sm back-home" href="#' + ((myProfile() || {}).jlpt_level === "N3" ? "n3" : "home") + '">← 홈으로</a><a class="btn ghost sm" href="#partner">공부 파트너</a></div>' +
         '<div class="panel-head"><div><h2>내 기록</h2></div>' +
           '<div class="toolbar"><button type="button" class="btn ghost" id="rc-sync">지금 맞추기</button></div></div>' +
         flash + (err ? '<p class="notice pt-bad">서버에 연결하지 못했어요. (' + esc(err) + ")</p>" : "") +
@@ -96,7 +97,6 @@ export function createRecordsView() {
           '<p class="hint"><b>휴대폰 브라우저에 남은 기록은 백업이 아니에요.</b> 사파리 설정에서 웹사이트 데이터를 지우거나 휴대폰을 초기화하면 함께 사라질 수 있어요.</p>' +
           (backupDue() ? '<p class="notice">마지막 백업 후 7일이 지났어요. 백업 파일을 받아 두세요.</p>' : "") +
           '<button type="button" class="btn" id="rc-export">백업 파일 받기</button></article>' +
-        '<p><a href="#partner">← 공부 파트너</a></p>' +
       "</section>";
     ui.msg = "";
 
