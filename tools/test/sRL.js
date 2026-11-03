@@ -122,7 +122,7 @@
     await showAll();
     check("N1 청해: 문항 19개 (기존 7 + 새 12)", $$(".pick").length === 19, $$(".pick").length);
     // 단어장 발음 버튼
-    location.hash = "vocab"; await until(() => $(".card-face"), 10000);
+    location.hash = "vocab"; await until(() => $(".topic-tile"), 10000); $('.topic-tile[data-cat="all"]').click(); await until(() => $(".card-face"), 3000);
     $(".card-face").click(); await wait(200);
     check("N1 단어 카드: 펼치면 발음 버튼", !!$(".card .say-btn"));
     check("예문: 히라가나만 적은 중복 줄 없음", !$(".ex-reading"));

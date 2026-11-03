@@ -19,7 +19,7 @@
     check("N1 배지 기록 저장(받은 날)", !!(LS("n1lab:badges") || {}).first);
     check("환산 안내", app().textContent.includes("처음 한 번 경험치로 바꿔"));
     // N1 문제 → 경험치
-    await go("vocab");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $('[data-mode="quiz"]').click(); await wait(200);
     $$(".q")[0].querySelectorAll(".opt")[0].click(); await wait(100);
     const xp1 = LS("n1lab:game").xp;
@@ -68,9 +68,7 @@
     await solve(kb());
     check("N3 한자 퀴즈 기록·경험치", (LS("n3lab:attempts") || []).filter(a => a.area === "kanji").length >= 5 && LS("n3lab:game").xp > 120, LS("n3lab:game").xp);
     await go("n3/notes");
-    check("N3 오답 노트 한자 칸", $$("[data-narea]").map(b => b.textContent).join(",").includes("한자"));
-    await go("n3/together");
-    check("함께 보기 배지 표시", $$(".person").length === 2);
+    { const allBtn = $('[data-nstatus="all"]'); if (allBtn) { allBtn.click(); await wait(100); } check("N3 오답 노트에 한자 오답 표시(틀린 한자가 있을 때만)", $$(".note .q-num").some(s => s.textContent.includes("한자")) === (LS("n3lab:attempts") || []).some(a => a.area === "kanji" && !a.correct), $$(".note .q-num").length); }
     check("가로 스크롤 없음", document.documentElement.scrollWidth <= document.documentElement.clientWidth);
   } catch (e) { log.push("ERROR " + e.message + " @ " + (e.stack || "").split("\n")[1]); }
   return log.join("\n");

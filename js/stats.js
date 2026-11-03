@@ -89,7 +89,30 @@ const ICONS = {
   check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/>',
   flame: '<path d="M12 3c.6 3.5 5.5 5.8 5.5 11a5.5 5.5 0 0 1-11 0c0-2.2 1-3.6 2.2-4.8.3 1.5 1 2.3 1.8 2.8C10.2 9 10.5 5.800 12 3z"/>',
   target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1.500"/><rect x="13" y="4" width="7" height="7" rx="1.500"/><rect x="4" y="13" width="7" height="7" rx="1.500"/><rect x="13" y="13" width="7" height="7" rx="1.500"/>',
+  biz: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/>',
+  life: '<path d="M4 11l8-7 8 7"/><path d="M6 9.500V20h12V9.500"/><path d="M10 20v-6h4v6"/>',
+  people: '<circle cx="9" cy="8" r="3.500"/><path d="M3 20c0-3.500 2.700-6 6-6s6 2.500 6 6"/><path d="M16 5a3.500 3.500 0 0 1 0 6.500"/><path d="M18 14.500c1.800.8 3 2.800 3 5.500"/>',
+  mind: '<path d="M12 20s-8-4.700-8-10.500A4.500 4.500 0 0 1 12 7a4.500 4.500 0 0 1 8 2.500C20 15.300 12 20 12 20z"/>',
+  society: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.500 2.500 3.800 5.500 3.800 9s-1.300 6.500-3.800 9c-2.500-2.500-3.800-5.500-3.800-9S9.500 5.500 12 3z"/>',
+  body: '<path d="M3 12h4l2.500-6 4 12 2.500-6h5"/>',
+  nature: '<path d="M5 19c0-8 5-14 15-15 0 10-5 15-12 15-1 0-2-.1-3 0z"/><path d="M5 21c1.500-5 5-8.500 9-10.500"/>',
+  place: '<path d="M12 21s-7-6.300-7-11.500a7 7 0 0 1 14 0C19 14.700 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/>',
+  action: '<path d="M4 8h13l-3.500-3.500"/><path d="M20 16H7l3.500 3.500"/>',
+  state: '<circle cx="8" cy="8" r="4"/><rect x="13" y="13" width="7" height="7" rx="1.500"/><path d="M6 20l2.500-4.500L11 20z"/>',
+  time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.500 2"/>',
+  map: '<path d="M9 4L3 6.500v13.500l6-2.500 6 2.500 6-2.500V4l-6 2.500z"/><path d="M9 4v13.500"/><path d="M15 6.500V20"/>',
+  seed: '<path d="M12 21v-9"/><path d="M12 12c0-4 2.500-6.500 7-7 0 4.500-2.500 7-7 7z"/><path d="M12 15c0-3-2-5-6-5.500 0 3.500 2 5.500 6 5.500z"/>',
+  ear: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.500"/><rect x="17" y="14" width="4" height="6" rx="1.500"/>',
+  retry: '<path d="M4 12a8 8 0 1 1 2.500 5.800"/><path d="M4 19v-5h5"/>',
+  paper: '<path d="M6 3h9l4 4v14H6z"/><path d="M14.500 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/>',
+  save: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><rect x="8" y="13" width="8" height="7"/>',
+  swap: '<path d="M4 8h13l-3.500-3.500"/><path d="M20 16H7l3.500 3.500"/>',
+  moon: '<path d="M20 14.500A8.500 8.500 0 0 1 9.500 4a8.500 8.500 0 1 0 10.500 10.500z"/>',
+  link: '<circle cx="8" cy="9" r="3.500"/><circle cx="16.500" cy="9" r="3"/><path d="M2.500 20c0-3.200 2.500-5.500 5.500-5.500s5.500 2.300 5.500 5.500"/><path d="M15.500 14.600c3-.3 6 1.700 6 5.400"/>',
+  cloud: '<path d="M7 18a4.500 4.500 0 0 1-.6-9A6 6 0 0 1 18 10a4 4 0 0 1-.5 8z"/>',
 };
+export const iconSVG = name => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.book) + "</svg>";
 export function statTileHTML(label, value, sub, opts = {}) {
   const R = 25, C = 2 * Math.PI * R, pct = opts.pct;
   const ring = pct === undefined || pct === null ? "" :
@@ -97,7 +120,7 @@ export function statTileHTML(label, value, sub, opts = {}) {
     '<circle class="ring-fg" cx="30" cy="30" r="' + R + '" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - Math.min(100, Math.max(0, pct)) / 100)).toFixed(1) + '"/>' +
     '<text x="30" y="30">' + Math.round(pct) + "</text></svg>";
   return '<article class="tile stat-tile tone-' + (opts.tone || "mint") + '"><div class="stat-head"><span class="stat-icon" aria-hidden="true">' +
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[opts.icon] || ICONS.book) + "</svg></span>" +
+    iconSVG(opts.icon) + "</span>" +
     '<span class="tile-label">' + label + "</span></div>" +
     '<div class="stat-main"><span class="tile-value">' + String(value).replace(/[&<>"']/g, "") + '</span><span class="tile-sub">' + String(sub).replace(/[&<>"']/g, "") + "</span></div>" + ring + "</article>";
 }

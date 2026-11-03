@@ -9,7 +9,7 @@
   const mod = p => window.eval('import("./js/' + p + '")');
   try {
     const L = await mod("views/listStudy.js"), Ex = await mod("examples.js"), P = await mod("pick.js"), D = await mod("data.js");
-    await go("vocab"); await go("grammar"); await go("n3/vocab"); await go("n3/grammar");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("grammar"); await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("n3/grammar");
     const merged = (core, extra) => { const seen = new Set(), out = []; [...(core || []), ...(extra || [])].forEach(v => { const k = v.word || v.pattern; if (!seen.has(k)) { seen.add(k); out.push(v); } }); return out; };
     const sets = [
       ["N1 단어", merged(D.DB.vocab.items, D.EXTRA.n1vocab.items), "vocab", D.DB.vocab.questions.length],
@@ -65,7 +65,7 @@
     for (let k = 0; k < 50; k++) fresh += P.pickItems(pool, 10, { attempts: seen }).filter(x => Number(x.id.slice(1)) >= 50).length;
     check("처음 보는 단어를 가장 많이 냄", fresh / 50 >= 6, (fresh / 50).toFixed(1) + "개/10");
     // 화면
-    await go("n3/vocab"); $('[data-mode="quiz"]').click(); await wait(400);
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $('[data-mode="quiz"]').click(); await wait(400);
     check("첫 화면은 전체 섞기", $('[data-qt="mix"]').getAttribute("aria-pressed") === "true");
     const pr = () => $("#quiz-progress").textContent;
     check("풀어 본 정도 표시", /단어 733개 중 0개 풀어 봄 · 문제 [\d,]+개 중 0개 풀어 봄/.test(pr()), pr());

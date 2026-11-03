@@ -6,7 +6,7 @@
   const $ = s => app().querySelector(s), $$ = s => [...app().querySelectorAll(s)];
   const go = async h => { location.hash = h; await wait(1400); };
   try {
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const i = $("#v-q"); i.value = "計算"; i.dispatchEvent(new window.Event("input", { bubbles: true })); await wait(100);
     const card = $$(".card").find(c => c.querySelector(".word").textContent === "計算");
     card.querySelector(".card-face").click(); await wait(80);

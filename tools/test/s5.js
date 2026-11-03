@@ -13,7 +13,7 @@
   try {
     await go("home");
     check("N1 메뉴에 한자", tabs().startsWith("홈|단어|문법|한자|독해"), tabs());
-    await go("vocab");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     await search("顕著");
     $(".card .card-face").click(); await wait(100);   // 한자 버튼은 카드를 펼쳤을 때 보인다
     const row = $(".card .kanji-row");
@@ -70,7 +70,7 @@
     check("N3 기록에만 저장", !!LS("n3lab:kanji")["合"] && !LS("n1lab:kanji")["合"]);
     await go("n3");
     await go("n3/roadmap"); check("N3 로드맵 한자 진도", $$(".meter").some(m => m.textContent.includes("한자") && m.textContent.includes("1 / 586")), $$(".meter").map(m => m.textContent).join("|").slice(0, 200));
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     await search("場合");
     const c3 = [...$$(".card")].find(c => c.querySelector(".word").textContent === "場合");
     if (c3) { c3.querySelector('[data-kanji="場"]').click(); await wait(100); log.push("INFO 場合(" + c3.querySelector('[data-kanji="場"]').dataset.r + ") 나누기: " + (dlg().querySelector(".rd-in") ? dlg().querySelector(".rd-in").textContent : "나누지 않음(자료로 한 가지로 맞출 수 없음)")); dlg().close(); }

@@ -81,6 +81,10 @@ export function createBackupView(id, roomId) {
           '<p class="hint">' + counts({ attempts: st.get("attempts"), words: st.get("words"), lists: st.get("lists") }) +
           (roomId === "n1" ? " · 모의고사 " + mocks + "회" : " · 연습 테스트 " + st.get("tests").length + "회") +
           (st.available ? "" : ' · <b class="confirm">이 브라우저는 저장소를 쓸 수 없어서, 새로고침하면 기록이 사라져요.</b>') + "</p></article>" +
+        '<article class="card-box"><h3>내 이름 · 이번 주 목표</h3>' +
+          '<div class="set-row"><label for="name-input">이름</label><input class="inline-input" id="name-input" maxlength="20" value="' + esc(nameOf(roomId)) + '"><button type="button" class="btn ghost sm" id="name-save">저장</button></div>' +
+          '<div class="set-row"><label for="goal-input">주당 공부 시간(분)</label><input class="inline-input" id="goal-input" type="number" min="10" max="6000" step="10" value="' + ((st.get("goal") && st.get("goal").weeklyMinutes) || 300) + '"><button type="button" class="btn ghost sm" id="goal-save">저장</button></div>' +
+        "</article>" +
         '<article class="card-box"><h3>백업하기</h3>' +
           "<p>기록을 파일 하나(.json)로 내려받아요. 기기를 바꾸거나 브라우저 기록을 지우기 전에 받아 두세요.</p>" +
           '<div class="toolbar">' +
@@ -124,6 +128,16 @@ export function createBackupView(id, roomId) {
       const ex = e.target.closest("[data-export]");
       const id = e.target.id;
       if (ex) { ui.message = exportRooms(ex.dataset.export) + " 백업 파일을 내려받았어요."; render(app); }
+      else if (id === "name-save") {
+        const v = app.querySelector("#name-input").value.trim().slice(0, 20);
+        st.set("profile", v ? { name: v } : null);
+        ui.message = "이름을 저장했어요."; render(app);
+      } else if (id === "goal-save") {
+        const v = Math.round(Number(app.querySelector("#goal-input").value));
+        ui.message = v >= 10 && v <= 6000 ? "이번 주 목표를 저장했어요." : "10분에서 6000분 사이로 적어 주세요.";
+        if (v >= 10 && v <= 6000) st.set("goal", { weeklyMinutes: v });
+        render(app);
+      }
       else if (id === "b-pre-backup") {
         const rooms = Object.keys(ui.pending);
         exportRooms(rooms.length > 1 ? "all" : rooms[0]);

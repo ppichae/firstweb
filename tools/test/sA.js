@@ -20,8 +20,8 @@
     check("새로고침 후 화면 모드 유지", doc().documentElement.getAttribute("data-theme") === (wasDark ? "light" : "dark"));
     doc().getElementById("theme-toggle").click(); await wait(50);
     // 모든 화면에서 미완성·부정 문구 검사
-    const routes = ["home", "vocab", "grammar", "kanji", "reading", "listening", "notes", "sprint", "mock", "together", "backup", "badges",
-      "n3", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/notes", "n3/exam", "n3/together", "n3/backup", "n3/badges"];
+    const routes = ["home", "vocab", "grammar", "kanji", "reading", "listening", "notes", "sprint", "mock", "backup", "badges",
+      "n3", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/notes", "n3/exam", "n3/backup", "n3/badges"];
     const hits = [];
     for (const h of routes) {
       await go(h);
@@ -31,7 +31,7 @@
       if (m) hits.push(h + ":" + m[0]);
     }
     check("미완성·부정 문구 없음 (" + routes.length + "개 화면)", !hits.length, hits.join(", "));
-    await go("vocab");
+    await go("vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $("#toggle-all").click(); await wait(100);
     check("'검수 완료' 표시가 잘못 나오지 않음", !$$(".badge").some(b => b.textContent === "검수 완료"));
     check("N1 단어: 헷갈리는 단어 탭 있음", !!$('[data-mode="compare"]'));
@@ -39,7 +39,7 @@
     $$(".q").forEach(q => q.querySelectorAll(".opt")[0].click()); await wait(100);
     const fb = $$(".fb").map(f => f.textContent).join(" ");
     check("퀴즈 해설 문구(뜻이에요)", !BAD.test(fb) && (fb.includes("정답이에요") || fb.includes("오답이에요")), (fb.match(BAD) || [""])[0]);
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 단어: 빈 '헷갈리는 단어' 탭 숨김", !$('[data-mode="compare"]'));
     // 한자 창 별표
     await go("n3/kanji");

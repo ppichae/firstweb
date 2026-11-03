@@ -43,7 +43,7 @@
     return { wrongSeen, res };
   }
   try {
-    await go("vocab");
+    await go("vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $('[data-mode="quiz"]').click(); await wait(300);
     const a0 = (LS("n1lab:attempts") || []).length;
     const r1 = await solveAll("N1 단어", $("#quiz"), true);
@@ -65,7 +65,7 @@
     kb.querySelector(".kq-opt").click(); await wait(100);
     check("한자-획순: 답한 뒤 한자 학습 정보", !!kb.querySelector(".kq-fb .learn-box") && kb.querySelector(".kq-fb .learn-box").textContent.includes("음독"));
     check("한자-획순: 다음 버튼", !!kb.querySelector(".qr-next"));
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $('[data-mode="quiz"]').click(); await wait(300);
     await solveAll("N3 단어", $("#quiz"), true);
     await go("n3/exam");

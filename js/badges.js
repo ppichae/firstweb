@@ -60,7 +60,7 @@ function defs(roomId) {
     ["s7", "habit", "🔥", "7일 연속", "7일 연속 공부했어요", f.streak >= 7],
     ["s14", "habit", "🏅", "14일 연속", "14일 연속 공부했어요", f.streak >= 14],
     ["exam", "special", "📅", "시험일 설정", "홈에서 내 시험일을 직접 정했어요", f.examSet],
-    ["goal", "special", "🎉", "주간 목표 달성", "'함께 보기'에서 정한 이번 주 학습 시간 목표를 채웠어요", f.goalDone],
+    ["goal", "special", "🎉", "주간 목표 달성", "'기록 관리'에서 정한 이번 주 학습 시간 목표를 채웠어요", f.goalDone],
   ];
   if (roomId === "n1") {
     const passages = new Set(f.attemptsOf("reading").map(a => (QUESTIONS.get(a.qid) || {}).passageId).filter(Boolean));

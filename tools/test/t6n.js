@@ -12,7 +12,7 @@
   $(".qr-next").click(); await wait(100);   // 한 문제씩: 다음 문제로 넘어가서 두 번째 문제를 푼다
   $(".qr-q .q").querySelector('[data-o="1"]').click(); await wait(30);
   // 어휘 자동 문제 틀리기 (정답 아닌 보기 찾기)
-  location.hash = "vocab"; await wait(1500); { const s = document.querySelector("#v-src"); s.value = "core"; s.dispatchEvent(new window.Event("change", { bubbles: true })); await wait(100); }
+  location.hash = "vocab"; await wait(1500); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(60); } } { const s = document.querySelector("#v-src"); s.value = "core"; s.dispatchEvent(new window.Event("change", { bubbles: true })); await wait(100); }
   $('[data-mode="quiz"]').click(); await wait(100);
   const q0 = $$(".q")[0];
   q0.querySelector('[data-o="0"]').click(); await wait(30);

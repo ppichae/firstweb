@@ -1,8 +1,11 @@
 // 휴대폰 하단 메뉴: 자주 쓰는 화면 4개 + 더보기. 나머지 메뉴와 오른쪽 위 버튼은 더보기 창에 모은다
 // 위쪽 메뉴·버튼은 그대로 두고 좁은 화면에서만 숨긴다(style.css). 더보기의 버튼은 원래 버튼을 대신 눌러 주므로 동작이 한 곳에만 있다
 import { esc } from "./util.js";
+import { iconSVG } from "./stats.js";
 
 const MAIN = ["홈", "단어", "문법", "한자"];
+const MENU_ICON = { "로드맵": "map", "기초": "seed", "독해": "book", "청해": "ear", "오답 노트": "retry", "시험 대비": "target", "모의고사": "paper", "기록 관리": "save" };
+const MENU_TONE = ["mint", "sky", "lav", "peach"];
 let bar = null, sheet = null, current = { room: null, view: null };
 
 function ensure() {
@@ -38,16 +41,16 @@ function openSheet() {
   const name = document.querySelector(".auth-user b");
   sheet.innerHTML =
     '<div class="q-top"><h3>더보기</h3><button type="button" class="btn ghost sm" data-m-close>닫기</button></div>' +
-    '<div class="m-grid">' + others.map(v =>
-      '<a class="m-link" href="#' + v.id + '"' + (v === view ? ' aria-current="page"' : "") + ">" + esc(v.label) + "</a>").join("") + "</div>" +
-    // 메뉴는 둥근 칸, 설정은 목록 줄로 구분한다
-    '<div class="m-rows">' +
-      '<a class="m-row" href="#rooms">방 바꾸기</a>' +
-      (partner ? '<a class="m-row" href="#partner">' + esc(partner.textContent) + "</a>" : "") +
-      (chip ? '<a class="m-row' + (chip.classList.contains("warn") ? " warn" : "") + '" href="#records">' + esc(chip.textContent) + "</a>" : "") +
-      (theme ? '<button type="button" class="m-row" data-m-proxy="theme-toggle">' + esc(theme.textContent) + "</button>" : "") +
-      (signOut ? '<button type="button" class="m-row" data-m-proxy="sign-out">로그아웃' + (name ? " (" + esc(name.textContent) + ")" : "") + "</button>" : "") +
-    "</div>";
+    // 공부 메뉴는 아이콘이 있는 칸, 계정·설정은 작은 버튼으로 나눈다
+    '<div class="m-grid">' + others.map((v, i) =>
+      '<a class="m-link tone-' + MENU_TONE[i % 4] + '" href="#' + v.id + '"' + (v === view ? ' aria-current="page"' : "") + '><span class="stat-icon">' + iconSVG(MENU_ICON[v.label]) + "</span>" + esc(v.label) + "</a>").join("") + "</div>" +
+    '<div class="m-tools">' +
+      '<a class="m-tool" href="#rooms">' + iconSVG("swap") + "방 바꾸기</a>" +
+      (partner ? '<a class="m-tool" href="#partner">' + iconSVG("link") + "공부 파트너</a>" : "") +
+      (chip ? '<a class="m-tool' + (chip.classList.contains("warn") ? " warn" : "") + '" href="#records">' + iconSVG("cloud") + "<span>" + esc(chip.textContent) + "</span></a>" : "") +
+      (theme ? '<button type="button" class="m-tool" data-m-proxy="theme-toggle">' + iconSVG("moon") + esc(theme.textContent.replace(/^[^가-힣]+/, "")) + "</button>" : "") +
+    "</div>" +
+    (signOut ? '<button type="button" class="m-out" data-m-proxy="sign-out">' + (name ? esc(name.textContent) + " · " : "") + "로그아웃</button>" : "");
   if (sheet.showModal) sheet.showModal(); else sheet.setAttribute("open", "");
   // 창을 열면 브라우저가 첫 버튼(닫기)에 초점을 줘서 테두리가 생긴다. 창 자체에 초점을 둔다
   sheet.focus();

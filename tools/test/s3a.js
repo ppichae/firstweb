@@ -53,7 +53,7 @@
   kq[0].querySelectorAll(".opt")[0].click(); await wait(50);
   app().querySelector('[data-mode="pending"]').click(); await wait(50);
   out.push("  pending: " + app().textContent.includes("콘텐츠 준비 중"));
-  await go("n3/vocab"); out.push("n3/vocab: " + app().querySelector("#l-count").textContent);
+  await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } out.push("n3/vocab: " + app().querySelector("#l-count").textContent);
   app().querySelector('[data-mode="quiz"]').click(); await wait(100);
   app().querySelector('[data-qt="reading"]').click(); await wait(100);
   out.push("  reading q: " + app().querySelector(".q-text").textContent + " " + [...app().querySelector(".q").querySelectorAll(".opt")].map(o=>o.textContent).join(","));

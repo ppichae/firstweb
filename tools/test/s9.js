@@ -7,7 +7,7 @@
   const go = async h => { location.hash = h; await wait(1300); };
   const W = () => document.documentElement.clientWidth;
   try {
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 단어 화면에 'PDF' 문구 없음", !app().textContent.includes("PDF"), (app().textContent.match(/.{10}PDF.{10}/) || [""])[0]);
     $("#toggle-all").click(); await wait(100);
     const t = app().textContent;
@@ -19,7 +19,7 @@
     check("복습 간격 안내", !!$(".srs-help") && $(".srs-help").textContent.includes("180일"));
     await go("n3/grammar");
     check("N3 문법 화면 'PDF' 없음", !app().textContent.includes("PDF"));
-    await go("vocab");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N1 자료 필터 이름", [...$("#v-src").options].map(o => o.textContent).join("|") === "전체|기본 단어장|참고 목록 단어");
     check("N1 화면 'PDF' 없음", !app().textContent.includes("PDF"));
     await go("home");

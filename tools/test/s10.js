@@ -12,8 +12,8 @@
   const errs = [];
   frame.contentWindow.addEventListener("error", e => errs.push(e.message));
   frame.contentWindow.addEventListener("unhandledrejection", e => errs.push("REJ " + (e.reason && e.reason.message)));
-  const routes = ["rooms", "home", "vocab", "grammar", "kanji", "reading", "listening", "notes", "sprint", "mock", "together", "backup", "badges",
-    "n3", "n3/roadmap", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/reading", "n3/listening", "n3/notes", "n3/exam", "n3/mock", "n3/together", "n3/backup", "n3/badges"];
+  const routes = ["rooms", "home", "vocab", "grammar", "kanji", "reading", "listening", "notes", "sprint", "mock", "backup", "badges",
+    "n3", "n3/roadmap", "n3/basics", "n3/vocab", "n3/grammar", "n3/kanji", "n3/reading", "n3/listening", "n3/notes", "n3/exam", "n3/mock", "n3/backup", "n3/badges"];
   try {
     const dark = !!top.DARK;
     if (dark) doc().documentElement.setAttribute("data-theme", "dark");
@@ -54,16 +54,16 @@
     check("한자 창 화면 안", dr.left >= 0 && dr.right <= W() + 1 && dlg.scrollWidth <= dlg.clientWidth + 1);
     dlg.close();
     // 기록 만들기 → 새로고침 → 그대로인지
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(100); } }
     app().querySelector('[data-act="known"]').click(); await wait(100);
-    await go("vocab");
+    await go("vocab"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(100); } }
     app().querySelector('[data-act="fav"]').click(); await wait(100);
     const before = { n3: LSx().getItem("n3lab:lists"), n1: LSx().getItem("n1lab:words") || LSx().getItem("n1lab:lists") };
     frame.contentWindow.location.reload(); await wait(8000);
-    frame.contentWindow.location.hash = "n3/vocab"; await wait(1500);
+    frame.contentWindow.location.hash = "n3/vocab"; await wait(1500); app().querySelector('.topic-tile[data-cat="all"]').click(); await wait(200);
     const known = doc().querySelectorAll("#app .card.is-known").length;
     check("새로고침 후 N3 기록 유지", known >= 1 && LSx().getItem("n3lab:lists") === before.n3, known);
-    frame.contentWindow.location.hash = "vocab"; await wait(1500);
+    frame.contentWindow.location.hash = "vocab"; await wait(1500); app().querySelector('.topic-tile[data-cat="all"]').click(); await wait(200);
     check("새로고침 후 N1 즐겨찾기 유지", [...doc().querySelectorAll('#app [data-act="fav"]')].some(b => b.getAttribute("aria-pressed") === "true"));
     check("N1·N3 기록 분리", !Object.keys(JSON.parse(LSx().getItem("n3lab:lists") || "{}")).some(k => k.startsWith("n1")) && !Object.keys(JSON.parse(LSx().getItem("n1lab:lists") || "{}")).some(k => k.startsWith("n3")));
     check("자바스크립트 오류 없음", !errs.length, errs.slice(0, 3).join(" / "));

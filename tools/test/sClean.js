@@ -21,7 +21,7 @@
     more.querySelector("summary").click(); await wait(100);
     check("N3 홈: 펼치면 4주 일정·7일 그래프·시험 구성·숫자 기준", more.open && visible(more.querySelector(".weeks")) && app().textContent.includes("최근 7일") && more.textContent.includes("N3 시험 구성") && !!more.querySelector(".stat-help"));
     // 단어 카드
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const card = $$(".card").find(c => c.querySelector(".word").textContent === "計算");
     check("단어: 접힌 카드는 단어와 버튼만", !card.querySelector(".pos") && !card.querySelector(".kj") && card.querySelector("[data-act=known]").textContent.includes("외웠어요"), card.textContent);
     check("단어: 자료 안내 상자 없음", !$(".notice"));
@@ -51,8 +51,6 @@
     // 모의고사는 공식 문제로 오해하지 않게 안내 유지
     await go("n3/mock");
     check("N3 모의고사: 연습 테스트 안내 유지", app().textContent.includes("어휘·문형 문제로 만든 연습 테스트예요"));
-    await go("n3/together");
-    check("함께 보기: 틀린 '동기화 안 됨' 안내 없음", !app().textContent.includes("자동 동기화는 되지 않아요"));
     // 빈 범위 안내는 남긴다
     await go("n3/grammar"); $('[data-mode="quiz"]').click(); await wait(300); $('[data-gscope="fav"]').click(); await wait(300);
     check("퀴즈: 범위에 문형이 없으면 안내", $("#gq-note").textContent.includes("이 범위에 문형이 없어요"));

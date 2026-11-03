@@ -2,6 +2,7 @@
 // 기본 자료(data/vocabulary.json · grammar.json)와 PDF 목록 자료(data/n1 · data/n3)를 한 화면에 합쳐서 보여 준다.
 // 기록 위치는 그대로 둔다: 기본 단어 → "words", 기본 문법 → "grammar", PDF·N3 목록 → "lists" (방마다 다른 저장소)
 import { EXTRA } from "../data.js";
+import { iconSVG } from "../stats.js";
 import { esc, badges, shuffle, today } from "../util.js";
 import { mountQuestion } from "../quiz.js";
 import { runQuiz } from "../quizRunner.js";
@@ -18,6 +19,9 @@ const patternSpeech = p => String(p || "").replace(/[〜～~]/g, "").split(/[／
 const POS = Object.assign({}, LIST_POS, { expression: "표현" });
 const LEVEL = { 1: "기본", 2: "중요", 3: "심화" };
 const PAGE = 60;
+// 기본 단어장(N1)의 예전 주제 이름을 단어 주제로 옮긴다
+const CORE_TOPIC = { "사회·경제": "society", "학술·사고": "study", "생활·감정": "mind", "업무·조직": "biz", "교육·성장": "study" };
+const TOPIC_TONES = ["mint", "sky", "lav", "peach"];
 const NEW_PER_SESSION = 10;
 const isKana = s => /^[぀-ヿ～ー・]+$/.test(s || "");
 const normPattern = s => String(s || "").replace(/[～〜…\s]/g, "").replace(/\(.*?\)|（.*?）/g, "");
@@ -53,7 +57,7 @@ function chipRow(attr, list, current) {
    ========================================================= */
 export function createVocabView(cfg) {
   const st = cfg.st;
-  const ui = { mode: "list", q: "", pos: "", topic: "", src: "", status: "all", showAll: false, shown: PAGE, quizType: "mix", count: "10" };
+  const ui = { mode: "list", cat: null, q: "", pos: "", src: "", status: "all", showAll: false, shown: PAGE, quizType: "mix", count: "10" };   // cat: 고른 주제 (null이면 주제 목록)
   const revealed = new Set();
   let session = null;
   let cache = null;
@@ -125,42 +129,90 @@ export function createVocabView(cfg) {
     root.querySelector("#known-bar").style.width = (known / all.length * 100) + "%";
   }
 
+  /* ---------- 주제 ---------- */
+  let topicIndex = null;
+  function topicMap() {
+    const t = EXTRA.vocabTopics;
+    if (!t || !t[cfg.roomId]) return null;
+    if (!topicIndex) {
+      topicIndex = new Map();
+      Object.entries(t[cfg.roomId]).forEach(([k, nums]) => nums.forEach(n => topicIndex.set(n, k)));
+    }
+    return topicIndex;
+  }
+  function topicOf(e) {
+    if (e.core) return CORE_TOPIC[e.item.topic] || "study";
+    const m = /-v0*(\d+)$/.exec(e.item.id), map = topicMap();
+    return m && map ? map.get(Number(m[1])) : undefined;
+  }
+  const topicLabel = id => { const t = EXTRA.vocabTopics && EXTRA.vocabTopics.topics.find(x => x.id === id); return t ? t.label : "전체 단어"; };
+
+  // 주제 칸: 아이콘, 이름, 외운 수, 진행 막대
+  function topicTile(id, label, list, tone) {
+    const known = list.filter(e => state(e.item.id).status === "known").length;
+    return '<button type="button" class="topic-tile tone-' + tone + '" data-cat="' + id + '"><span class="stat-icon">' + iconSVG(id === "all" ? "grid" : id) + "</span>" +
+      '<span class="topic-name">' + esc(label) + '</span><span class="topic-sub">' + known + " / " + list.length + '</span><span class="bar" aria-hidden="true"><span style="width:' + (list.length ? known / list.length * 100 : 0) + '%"></span></span></button>';
+  }
+  function hubHTML() {
+    const all = entries();
+    const n = f => all.filter(e => f(e, state(e.item.id))).length;
+    const quick = [["review", "복습 필요", n(e => needsReview(e.item.id))], ["unknown", "몰라요", n((e, s) => s.status === "unknown")], ["fav", "즐겨찾기", n((e, s) => s.fav)], ["known", "외운 단어", n((e, s) => s.status === "known")]].filter(x => x[2] > 0);
+    return (quick.length ? '<div class="toolbar">' + quick.map(([k, l, c]) => '<button type="button" class="chip" data-cat="all" data-st="' + k + '">' + l + " " + c + "</button>").join("") + "</div>" : "") +
+      '<div class="topic-grid">' +
+        EXTRA.vocabTopics.topics.map((t, i) => topicTile(t.id, t.label, all.filter(e => topicOf(e) === t.id), TOPIC_TONES[i % 4])).join("") +
+        topicTile("all", "전체 단어", all, "mint") +
+      "</div>";
+  }
+
   /* ---------- 단어장 ---------- */
   function renderList(el) {
     const hasCore = !!coreData();
     const all = entries();
     const usedPos = [...new Set(all.map(e => e.item.pos))];
-    const topics = [...new Set(all.filter(e => e.core).map(e => e.item.topic))];
+    const topicsOn = !!topicMap();
+    if (!topicsOn && !ui.cat) ui.cat = "all";   // 주제 자료를 못 읽으면 전체 목록을 바로 보여 준다
     el.innerHTML =
+      (ui.cat && topicsOn
+        ? '<div class="cat-head"><button type="button" class="btn ghost sm" id="cat-back">← 주제 목록</button><h3>' + esc(topicLabel(ui.cat)) + "</h3></div>"
+        : "") +
       '<div class="filters">' +
         '<div class="field search"><label for="v-q">검색</label><input id="v-q" type="search" placeholder="한자, 읽기, 뜻으로 찾기" value="' + esc(ui.q) + '"></div>' +
-        '<div class="field"><label for="v-pos">품사</label><select id="v-pos"><option value="">전체</option>' +
-          usedPos.map(p => '<option value="' + p + '"' + (ui.pos === p ? " selected" : "") + ">" + esc(POS[p] || p) + "</option>").join("") + "</select></div>" +
-        (hasCore
-          ? '<div class="field"><label for="v-src">자료</label><select id="v-src"><option value="">전체</option>' +
-              '<option value="core"' + (ui.src === "core" ? " selected" : "") + ">기본 단어장</option>" +
-              '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">참고 목록 단어</option></select></div>" +
-            '<div class="field"><label for="v-topic">주제</label><select id="v-topic"><option value="">전체</option>' +
-              topics.map(t => "<option" + (ui.topic === t ? " selected" : "") + ">" + esc(t) + "</option>").join("") + "</select></div>"
+        (ui.cat
+          ? '<div class="field"><label for="v-pos">품사</label><select id="v-pos"><option value="">전체</option>' +
+              usedPos.map(p => '<option value="' + p + '"' + (ui.pos === p ? " selected" : "") + ">" + esc(POS[p] || p) + "</option>").join("") + "</select></div>" +
+            (hasCore
+              ? '<div class="field"><label for="v-src">자료</label><select id="v-src"><option value="">전체</option>' +
+                  '<option value="core"' + (ui.src === "core" ? " selected" : "") + ">기본 단어장</option>" +
+                  '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">참고 목록 단어</option></select></div>"
+              : "")
           : "") +
       "</div>" +
-      '<div class="toolbar">' +
-        chipRow("status", [["all", "전체"], ["review", "복습 필요"], ["unknown", "몰라요"], ["known", "외운 단어"], ["fav", "즐겨찾기"]], ui.status) +
-        '<button type="button" class="chip" id="toggle-all" aria-pressed="' + ui.showAll + '">' + (ui.showAll ? "뜻 모두 가리기" : "뜻 모두 보기") + "</button>" +
-      "</div>" +
-      '<p class="result-count" id="v-count"></p>' +
-      '<div class="cards" id="cards"></div>' +
-      '<div class="toolbar" id="v-more"></div>';
+      '<div id="v-body" class="stack"></div>';
 
+    const paint = () => {
+      const body = el.querySelector("#v-body");
+      if (!ui.cat && !ui.q) { body.innerHTML = hubHTML(); return; }
+      if (!body.querySelector("#cards")) body.innerHTML =
+        '<div class="toolbar">' +
+          chipRow("status", [["all", "전체"], ["review", "복습 필요"], ["unknown", "몰라요"], ["known", "외운 단어"], ["fav", "즐겨찾기"]], ui.status) +
+          '<button type="button" class="chip" id="toggle-all" aria-pressed="' + ui.showAll + '">' + (ui.showAll ? "뜻 모두 가리기" : "뜻 모두 보기") + "</button>" +
+        "</div>" +
+        '<p class="result-count" id="v-count"></p>' +
+        '<div class="cards" id="cards"></div>' +
+        '<div class="toolbar more-list" id="v-more"></div>';
+      drawCards(el);
+    };
     const draw = () => drawCards(el);
-    const reset = () => { ui.shown = PAGE; draw(); };
+    const reset = () => { ui.shown = PAGE; paint(); };
     el.querySelector("#v-q").oninput = e => { ui.q = e.target.value.trim(); reset(); };
-    el.querySelector("#v-pos").onchange = e => { ui.pos = e.target.value; reset(); };
-    const src = el.querySelector("#v-src"), topic = el.querySelector("#v-topic");
+    const pos = el.querySelector("#v-pos"), src = el.querySelector("#v-src");
+    if (pos) pos.onchange = e => { ui.pos = e.target.value; reset(); };
     if (src) src.onchange = e => { ui.src = e.target.value; reset(); };
-    if (topic) topic.onchange = e => { ui.topic = e.target.value; reset(); };
     el.onclick = e => {
       if (handleKanjiClick(e, cfg.roomId)) return;
+      const cat = e.target.closest("[data-cat]");
+      if (cat) { ui.cat = cat.dataset.cat; ui.status = cat.dataset.st || "all"; ui.shown = PAGE; renderList(el); scrollTo(0, 0); return; }
+      if (e.target.closest("#cat-back")) { ui.cat = null; ui.q = ""; ui.pos = ""; ui.src = ""; ui.status = "all"; ui.shown = PAGE; renderList(el); return; }
       const stt = e.target.closest("[data-status]"), face = e.target.closest("[data-word]"), act = e.target.closest("[data-act]");
       if (stt) {
         ui.status = stt.dataset.status; ui.shown = PAGE;
@@ -186,15 +238,15 @@ export function createVocabView(cfg) {
       } else return;
       draw();
     };
-    draw();
+    paint();
   }
 
   function matches(e) {
     const v = e.item, s = state(v.id);
+    if (ui.cat && ui.cat !== "all" && topicOf(e) !== ui.cat) return false;
     if (ui.pos && v.pos !== ui.pos) return false;
     if (ui.src === "core" && !e.core) return false;
     if (ui.src === "pdf" && e.core) return false;
-    if (ui.topic && v.topic !== ui.topic) return false;
     if (ui.status === "known" && s.status !== "known") return false;
     if (ui.status === "unknown" && s.status !== "unknown") return false;
     if (ui.status === "fav" && !s.fav) return false;
@@ -208,11 +260,14 @@ export function createVocabView(cfg) {
 
   function drawCards(el) {
     const list = entries().filter(matches);
-    el.querySelector("#v-count").textContent = list.length + "개 단어" + (list.length > ui.shown ? " 중 " + ui.shown + "개 표시" : "") + " · 단어를 누르면 뜻이 보여요";
-    el.querySelector("#v-more").innerHTML = list.length > ui.shown ? '<button type="button" class="btn ghost" id="v-more-btn">' + Math.min(PAGE, list.length - ui.shown) + "개 더 보기</button>" : "";
+    if (!el.querySelector("#cards")) return;
+    // 주제 안에서는 한 번에 모두 보여 주고, 전체·검색 결과만 나눠서 보여 준다
+    const limit = ui.cat && ui.cat !== "all" ? list.length : ui.shown;
+    el.querySelector("#v-count").textContent = list.length + "개 단어" + (list.length > limit ? " 중 " + limit + "개 표시" : "") + " · 단어를 누르면 뜻이 보여요";
+    el.querySelector("#v-more").innerHTML = list.length > limit ? '<button type="button" class="btn ghost" id="v-more-btn">' + Math.min(PAGE, list.length - limit) + "개 더 보기</button>" : "";
     const cards = el.querySelector("#cards");
     if (!list.length) { cards.innerHTML = '<p class="empty">조건에 맞는 단어가 없어요. 검색어나 필터를 바꿔 보세요.</p>'; return; }
-    cards.innerHTML = list.slice(0, ui.shown).map(cardHTML).join("");
+    cards.innerHTML = list.slice(0, limit).map(cardHTML).join("");
   }
 
   function cardHTML(e) {
@@ -418,7 +473,7 @@ export function createVocabView(cfg) {
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks", EXAMPLE_KEYS[cfg.extraKey]], render },
+    view: { id: cfg.id, label: cfg.label || "단어", jp: cfg.jp || "語彙", needs: [cfg.extraKey, "sources", "kanji", "checks", "vocabTopics", EXAMPLE_KEYS[cfg.extraKey]], render },
     needsReview, reviewWordIds, markWordWrong, openMode, studiedCount, touchedCount, total: () => items().length,
   };
 }

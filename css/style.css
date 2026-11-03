@@ -1490,3 +1490,165 @@ input[type="file"]::file-selector-button { min-height: 32px; margin-right: 10px;
   .tablist { flex-wrap: wrap; overflow: visible; }
   .nav-row { align-items: flex-start; }
 }
+
+/* ==========================================================================
+   2차 정리: 선택 칸·화살표, 숫자 칸, 단어 주제, 오답 노트, 더보기, 휴대폰 간격
+   ========================================================================== */
+/* 선택 칸은 어디서나 같은 모양, 같은 화살표 */
+select, .field select, .rate select, .voice-set select, select.inline-input {
+  -webkit-appearance: none; appearance: none; height: 46px; padding: 0 40px 0 14px; border: 1px solid var(--line); border-radius: 14px; color: var(--fg);
+  background-color: var(--glass-strong); background-repeat: no-repeat; background-position: right 14px center; background-size: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='%237A8894' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5l4 4 4-4'/%3E%3C/svg%3E");
+}
+.rate select, .voice-set select { height: 40px; min-height: 40px; border-radius: 999px; }
+.rate, .voice-set label { display: inline-flex; align-items: center; gap: 8px; }
+/* 접고 펴는 줄의 화살표도 같은 그림 (글자 높이 가운데) */
+.g-more > summary::after, .more-box > summary::after, .voice-box > summary::after {
+  width: 14px; height: 14px; margin: 0; border: 0; transform: none; transition: transform .15s;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='%237A8894' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5l4 4 4-4'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+.g-more[open] > summary::after, .more-box[open] > summary::after, .voice-box[open] > summary::after { transform: rotate(180deg); }
+
+/* 홈 숫자 칸: 제목 / 숫자·그래프 / 설명이 줄마다 나뉘어 겹치지 않는다 */
+.stat-main { display: contents; }
+.stat-tile .tile-value { grid-column: 1; align-self: center; min-width: 0; }
+.stat-ring { grid-column: 2; grid-row: 2; align-self: center; width: 52px; height: 52px; }
+.stat-tile .tile-sub { grid-column: 1 / -1; }
+.week-scroll .week { min-width: 0; }
+.week-col { min-width: 0; }
+
+/* 단어 주제 */
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.topic-tile {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; align-items: center; padding: 16px; text-align: left; color: var(--fg); cursor: pointer;
+  border: 1.5px solid var(--glass-line); border-radius: var(--r-card); box-shadow: var(--glass-shadow); background: linear-gradient(150deg, var(--tone), transparent 70%), var(--glass);
+}
+.topic-tile .stat-icon { grid-row: 1 / span 2; }
+.topic-name { font-size: 15.5px; font-weight: 700; line-height: 1.3; }
+.topic-sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.topic-tile .bar { grid-column: 1 / -1; width: 100%; height: 6px; margin-top: 8px; }
+@media (hover: hover) { .topic-tile:hover { border-color: var(--ink); } }
+.cat-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.cat-head h3 { font-size: 19px; margin: 0; }
+
+/* 오답 노트 */
+.note-hero { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.note-hero-num { display: grid; gap: 2px; }
+.note-result { display: grid; gap: 10px; justify-items: start; }
+.notes { display: grid; gap: 14px; }
+.note { display: grid; gap: 12px; padding: var(--pad); }
+.note-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.note-q { font-size: 16.5px; line-height: 1.7; }
+.note-ans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.note-ans > div { padding: 10px 14px; border-radius: var(--r-inner); min-width: 0; }
+.note-ans .is-bad { background: var(--bad-soft); }
+.note-ans .is-good { background: var(--good-soft); }
+.note-ans dt { font-size: 12.5px; font-weight: 600; }
+.note-ans .is-bad dt { color: var(--bad); }
+.note-ans .is-good dt { color: var(--good); }
+.note-ans dd { margin: 2px 0 0; font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+.note-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.note .g-more { margin: -4px 0 0; }
+.history { display: flex; flex-wrap: wrap; gap: 4px; }
+.retry:empty { display: none; }
+
+/* 기록 관리: 이름·목표 줄 */
+.set-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 10px; }
+.set-row label { font-size: 14px; color: var(--muted); }
+.set-row .inline-input { width: 100%; padding-inline: 14px; }
+
+/* 공부 파트너 응원 메시지 */
+.pt-send { align-items: center; margin-top: 10px; }
+.pt-send input { min-width: 0; width: 100%; padding-inline: 14px; }
+.pt-send .btn { flex: none; }
+.pt-msgs { margin-top: 14px; }
+.pt-msgs li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.pt-msgs li.mine .link-btn { min-height: 28px; padding: 0 8px; font-size: 13px; }
+
+/* 더보기: 공부 메뉴 칸 + 계정·설정 작은 버튼 */
+.m-sheet { max-height: 88dvh; overflow-y: auto; }
+.m-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.m-link { flex-direction: column; gap: 6px; min-height: 84px; padding: 10px 2px; border-radius: 20px; background: linear-gradient(160deg, var(--tone), transparent 85%), var(--glass); border: 1.5px solid var(--glass-line); font-size: 13px; line-height: 1.25; }
+.m-link .stat-icon { width: 34px; height: 34px; }
+.m-link .stat-icon svg { width: 18px; height: 18px; }
+.m-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.m-tool { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 48px; padding: 0 14px; border: 1px solid var(--line); border-radius: 16px; background: transparent; color: var(--fg); font-size: 14px; font-weight: 600; text-align: left; text-decoration: none; }
+.m-tool > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.m-tool svg { flex: none; width: 18px; height: 18px; color: var(--muted); }
+.m-tool.warn, .m-tool.warn svg { color: var(--warn); border-color: var(--warn); }
+.m-out { justify-self: center; min-height: 40px; padding: 0 16px; border: 0; background: transparent; color: var(--muted); font-size: 14px; font-weight: 500; }
+
+/* 휴대폰: 바깥 여백 16, 칸 안 16, 칸 사이 12로 통일 */
+@media (max-width: 640px) {
+  :root { --pad: 16px; --gap: 12px; --r-card: 20px; }
+  .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  body.in-room header.site { padding-block: 12px 0; }
+  body.in-room main { padding-block: 8px 20px; }
+  h1 { font-size: 17px; }
+  h2 { font-size: 22px; }
+  h3 { font-size: 16px; }
+  .panel-head { min-height: 0; flex-wrap: wrap; gap: 4px 12px; }
+  .panel-head .toolbar { width: 100%; flex-wrap: nowrap; }
+  .panel-head .bar { flex: 1; min-width: 40px; }
+  .stack, .tiles, .home-top, .picker, .cards, .grammar-list, .notes, .topic-grid, .k-rows { gap: 12px; }
+  .q-top { flex-wrap: wrap; gap: 4px 8px; }
+  .toolbar { gap: 6px; }
+  .filters { gap: 10px; }
+  .filters .field:not(.search), .filters .field.search { flex: 1 1 100%; max-width: none; }
+  .segmented { padding: 4px; }
+  .seg { min-height: 38px; padding: 6px 8px; font-size: 13.5px; }
+  .chip, .link-btn { padding-inline: 13px; font-size: 13.5px; }
+  /* 숫자 칸 */
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile { padding: 14px; }
+  .stat-tile { column-gap: 6px; }
+  .stat-tile .stat-head { gap: 8px; }
+  .stat-icon { width: 32px; height: 32px; }
+  .stat-icon svg { width: 17px; height: 17px; }
+  .stat-tile .tile-label { font-size: 13.5px; line-height: 1.3; }
+  .stat-tile .tile-value { font-size: 26px; }
+  .stat-tile .tile-sub { font-size: 12.5px; line-height: 1.4; }
+  .stat-ring { width: 42px; height: 42px; }
+  .stat-ring text { font-size: 16px; }
+  /* 시험일 칸 */
+  .exam-tile { gap: 4px; }
+  .dday { font-size: 46px; }
+  .exam-tile .link-btn { min-height: 32px; }
+  /* 7일 그래프: 일곱 칸이 한 화면에 */
+  .week { gap: 4px; padding-top: 6px; }
+  .week-bar-wrap { height: 84px; width: min(26px, 88%); border-radius: 10px; }
+  .week-val { font-size: 12px; }
+  .week-day { font-size: 11px; }
+  /* 성장 칸 */
+  .growth-row { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .growth-goal, .growth-badges { padding-top: 12px; border-top: 1px solid var(--line); }
+  /* 단어 주제 */
+  .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topic-tile { padding: 12px; column-gap: 8px; }
+  .topic-name { font-size: 14px; }
+  .topic-sub { font-size: 12.5px; }
+  /* 단어 카드 */
+  .card-face { padding: 14px var(--pad) 6px; }
+  .card-foot { padding: 8px var(--pad) 14px; }
+  .word { font-size: 26px; }
+  /* 문법 */
+  .g-item { padding: 16px; }
+  .g-pattern { font-size: 19px; }
+  /* 오답 */
+  .note-ans dd { font-size: 14px; }
+  .note-hero { flex-direction: column; align-items: stretch; }
+  .note-hero .btn { width: 100%; }
+  /* 기록 관리 */
+  .set-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .set-row label { grid-column: 1 / -1; }
+  /* 응원 메시지 */
+  .pt-send .btn { padding-inline: 16px; }
+  /* 더보기 */
+  .m-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 359px) { .m-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* 7일 그래프: 옆으로 밀리지 않게. 말풍선은 칸 안쪽으로 연다 */
+.week-scroll { overflow: visible; }
+.week-col:nth-child(-n+3) .week-tip { left: 0; transform: none; }
+.week-col:nth-child(n+5) .week-tip { left: auto; right: 0; transform: none; }

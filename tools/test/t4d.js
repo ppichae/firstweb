@@ -8,7 +8,7 @@
   const change = (el, v) => { el.value = v; el.dispatchEvent(new window.Event("change", { bubbles: true })); };
 
   try {
-  location.hash = "vocab"; await wait(1500); { const s = document.querySelector("#v-src"); s.value = "core"; s.dispatchEvent(new window.Event("change", { bubbles: true })); await wait(100); }
+  location.hash = "vocab"; await wait(1500); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(60); } } { const s = document.querySelector("#v-src"); s.value = "core"; s.dispatchEvent(new window.Event("change", { bubbles: true })); await wait(100); }
   check("에러 없음", !$(".error-box"));
   check("단어 44개", $$(".card").length === 44, $$(".card").length);
   // 검색

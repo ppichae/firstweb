@@ -15,7 +15,7 @@
     const help = $(".stat-help");
     check("숫자 기준 설명 있음", !!help && help.textContent.includes("같은 단어는 여러 번 공부해도 1개"));
     // 카드에서 '알았어요'를 고르면 학습한 단어가 하나 는다
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $('[data-mode="cards"]').click(); await wait(300);
     const word = $(".flash-word").textContent;
     $("#flip").click(); await wait(300);

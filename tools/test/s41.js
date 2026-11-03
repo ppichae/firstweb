@@ -14,7 +14,7 @@
   try {
     // 예전 기록이 있는 상태로 첫 화면 → N1 홈
     check("첫 화면 N1 홈", $("h2").textContent === "오늘의 학습" && document.title.includes("N1"), document.title);
-    check("N1 메뉴", tabs().join("|") === "홈|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs().join("|"));
+    check("N1 메뉴", tabs().join("|") === "홈|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|기록 관리", tabs().join("|"));
     check("방 바꾸기 보임(N1)", swVisible() && sw().textContent === "방 바꾸기");
     const tv = $$(".tiles .tile");
     check("N1 홈 단어 칸(기존 기록 유지)", tv[0].textContent.includes("2") && tv[0].textContent.includes("/ "), tv[0].textContent);
@@ -28,7 +28,7 @@
     check("지난 날짜 거부", $("#dd-msg") && $("#dd-msg").textContent.includes("오늘 이후"));
     $("#dd-cancel").click(); await wait(50);
     // 단어
-    await go("vocab");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const cnt = $("#v-count").textContent;
     const total = Number(cnt.match(/(\d+)개 단어/)[1]);
     check("N1 단어 통합 개수 (44 + 916 - 겹침)", total > 916 && total < 960, cnt);
@@ -84,7 +84,7 @@
     check("N1 오답 노트(예전 기록 유지)", $$(".note").length >= 1, $$(".note").length);
     // N3
     await go("n3");
-    check("N3 메뉴", tabs().join("|") === "홈|로드맵|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs().join("|"));
+    check("N3 메뉴", tabs().join("|") === "홈|로드맵|기초|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|기록 관리", tabs().join("|"));
     check("방 바꾸기 보임(N3)", swVisible());
     check("N3 홈 구조(D-Day·할 일·칸 4개)", !!$(".dday-tile") && !!$(".todo-tile") && $$(".tiles .tile").length === 4);
     check("N3 D-Day는 N1 설정과 별개", $(".dday-tile").textContent.includes("2026년") , $(".dday-tile .tile-label").textContent);
@@ -93,7 +93,7 @@
     check("N3 단어 칸(기존 기록)", $$(".tiles .tile")[0].textContent.includes("1"), $$(".tiles .tile")[0].textContent);
     const linkDeco = getComputedStyle($(".weeks a")).textDecorationLine;
     check("N3 링크 밑줄 없음", linkDeco === "none", linkDeco);
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 단어 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "단어장|플래시카드|퀴즈" && $("#v-count").textContent.startsWith("733"), $("#v-count").textContent);
     await go("n3/grammar");
     check("N3 문법 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "문법 학습|플래시카드|문법 퀴즈" && $("#g-count").textContent.startsWith("306"));

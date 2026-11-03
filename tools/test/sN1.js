@@ -7,7 +7,7 @@
   const go = async h => { location.hash = h; await wait(1400); };
   try {
     if (window.parent.DARK) document.documentElement.dataset.theme = "dark";
-    await go("vocab");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const i = $("#v-q"); i.value = "懸念"; i.dispatchEvent(new window.Event("input", { bubbles: true })); await wait(150);
     const card = () => $$(".card").find(c => c.querySelector(".word").textContent === "懸念");
     card().querySelector(".card-face").click(); await wait(100);

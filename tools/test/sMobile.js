@@ -31,7 +31,7 @@
     const sheet = document.querySelector(".m-sheet");
     check("더보기 창 열림", sheet.open);
     const links = [...sheet.querySelectorAll(".m-link")].map(a => a.textContent);
-    check("더보기에 나머지 메뉴 모두", ["로드맵", "기초", "독해", "청해", "오답 노트", "시험 대비", "모의고사", "함께 보기", "기록 관리"].every(x => links.includes(x)), links.join(","));
+    check("더보기에 나머지 메뉴 모두", ["로드맵", "기초", "독해", "청해", "오답 노트", "시험 대비", "모의고사", "기록 관리"].every(x => links.includes(x)), links.join(","));
     check("더보기에 방 바꾸기·다크 모드", !!sheet.querySelector('a[href="#rooms"]') && !!sheet.querySelector('[data-m-proxy="theme-toggle"]'));
     const before = document.documentElement.getAttribute("data-theme");
     sheet.querySelector('[data-m-proxy="theme-toggle"]').click(); await wait(150);

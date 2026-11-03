@@ -47,6 +47,7 @@ const EXTRA_FILES = {
   n3vocab: "data/n3/vocab.json",
   n3grammar: "data/n3/grammar.json",
   n3basics: "data/n3/basics.json",
+  vocabTopics: "data/vocab-topics.json",
   kanji: "data/kanji/common.json",
   kanjiIndex: "data/kanji/index.json",
   kanjiParts: "data/kanji/parts.json",

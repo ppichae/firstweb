@@ -24,7 +24,7 @@
     check("문형과 뜻의 왼쪽이 같음", Math.abs(pat.getBoundingClientRect().left - mean.getBoundingClientRect().left) < 1);
 
     // 버튼 통일: 모양이 같은 종류는 높이·둥글기가 같다
-    await go("n3/vocab");
+    await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const chips = $$(".chip"), marks = $$(".mark:not(.star)");
     const h40 = el => Math.round(el.getBoundingClientRect().height);
     check("칩·표시 버튼 높이 40px 통일", [...chips, ...marks].every(b => h40(b) === 40), [...new Set([...chips, ...marks].map(h40))].join());
@@ -59,8 +59,8 @@
     const sheet = document.querySelector(".m-sheet");
     check("더보기를 열어도 닫기 버튼에 초점이 없음", document.activeElement === sheet && !document.activeElement.closest("[data-m-close]"), document.activeElement.tagName);
     check("창 자체에 테두리 없음", css(sheet, "outlineStyle") === "none");
-    const link = sheet.querySelector(".m-link"), row = sheet.querySelector(".m-row");
-    check("메뉴 칸은 둥글고 설정 줄은 목록 모양", parseFloat(css(link, "borderTopLeftRadius")) >= 16 && parseFloat(css(row, "borderTopLeftRadius")) === 0, css(link, "borderTopLeftRadius") + "/" + css(row, "borderTopLeftRadius"));
+    const link = sheet.querySelector(".m-link"), row = sheet.querySelector(".m-tool");
+    check("메뉴 칸과 설정 버튼의 모양이 다름", parseFloat(css(link, "borderTopLeftRadius")) >= 16 && css(row, "minHeight") !== css(link, "minHeight"), css(link, "borderTopLeftRadius") + "/" + css(row, "borderTopLeftRadius"));
     check("더보기 창 가로 넘침 없음", sheet.scrollWidth <= sheet.clientWidth);
     sheet.close();
   } catch (e) { log.push("ERROR " + e.message + " @ " + (e.stack || "").split("\n")[1]); }

@@ -20,7 +20,6 @@ import n3notes from "./views/n3/notes.js";
 import { n3Reading as n3reading } from "./views/reading.js";
 import { n3Listening as n3listening } from "./views/listening.js";
 import { n3vocab, n3grammar } from "./views/n3/study.js";
-import { createTogetherView } from "./views/together.js";
 import { createBackupView } from "./views/backup.js";
 import { summaryOf } from "./summary.js";
 import { createKanjiView } from "./views/kanji.js";
@@ -34,12 +33,12 @@ export const ROOMS = {
   n1: {
     id: "n1", name: "N1 공부방", st: store, docTitle: "JLPT N1 合格!",
     title: 'JLPT N1 <span lang="ja">合格!</span>',
-    views: [home, vocab, grammar, createKanjiView("kanji", "n1"), reading, listening, notes, sprint, mock, createTogetherView("together", "n1"), backup, createBadgesView("badges", "n1", "home")],
+    views: [home, vocab, grammar, createKanjiView("kanji", "n1"), reading, listening, notes, sprint, mock, backup, createBadgesView("badges", "n1", "home")],
   },
   n3: {
     id: "n3", name: "N3 공부방", st: n3store, docTitle: "JLPT N3 合格!",
     title: 'JLPT N3 <span lang="ja">合格!</span>',
-    views: [n3home, n3roadmap, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
+    views: [n3home, n3roadmap, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
   },
 };
 
