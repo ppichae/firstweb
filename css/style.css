@@ -1095,3 +1095,8 @@ u.ul-mark { text-decoration: underline; text-underline-offset: 4px; text-decorat
 .kanji-dialog .kd-dl dd, .kanji-dialog .kd-box p, .kanji-dialog .kd-word, .kanji-dialog .kd-words li, .kanji-dialog .kd-ex li { font-weight: 600; }
 .kanji-dialog .hint, .kanji-dialog .kd-dl dt, .kanji-dialog .kd-mean, .kanji-dialog .kd-foot, .kanji-dialog .kd-ex .ko { font-weight: 500; }
 .kj.part { cursor: default; color: var(--fg); }
+
+/* 퀴즈: 문장 빈칸과 풀어 본 정도 */
+.q-blank { color: var(--ink); font-weight: 700; }
+.q-ko { display: block; margin-top: 4px; font-family: var(--font-body); font-size: 14px; line-height: 1.6; color: var(--muted); }
+.quiz-progress { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink); }

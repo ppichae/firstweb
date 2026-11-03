@@ -6,7 +6,7 @@ import { esc, shuffle, pct, fmtDate, dateKey } from "../../util.js";
 import { mountQuestion, feedbackHTML } from "../../quiz.js";
 import { runQuiz } from "../../quizRunner.js";
 import { LIST_POS } from "../listStudy.js";
-import { buildQuestion } from "../listStudy.js";
+import { buildQuestion, blankOf, blankText } from "../listStudy.js";
 import { pickItems } from "../../pick.js";
 import { furiToggleHTML } from "../../examples.js";
 import { award } from "./game.js";
@@ -15,6 +15,7 @@ import { renderN3Plan } from "./sprint.js";
 
 const SETS = { vocab: { area: "vocab", dataKey: "n3vocab" }, grammar: { area: "grammar", dataKey: "n3grammar" } };
 const DRILLS = [
+  ["vocab:blank", "어휘 · 문장 빈칸"], ["grammar:blank", "문형 · 문장 빈칸"],
   ["vocab:reading", "어휘 · 읽기 고르기"], ["vocab:meaning", "어휘 · 뜻 고르기"], ["vocab:reverse", "어휘 · 단어 고르기"],
   ["grammar:meaning", "문형 · 뜻 고르기"], ["grammar:reverse", "문형 · 문형 고르기"],
 ];
@@ -39,7 +40,7 @@ function n3Extra(q, picked) {
   let wrong = "";
   if (picked !== null && picked !== undefined && picked !== q.answer) {
     const t = q.options[picked];
-    const o = all.find(x => x !== v && (x.meaning === t || x.reading === t || head(x) === t));
+    const o = all.find(x => x !== v && (x.meaning === t || x.reading === t || head(x) === t || blankText(x) === t));
     if (o) wrong = '<div class="lb-row lb-wrong"><span class="lb-label">내가 고른 보기</span>' + line(o) + "</div>";
   }
   return '<div class="learn-box"><div class="lb-title">학습 정보</div>' + line(v) + wrong + "</div>";
@@ -48,6 +49,7 @@ function pool(setKey, type) {
   const d = EXTRA[SETS[setKey].dataKey];
   let items = (d && d.items) || [];
   if (type === "reading") items = items.filter(v => hasKanji(v.word) && v.reading);
+  if (type === "blank") items = items.filter(blankOf);
   return items;
 }
 
@@ -271,5 +273,5 @@ function renderHistory(el) {
 
 
 const leave = () => { stopTimer(); test = null; };
-export default { id: "n3/exam", label: "시험 대비", jp: "試験対策", needs: ["n3vocab", "n3grammar", "sources"], render: app => { if (page !== "exam") { page = "exam"; ui.mode = "plan"; } render(app); }, leave };
-export const n3MockView = { id: "n3/mock", label: "모의고사", jp: "模試", needs: ["n3vocab", "n3grammar", "sources"], render: app => { if (page !== "mock") { page = "mock"; ui.mode = "test"; } render(app); }, leave };
+export default { id: "n3/exam", label: "시험 대비", jp: "試験対策", needs: ["n3vocab", "n3grammar", "sources", "exN3V", "exN3G"], render: app => { if (page !== "exam") { page = "exam"; ui.mode = "plan"; } render(app); }, leave };
+export const n3MockView = { id: "n3/mock", label: "모의고사", jp: "模試", needs: ["n3vocab", "n3grammar", "sources", "exN3V", "exN3G"], render: app => { if (page !== "mock") { page = "mock"; ui.mode = "test"; } render(app); }, leave };

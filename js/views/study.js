@@ -6,7 +6,7 @@ import { esc, badges, shuffle, today } from "../util.js";
 import { mountQuestion } from "../quiz.js";
 import { runQuiz } from "../quizRunner.js";
 import { GRADES, schedule, preview, newCard, SRS_HELP } from "../srs.js";
-import { listBadges, LIST_POS, buildQuestion, checkedBadge } from "./listStudy.js";
+import { listBadges, LIST_POS, buildQuestion, checkedBadge, blankOf, blankText, mixedQuestion, quizProgress } from "./listStudy.js";
 import { kanjiRowHTML, handleKanjiClick } from "../kanji.js";
 import { examplesFor, exampleHTML, plainOf, EXAMPLE_KEYS, furiToggleHTML } from "../examples.js";
 import { sayBtn } from "../speech.js";
@@ -45,6 +45,10 @@ function seg(ui, key, label) {
   return '<button type="button" role="tab" class="seg" data-mode="' + key + '" aria-selected="' + (ui.mode === key) + '">' + label + "</button>";
 }
 
+// 퀴즈: 한 번에 풀 문제 수와 지금까지 풀어 본 정도
+const QUIZ_COUNTS = [["10", "10문제"], ["20", "20문제"], ["30", "30문제"]];
+const progressText = (p, noun) => noun + " " + p.items.toLocaleString() + "개 중 " + p.doneItems.toLocaleString() + "개 풀어 봄 · 문제 " + p.questions.toLocaleString() + "개 중 " + p.doneQuestions.toLocaleString() + "개 풀어 봄";
+
 function chipRow(attr, list, current) {
   return list.map(([k, l]) => '<button type="button" class="chip" data-' + attr + '="' + k + '" aria-pressed="' + (current === k) + '">' + l + "</button>").join("");
 }
@@ -55,7 +59,7 @@ function chipRow(attr, list, current) {
    ========================================================= */
 export function createVocabView(cfg) {
   const st = cfg.st;
-  const ui = { mode: "list", q: "", pos: "", topic: "", src: "", status: "all", showAll: false, shown: PAGE, quizType: "meaning" };
+  const ui = { mode: "list", q: "", pos: "", topic: "", src: "", status: "all", showAll: false, shown: PAGE, quizType: "mix", count: "10" };
   const revealed = new Set();
   let session = null;
   let cache = null;
@@ -323,46 +327,61 @@ export function createVocabView(cfg) {
   /* ---------- 퀴즈 ---------- */
   function renderQuiz(el) {
     const core = coreData();
-    const types = [["meaning", "뜻 고르기"], ["reading", "읽기 고르기"], ["reverse", "단어 고르기"]];
-    if (core && core.questions && core.questions.length) types.push(["exam", "시험형 문제"]);
-    if (!types.some(t => t[0] === ui.quizType)) ui.quizType = "meaning";
+    const coreQs = (core && core.questions) || [];
+    const types = [["mix", "전체 섞기"], ["blank", "문장 빈칸"], ["meaning", "뜻 고르기"], ["reading", "읽기 고르기"], ["reverse", "단어 고르기"]];
+    if (coreQs.length) types.push(["exam", "시험형 문제"]);
+    if (!types.some(t => t[0] === ui.quizType)) ui.quizType = "mix";
     el.innerHTML =
-      '<div class="toolbar">' + chipRow("qt", types, ui.quizType) +
+      '<div class="toolbar">' + chipRow("qt", types, ui.quizType) + "</div>" +
+      '<div class="toolbar"><span class="hint">한 번에</span>' + chipRow("qc", QUIZ_COUNTS, ui.count) +
         furiToggleHTML() +
         '<button type="button" class="link-btn" id="new-set">새 문제</button>' +
       "</div>" +
+      '<p class="quiz-progress" id="quiz-progress" role="status"></p>' +
       '<p class="hint" id="quiz-note"></p>' +
       '<div class="quiz" id="quiz"></div>';
+    const fixedIds = coreQs.map(q => q.id);
+    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(items(), st.get("attempts"), fixedIds), "단어"); };
     const start = () => {
       let qs;
-      if (ui.quizType === "exam") qs = core.questions.map(q => Object.assign({ area: "vocab" }, q));
+      const n = Number(ui.count);
+      if (ui.quizType === "exam") qs = coreQs.map(q => Object.assign({ area: "vocab" }, q));
       else {
+        const set = { area: "vocab" }, attempts = st.get("attempts");
         let pool = items();
         if (ui.quizType === "reading") pool = pool.filter(v => /[一-鿿々]/.test(v.word) && v.reading);
+        if (ui.quizType === "blank") pool = pool.filter(blankOf);
         // 틀린 단어·처음 보는 단어·오래전에 맞힌 단어를 섞고, 최근 퀴즈에 나온 단어는 되도록 피한다 (pick.js)
-        qs = pickItems(pool, 10, { attempts: st.get("attempts"), weak: v => (state(v.id).wrong || 0) > 0 && state(v.id).status !== "known" })
-          .map(v => buildQuestion(v, ui.quizType, { area: "vocab" }, items(), cfg.idPrefix));
+        const picked = pickItems(pool, n, { attempts, weak: v => (state(v.id).wrong || 0) > 0 && state(v.id).status !== "known" });
+        const tried = new Set(attempts.map(a => a.qid));
+        qs = picked.map(v => ui.quizType === "mix" ? mixedQuestion(v, set, items(), cfg.idPrefix, tried) : buildQuestion(v, ui.quizType, set, items(), cfg.idPrefix));
       }
+      showProgress();
       el.querySelector("#quiz-note").innerHTML = ui.quizType === "exam"
         ? "한자 읽기 · 문맥 규정 · 바꿔 말하기 · 용법 유형의 연습문제예요."
-        : "단어장에서 10개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요. 틀린 단어·처음 보는 단어·오래전에 맞힌 단어를 섞고, 최근 퀴즈에 나온 단어는 되도록 다시 내지 않아요.";
+        : "단어장으로 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요. 처음 보는 단어를 가장 많이 내고, 마지막에 틀린 단어와 오래전에 맞힌 단어를 섞어요.";
       // 한 문제씩 풀고, 답한 뒤에는 그 단어의 학습 정보(읽기·뜻·예문·헷갈린 단어)를 보여 준다
       runQuiz(el.querySelector("#quiz"), qs.map(q => ({ q, extra: vocabExtra })), {
-        store: st, label: "문제", onRestart: start, restartLabel: "새 문제 10개",
+        store: st, label: "문제", onRestart: start, restartLabel: ui.quizType === "exam" ? "처음부터 다시" : "새 문제 " + n + "개",
         onAnswer: (it, ok) => {
           const wid = it.q.wordId || it.q.word;
           st.logActivity("words");
           if (ok && wid && items().some(v => v.id === wid)) setState(wid, s => { s.right = (s.right || 0) + 1; });
           if (!ok && wid) { markWordWrong(wid); updateCounts(document); }
           emit(ok ? "correct" : "wrong", it.q.id);
+          showProgress();
         },
       });
     };
     el.onclick = e => {
-      const t = e.target.closest("[data-qt]");
+      const t = e.target.closest("[data-qt]"), c = e.target.closest("[data-qc]");
       if (t) {
         ui.quizType = t.dataset.qt;
         el.querySelectorAll("[data-qt]").forEach(b => b.setAttribute("aria-pressed", b === t));
+        start();
+      } else if (c) {
+        ui.count = c.dataset.qc;
+        el.querySelectorAll("[data-qc]").forEach(b => b.setAttribute("aria-pressed", b === c));
         start();
       } else if (e.target.closest("#new-set")) start();
     };
@@ -431,7 +450,7 @@ export function createVocabView(cfg) {
    ========================================================= */
 export function createGrammarView(cfg) {
   const st = cfg.st;
-  const ui = { mode: "learn", q: "", src: "", filter: "all", shown: PAGE, quiz: null, scope: "all", open: new Set() };
+  const ui = { mode: "learn", q: "", src: "", filter: "all", shown: PAGE, quiz: null, scope: "all", count: "10", open: new Set() };
   let session = null;
   let cache = null;
 
@@ -602,7 +621,7 @@ export function createGrammarView(cfg) {
     let wrongPart = "";
     if (picked !== null && picked !== undefined && picked !== q.answer && q.generated) {
       const t = q.options[picked];
-      const o = all.find(x => x.meaning === t || x.pattern === t);
+      const o = all.find(x => x.meaning === t || x.pattern === t || blankText(x) === t);
       if (o && o.id !== g.id) wrongPart = '<div class="lb-row lb-wrong"><span class="lb-label">내가 고른 보기</span>' + patternLine(o) + "</div>";
     }
     return '<div class="learn-box"><div class="lb-title">학습 정보</div>' + patternLine(g) +
@@ -668,9 +687,9 @@ export function createGrammarView(cfg) {
   function renderQuiz(el) {
     const core = coreData();
     const coreQs = (core && core.questions) || [];
-    const types = [["meaning", "뜻 고르기"], ["reverse", "문형 고르기"]];
-    if (coreQs.length) types.unshift(["exam", "시험형 문제"]);
-    if (!types.some(t => t[0] === ui.quiz)) ui.quiz = types[0][0];
+    const types = [["mix", "전체 섞기"], ["blank", "문장 빈칸"], ["meaning", "뜻 고르기"], ["reverse", "문형 고르기"]];
+    if (coreQs.length) types.push(["exam", "시험형 문제"]);
+    if (!types.some(t => t[0] === ui.quiz)) ui.quiz = "mix";
     const kinds = [...new Set(coreQs.map(q => q.kind))];
     if (ui.quiz === "exam" && ui.scope !== "all" && !kinds.includes(ui.scope)) ui.scope = "all";
     if (ui.quiz !== "exam" && kinds.includes(ui.scope)) ui.scope = "all";
@@ -680,33 +699,41 @@ export function createGrammarView(cfg) {
     el.innerHTML =
       '<div class="toolbar">' + chipRow("gq", types, ui.quiz) + "</div>" +
       '<div class="toolbar"><span class="hint">범위</span>' + chipRow("gscope", scopes, ui.scope) + "</div>" +
-      '<div class="toolbar">' + furiToggleHTML() + '<button type="button" class="link-btn" id="reset">' + (ui.quiz === "exam" ? "다시 풀기" : "새 문제") + "</button></div>" +
+      '<div class="toolbar"><span class="hint">한 번에</span>' + chipRow("gc", QUIZ_COUNTS, ui.count) + furiToggleHTML() + '<button type="button" class="link-btn" id="reset">' + (ui.quiz === "exam" ? "다시 풀기" : "새 문제") + "</button></div>" +
+      '<p class="quiz-progress" id="quiz-progress" role="status"></p>' +
       '<p class="hint" id="gq-note"></p>' +
       '<div class="quiz" id="quiz"></div>';
+    const fixedIds = coreQs.map(q => q.id);
+    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(items(), st.get("attempts"), fixedIds), "문형"); };
     const start = () => {
       let qs;
-      const note = el.querySelector("#gq-note");
+      const note = el.querySelector("#gq-note"), n = Number(ui.count);
       if (ui.quiz === "exam") {
         qs = coreQs.filter(q => ui.scope === "all" || q.kind === ui.scope).map(q => Object.assign({ area: "grammar" }, q));
         note.textContent = "빈칸 채우기 · 문장 배열 · 문맥 · 유사 문법 구별 유형의 연습문제예요.";
       } else {
-        const pool = items().filter(g => ui.scope === "all" || (ui.scope === "studied" ? state(g.id).studied : state(g.id).fav));
-        qs = pickItems(pool, 10, { attempts: st.get("attempts"), weak: g => (state(g.id).wrong || 0) > 0 })
-          .map(g => buildQuestion(g, ui.quiz, { area: "grammar" }, items(), cfg.idPrefix));
+        const set = { area: "grammar" }, attempts = st.get("attempts");
+        let pool = items().filter(g => ui.scope === "all" || (ui.scope === "studied" ? state(g.id).studied : state(g.id).fav));
+        if (ui.quiz === "blank") pool = pool.filter(blankOf);
+        const tried = new Set(attempts.map(a => a.qid));
+        qs = pickItems(pool, n, { attempts, weak: g => (state(g.id).wrong || 0) > 0 })
+          .map(g => ui.quiz === "mix" ? mixedQuestion(g, set, items(), cfg.idPrefix, tried) : buildQuestion(g, ui.quiz, set, items(), cfg.idPrefix));
         note.innerHTML = pool.length
-          ? "선택한 범위의 문형 " + pool.length + "개에서 " + Math.min(10, pool.length) + "개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요."
+          ? "선택한 범위의 문형 " + pool.length + "개에서 " + Math.min(n, pool.length) + "개를 뽑아 만든 <b>자체 제작 연습 문제</b>예요. 실제 JLPT 기출문제가 아니에요."
           : "이 범위에 문형이 없어요. '문법 학습'에서 공부했어요·즐겨찾기를 표시하거나 '전체 문형'을 골라 주세요.";
       }
+      showProgress();
       runQuiz(el.querySelector("#quiz"), qs.map(q => ({ q, extra: grammarExtra })), {
-        store: st, label: "문제", onRestart: start, restartLabel: ui.quiz === "exam" ? "처음부터 다시" : "새 문제 10개",
+        store: st, label: "문제", onRestart: start, restartLabel: ui.quiz === "exam" ? "처음부터 다시" : "새 문제 " + n + "개",
         empty: "이 범위에 문형이 없어요.",
-        onAnswer: (it, ok) => emit(ok ? "correct" : "wrong", it.q.id),
+        onAnswer: (it, ok) => { emit(ok ? "correct" : "wrong", it.q.id); showProgress(); },
       });
     };
     el.onclick = e => {
-      const t = e.target.closest("[data-gq]"), s = e.target.closest("[data-gscope]");
+      const t = e.target.closest("[data-gq]"), s = e.target.closest("[data-gscope]"), c = e.target.closest("[data-gc]");
       if (t) { ui.quiz = t.dataset.gq; renderQuiz(el); }
       else if (s) { ui.scope = s.dataset.gscope; renderQuiz(el); }
+      else if (c) { ui.count = c.dataset.gc; renderQuiz(el); }
       else if (e.target.closest("#reset")) start();
     };
     start();

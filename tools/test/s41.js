@@ -52,7 +52,7 @@
     const dup = allWords.filter((w, i) => allWords.indexOf(w) !== i);
     check("같은 표기 중복 노출 없음", dup.length === 0, allWords.length + "개 중 중복 " + dup.join(","));
     $('[data-mode="quiz"]').click(); await wait(100);
-    check("퀴즈 종류", $$("[data-qt]").map(b => b.textContent).join("|") === "뜻 고르기|읽기 고르기|단어 고르기|시험형 문제");
+    check("퀴즈 종류", $$("[data-qt]").map(b => b.textContent).join("|") === "전체 섞기|문장 빈칸|뜻 고르기|읽기 고르기|단어 고르기|시험형 문제");
     $$(".q")[0].querySelectorAll(".opt")[0].click(); await wait(50);
     $('[data-qt="exam"]').click(); await wait(100);
     check("시험형 문제(기존) 유지", $$(".q").length > 0, $$(".q").length);
@@ -66,7 +66,7 @@
     check("N1 문법 통합 개수", Number(gc.match(/\d+/)[0]) > 491, gc + " / 진도 " + app().querySelector(".progress").textContent);
     check("기존 공부함 표시 유지(g001)", app().querySelector("#g001 [data-gact=studied]").getAttribute("aria-pressed") === "true");
     $('[data-mode="quiz"]').click(); await wait(100);
-    check("문법 퀴즈 바로 열림(시험형)", $$(".q").length > 0 && $$("[data-gq]").map(b => b.textContent).join("|") === "시험형 문제|뜻 고르기|문형 고르기", $$(".q").length);
+    check("문법 퀴즈 바로 열림(전체 섞기)", $$(".q").length > 0 && $$("[data-gq]").map(b => b.textContent).join("|") === "전체 섞기|문장 빈칸|뜻 고르기|문형 고르기|시험형 문제", $$(".q").length);
     $('[data-gq="meaning"]').click(); await wait(100);
     check("뜻 고르기 10문제(한 문제씩)", /\/ 10/.test($(".qr-head").textContent) && $$(".q").length === 1);
     $('[data-gscope="studied"]').click(); await wait(100);
@@ -98,7 +98,7 @@
     await go("n3/grammar");
     check("N3 문법 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "문법 학습|플래시카드|문법 퀴즈" && $("#g-count").textContent.startsWith("306"));
     $('[data-mode="quiz"]').click(); await wait(100);
-    check("N3 문법 퀴즈(시험형 없음)", $$("[data-gq]").map(b => b.textContent).join("|") === "뜻 고르기|문형 고르기" && /\/ 10/.test($(".qr-head").textContent));
+    check("N3 문법 퀴즈(시험형 없음)", $$("[data-gq]").map(b => b.textContent).join("|") === "전체 섞기|문장 빈칸|뜻 고르기|문형 고르기" && /\/ 10/.test($(".qr-head").textContent));
     $$(".q")[0].querySelectorAll(".opt")[0].click(); await wait(50);
     const n3att = JSON.parse(localStorage.getItem("n3lab:attempts"));
     check("N3 퀴즈 기록은 N3에", n3att.length === 1 && n3att[0].qid.startsWith("n3-"), n3att[0].qid);

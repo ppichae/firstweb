@@ -29,6 +29,7 @@
     await until(() => $("#quiz .q"), 10000);
     check("단어 퀴즈 열림", !!$("#quiz .q"));
     check("퀴즈에 후리가나 보이기/숨기기 버튼", !!$("[data-furi-toggle]"));
+    $('[data-qt="meaning"]').click(); await until(() => $("#quiz .q"));
     const p = $("#quiz .q-text");
     check("뜻 고르기: 문제 단어에 후리가나 또는 가나 단어", !!p.querySelector("ruby") || !/[一-鿿]/.test((p.textContent.match(/「(.*?)」/) || ["", ""])[1]), p.innerHTML.slice(0, 80));
     check("뜻 고르기: 답 고르기 전 발음 버튼 없음", !p.querySelector(".say-btn"));
@@ -40,10 +41,13 @@
     check("결과 화면에 새 문제 버튼", !!app().querySelector('[data-qr="restart"]'));
     app().querySelector('[data-qr="restart"]').click(); await wait(300);
     const set2 = await playSet(false);
-    const again = set2.filter(id => wrong1.includes(id)).length;
     const overlap = set2.filter(id => set1.includes(id)).length;
-    check("틀린 단어가 다음 세트에 다시 나옴(오답 재출제)", wrong1.length === 0 || again >= Math.min(3, wrong1.length), "틀린 " + wrong1.length + "개 중 " + again + "개");
-    check("틀리지 않은 단어는 바로 다시 나오지 않음", overlap === again, "겹침 " + overlap + " · 오답 재출제 " + again);
+    check("바로 다음 세트에는 같은 단어가 나오지 않음", overlap === 0, "겹침 " + overlap);
+    await until(() => app().querySelector('[data-qr="restart"]'));
+    app().querySelector('[data-qr="restart"]').click(); await wait(300);
+    const set3 = await playSet(false);
+    const again = set3.filter(id => wrong1.includes(id)).length;
+    check("틀린 단어가 한 세트 뒤에 다시 나옴(오답 재출제)", wrong1.length === 0 || again >= Math.min(2, wrong1.length), "틀린 " + wrong1.length + "개 중 " + again + "개");
     // 읽기 고르기에는 후리가나·발음 버튼 없음 (정답이 보이면 안 된다)
     const rt = $$("[data-qt]").find(b => b.dataset.qt === "reading"); if (rt) { rt.click(); await until(() => $("#quiz .q")); }
     const rp = $("#quiz .q-text");

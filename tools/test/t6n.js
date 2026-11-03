@@ -7,7 +7,7 @@
   location.hash = "notes"; await wait(300);
   check("빈 오답 노트 안내", $(".empty") && $(".empty").textContent.includes("아직 틀린 문제가 없어요"));
   // 문법 1문제 틀리기, 1문제 맞히기
-  location.hash = "grammar"; await wait(1500); document.querySelector("[data-mode=quiz]").click(); await wait(200);
+  location.hash = "grammar"; await wait(1500); document.querySelector("[data-mode=quiz]").click(); await wait(200); document.querySelector("[data-gq=exam]").click(); await wait(200);
   $$(".q")[0].querySelector('[data-o="2"]').click(); await wait(30);
   $(".qr-next").click(); await wait(100);   // 한 문제씩: 다음 문제로 넘어가서 두 번째 문제를 푼다
   $(".qr-q .q").querySelector('[data-o="1"]').click(); await wait(30);

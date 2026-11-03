@@ -14,7 +14,7 @@
   check("D-day 표시", /^D-\d+$/.test($(".dday").textContent), $(".dday").textContent);
   check("시험 구성 110/55", $(".facts").textContent.includes("110분") && $(".facts").textContent.includes("55분"));
   // 기록 만들기: 문법 6문제(정답 3, 오답 3)
-  location.hash = "grammar"; await wait(1500); document.querySelector("[data-mode=quiz]").click(); await wait(200);
+  location.hash = "grammar"; await wait(1500); document.querySelector("[data-mode=quiz]").click(); await wait(200); document.querySelector("[data-gq=exam]").click(); await wait(200);
   const qs = $$(".q");
   const answers = [0, 1, 2, 0, 1, 0];
   // 한 문제씩: 답을 고르고 '다음 문제'로 넘어간다
