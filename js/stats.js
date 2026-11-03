@@ -82,6 +82,9 @@ export function weakAreas() {
   return judgedAreas().filter(([, r]) => r.rate < WEAK_BELOW).sort((a, b) => a[1].rate - b[1].rate);
 }
 
+// 가끔만 보는 정보를 접어 두는 칸 (누르면 펼쳐진다)
+export const moreHTML = (label, inner) => '<details class="more-box"><summary>' + label + "</summary>" + inner + "</details>";
+
 // 홈 숫자 칸의 기준 설명 (N1·N3 같은 기준). 화면의 숫자와 같은 규칙을 글로 적은 것이다
 export function statsHelpHTML(roomId) {
   const rows = [

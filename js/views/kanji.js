@@ -39,7 +39,7 @@ export function createKanjiView(id, roomId) {
     const seg = (k, l) => '<button type="button" role="tab" class="seg" data-kmode="' + k + '" aria-selected="' + (ui.mode === k) + '">' + l + "</button>";
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>한자</h2><p>한자를 누르면 한국어 훈음, 음독·훈독, 획순, 직접 쓰기, 이 한자가 쓰인 단어를 볼 수 있어요.</p></div>' +
+        '<div class="panel-head"><div><h2>한자</h2></div>' +
           '<div class="toolbar"><div class="progress">' + roomLv + " 한자 살펴봄 <strong>" + seen + "</strong> / " + list.length + "</div>" +
           '<div class="bar" aria-hidden="true"><span style="width:' + (seen / list.length * 100) + '%"></span></div></div></div>' +
         '<div class="segmented" role="tablist" aria-label="한자 학습">' + seg("list", "한자 목록") + seg("quiz", "한자 퀴즈") + seg("review", "오답 복습 · 기록") + "</div>" +

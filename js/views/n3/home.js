@@ -1,20 +1,17 @@
 // N3 방 · 홈: N1 홈과 같은 구성(D-Day · 지금 할 일 · 숫자 칸) + 4주 추천 일정 · 과정별 진행
 import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
-import { syncActive } from "../../sync.js";
 import { esc, pct } from "../../util.js";
 import { daysUntil, examCardHTML, EXAM_INFO_N3 } from "../../exam.js";
-import { noteEntries, statsHelpHTML } from "../../stats.js";
+import { noteEntries, statsHelpHTML, moreHTML } from "../../stats.js";
 import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone, coreUnits, openBasics } from "./basics.js";
-import { scriptProgress } from "./kana.js";
 import { n3vocab, n3grammar } from "./study.js";
 import { growthCardHTML } from "../../badges.js";
 import { n3SprintSummary } from "./sprint.js";
 import { studyWeekHTML } from "../../summary.js";
 import { weekCardHTML } from "../../weekchart.js";
-import { roomKanjiList } from "../../kanji.js";
 
 const WEEKS = [
   { n: 1, title: "문자 + N5", items: [["#n3/basics", "히라가나 (50음도·퀴즈·쓰기)", "hira"], ["#n3/basics", "가타카나 (50음도·퀴즈·쓰기)", "kata"], ["#n3/basics", "문자 통합 학습 (구별·혼합 퀴즈)", "mix"], ["#n3/basics", "핵심 단원 1~6 (인사 · です · 조사 · こそあど · 형용사 · ます형)", "units"]] },
@@ -34,20 +31,15 @@ function render(app) {
   const week = suggestedWeek(target ? daysUntil(target.date) : null);
   const lv = level();
   const units = EXTRA.n3basics ? coreUnits(EXTRA.n3basics) : [];
-  const hp = EXTRA.n3basics ? scriptProgress(EXTRA.n3basics, "hira") : null, kp = EXTRA.n3basics ? scriptProgress(EXTRA.n3basics, "kata") : null;
-  const unitsDone = units.filter(u => unitDone(u.id)).length;
   const nextUnit = units.find(u => !unitDone(u.id));
   const openNotes = noteEntries(n3store).filter(n => !n.resolved).length;
   const sprint = n3SprintSummary();
   const attempts = n3store.get("attempts");
   const correct = attempts.filter(a => a.correct).length;
-  const kanjiSet = roomKanjiList("n3");
-  const tests = n3store.get("tests");
-  const best = tests.length ? Math.max(...tests.map(t => Math.round(t.correct / t.total * 100))) : null;
 
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>오늘의 학습</h2><p>처음부터 시작해도 괜찮아요. 기초 → N3 집중 → 시험 대비 순서를 추천하지만, 원하는 메뉴로 자유롭게 이동해도 돼요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>오늘의 학습</h2></div></div>' +
       studyWeekHTML(n3store, "N3") +
       '<div class="home-top">' +
         ddayTileHTML(n3store) +
@@ -65,36 +57,17 @@ function render(app) {
         tile("누적 문제 풀이", attempts.length, attempts.length ? "정답률 " + pct(correct, attempts.length) + "%" : "문제") +
         tile("연속 학습", streak() + "일", "오늘 학습 " + todayCount() + "회") +
       "</div>" +
-
-      statsHelpHTML("n3") +
       growthCardHTML("n3", "#n3/badges") +
-      weekCardHTML(n3store) +
+      moreHTML("학습 기록·일정 더 보기", statsHelpHTML("n3") + weekCardHTML(n3store) +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정 <small class="hint">시험일 기준</small></h3><a href="#n3/roadmap">N5→N3 로드맵 보기 →</a></div>' +
-        '<p class="hint">시험일까지 남은 날로 계산한 추천이에요. ' + (week ? "지금은 <b>" + week + "주차</b>쯤이에요. " : "") + "순서대로 하지 않아도 되고, 언제든 다른 주차의 공부를 해도 돼요.</p>" +
+        (week ? '<p class="hint">지금은 <b>' + week + "주차</b>쯤이에요.</p>" : "") +
         '<ol class="weeks">' + WEEKS.map(w =>
           '<li class="' + (w.n === week ? "now" : "") + '"><b>' + w.n + "주차 · " + esc(w.title) + "</b>" +
             "<ul>" + w.items.map(([h, t, m]) => '<li><a href="' + h + '"' + (m ? ' data-basics="' + m + '"' : "") + '>' + esc(t) + "</a></li>").join("") + "</ul></li>").join("") +
         "</ol>" +
       "</article>" +
 
-      '<div class="courses">' +
-        course("A", "기초 과정 (N5·N4)", "#n3/basics", [
-          ["핵심 단원", units.length ? unitsDone + " / " + units.length + " 완료" : "—"],
-          ["히라가나 기본 글자", hp ? hp.done + " / " + hp.total + " 익힘" : "—"],
-          ["가타카나 기본 글자", kp ? kp.done + " / " + kp.total + " 익힘" : "—"],
-        ]) +
-        course("B", "N3 집중 과정", "#n3/vocab", [
-          ["단어", n3vocab.total() ? n3vocab.studiedCount() + " / " + n3vocab.total() + " 학습" : "—"],
-          ["문법", n3grammar.total() ? n3grammar.studiedCount() + " / " + n3grammar.total() + " 공부함" : "—"],
-          ["한자", kanjiSet.length ? kanjiSet.filter(c => (n3store.get("kanji")[c] || {}).seen).length + " / " + kanjiSet.length + " 살펴봄" : "—"],
-        ]) +
-        course("C", "시험 대비 과정", "#n3/exam", [
-          ["연습 테스트", tests.length ? tests.length + "회 · 최고 " + best + "%" : "아직 없음"],
-          ["다시 풀 오답", openNotes + "개"],
-        ]) +
-      "</div>" +
-      examCardHTML(EXAM_INFO_N3, "N3") +
-      '<p class="hint">학습 기록은 N1 방과 따로 ' + (syncActive() ? "내 계정에" : "이 브라우저에") + " 저장돼요. 경험치 기준은 「전체 배지 보기」에서 볼 수 있어요.</p>" +
+      examCardHTML(EXAM_INFO_N3, "N3")) +
     "</section>";
 
   app.onclick = e => {
@@ -110,9 +83,5 @@ function tile(label, value, sub) {
   return '<article class="tile"><span class="tile-label">' + label + '</span><span class="tile-value">' + esc(value) + '</span><span class="tile-sub">' + esc(sub) + "</span></article>";
 }
 
-function course(letter, title, href, rows) {
-  return '<article class="card-box course"><div class="q-top"><h3><span class="course-letter">' + letter + "</span> " + esc(title) + '</h3><a href="' + href + '">열기 →</a></div>' +
-    '<dl class="course-rows">' + rows.map(([t, v]) => "<div><dt>" + esc(t) + "</dt><dd>" + esc(v) + "</dd></div>").join("") + "</dl></article>";
-}
 
 export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources", "kanji", "kanjiN3"], render };

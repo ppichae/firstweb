@@ -11,7 +11,7 @@
     check("N3 단어 화면에 'PDF' 문구 없음", !app().textContent.includes("PDF"), (app().textContent.match(/.{10}PDF.{10}/) || [""])[0]);
     $("#toggle-all").click(); await wait(100);
     const t = app().textContent;
-    check("읽기 확인됨 배지", $$(".card .badge.ok").some(b => b.textContent === "읽기 확인됨"), $$(".card .badge.ok").length);
+    check("단어 카드에 출처 배지 없음", !$(".card .badges"));
     check("부정 문구 없음(검수 필요·자료 준비 중)", !t.includes("검수 필요") && !t.includes("자료 준비 중"));
     $('[data-mode="cards"]').click(); await wait(100); $("#flip").click(); await wait(50);
     check("복습 버튼 이름", $$(".grade span").map(s => s.textContent).join("|") === "모르겠어요|헷갈려요|알았어요|쉬워요", $$(".grade span").map(s => s.textContent).join("|"));

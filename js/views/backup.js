@@ -70,14 +70,12 @@ export function createBackupView(id, roomId) {
     app.innerHTML =
       '<section class="panel">' +
         (synced
-          ? '<div class="panel-head"><div><h2>기록 관리</h2><p>학습 기록은 내 계정에 저장돼요. 다른 기기에서 로그인해도 이어서 공부할 수 있어요.</p></div></div>'
-          : '<div class="panel-head"><div><h2>기록 관리</h2><p>학습 기록은 지금 쓰는 브라우저에만 저장돼요. 다른 브라우저나 기기와는 자동으로 공유되지 않아요.</p></div></div>') +
+          ? '<div class="panel-head"><div><h2>기록 관리</h2></div></div>'
+          : '<div class="panel-head"><div><h2>기록 관리</h2></div></div>') +
         (ui.message ? '<p class="toast" role="status">' + esc(ui.message) + "</p>" : "") +
         (synced
-          ? '<p class="notice">동기화 상태, 이 기기의 예전 기록 가져오기, 계정 백업은 <a href="#records">내 기록</a>에서 관리해요. ' +
-              "여기서 복원하면 백업 파일의 기록을 내 계정에 더해요(같은 기록은 두 번 들어가지 않고, 내 기록에서 취소할 수 있어요).</p>"
-          : '<p class="notice"><b>실시간 동기화는 지원하지 않아요.</b> 이 사이트는 서버 없이 운영돼서, 기기끼리 기록이 자동으로 맞춰지지 않아요. ' +
-              "기기를 바꾸거나 '함께 보기'에서 상대 기록을 보려면 백업 파일을 내려받아 다른 기기에서 복원하세요.</p>") +
+          ? '<p class="notice">동기화와 계정 백업은 <a href="#records">내 기록</a>에서 관리해요.</p>'
+          : "") +
         '<article class="card-box"><h3>지금 저장된 기록 · ' + esc(nameOf(roomId)) + " (" + room.label + " 방)</h3>" +
           '<p class="hint">' + counts({ attempts: st.get("attempts"), words: st.get("words"), lists: st.get("lists") }) +
           (roomId === "n1" ? " · 모의고사 " + mocks + "회" : " · 연습 테스트 " + st.get("tests").length + "회") +

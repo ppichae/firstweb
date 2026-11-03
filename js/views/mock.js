@@ -75,7 +75,7 @@ function renderIntro(app) {
   const history = store.get("mocks");
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>실전 모의고사</h2><p>실제 N1처럼 1부(언어지식·독해)와 2부(청해)로 나눠 시간을 재고 풀어요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>실전 모의고사</h2></div></div>' +
       '<article class="card-box"><h3>구성</h3>' +
         '<table class="mock-table"><thead><tr><th>구분</th><th>이 모의고사</th><th>실제 시험 시간</th></tr></thead><tbody>' +
           "<tr><td>1부 언어지식·독해</td><td>어휘 10 · 문법 10 · 독해 " + (set[1].length - 20) + "문제</td><td>" + EXAM_INFO.sections[0].minutes + "분</td></tr>" +
@@ -87,7 +87,6 @@ function renderIntro(app) {
         '<label class="radio"><input type="radio" name="tm" value="fitted" checked> <span><b>문항 수에 맞춘 시간 (추천)</b> 1부 ' + fit[1] + "분 · 2부 " + fit[2] + "분</span></label>" +
         '<label class="radio"><input type="radio" name="tm" value="official"> <span><b>실제 시험 시간</b> 1부 110분 · 2부 55분 <small>(문항 수가 적어 시간이 많이 남아요)</small></span></label>' +
         '<div class="toolbar"><button type="submit" class="btn">모의고사 시작</button></div>' +
-        '<p class="hint">시작하면 답은 자동으로 임시 저장돼요. 다른 화면에 다녀와도 이어서 풀 수 있고, 시간이 끝나면 자동으로 제출돼요.</p>' +
       "</form>" +
       '<article class="card-box"><h3>지난 결과</h3>' +
         (history.length

@@ -14,7 +14,7 @@ export function mountQuestion(el, q, opts = {}) {
     el.className = "q";
     el.innerHTML =
       '<div class="q-top"><span class="q-num">' + esc(opts.label || ("問" + (opts.number || 1))) +
-        (q.kind ? " · " + esc(q.kind) : "") + "</span>" + badges(q) + "</div>" +
+        (q.kind ? " · " + esc(q.kind) : "") + "</span>" + (q.source && q.source.type === "official" ? badges(q) : "") + "</div>" +
       '<div class="q-text" lang="ja">' + (q.promptHTML || multiline(q.prompt)) + "</div>" +   // promptHTML: 후리가나·발음 버튼이 붙은 문제 (안전하게 만든 HTML)
       '<div class="opts' + (wide ? " wide" : "") + '">' +
         q.options.map((o, j) => {
@@ -25,7 +25,7 @@ export function mountQuestion(el, q, opts = {}) {
             '><span class="n">' + (j + 1) + '</span><span lang="ja">' + esc(o) + "</span></button>";
         }).join("") +
       "</div>" +
-      (done ? feedbackHTML(q, picked, opts.record !== false) + (opts.extra ? opts.extra(q, picked) : "") : "");
+      (done ? feedbackHTML(q, picked, opts.record !== false, !!(opts.extra && q.generated)) + (opts.extra ? opts.extra(q, picked) : "") : "");
   }
 
   el.onclick = e => {
@@ -41,7 +41,8 @@ export function mountQuestion(el, q, opts = {}) {
   return { reset() { picked = null; render(); }, get answered() { return picked !== null; } };
 }
 
-export function feedbackHTML(q, picked, saved = false) {
+// short: 자동으로 만든 문제는 아래 학습 정보에 같은 내용이 있으므로 정답 여부만 보여 준다
+export function feedbackHTML(q, picked, saved = false, short = false) {
   const ok = picked === q.answer;
   const rows = [];
   rows.push(["정답", (q.answer + 1) + ". " + esc(q.options[q.answer])]);
@@ -56,10 +57,10 @@ export function feedbackHTML(q, picked, saved = false) {
     rows.push(["관련 문법", '<strong lang="ja">' + esc(g.pattern) + "</strong> — " + esc(g.meaning) +
       (g.explanation ? "<br>" + multiline(g.explanation) : "")]);
   }
-  return '<div class="fb" role="status">' +
+  return '<div class="fb' + (short ? " fb-short" : "") + '" role="status">' +
     '<div class="fb-verdict ' + (ok ? "good" : "bad") + '">' + (ok ? "정답이에요" : picked === null ? "답하지 않았어요" : "오답이에요") +
       (!ok && saved ? " · 오답 노트에 저장했어요" : "") + "</div>" +
-    "<dl>" + rows.map(([t, d]) => "<div><dt>" + t + "</dt><dd>" + d + "</dd></div>").join("") + "</dl>" +
+    (short ? "" : "<dl>" + rows.map(([t, d]) => "<div><dt>" + t + "</dt><dd>" + d + "</dd></div>").join("") + "</dl>") +
   "</div>";
 }
 

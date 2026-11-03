@@ -82,7 +82,7 @@ function render(app) {
   const w = studyWeekOf(n3store);
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>학습 로드맵</h2><p>N5 → N4 → N3 순서로 공부해요. 진행률은 이 공부방의 실제 기록으로 계산해요. 순서대로 하지 않아도 괜찮아요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>학습 로드맵</h2></div></div>' +
       '<article class="card-box roadmap-now"><h3>지금 추천</h3>' +
         '<p class="hint">' + (w ? "N3 학습 " + w.week + "주차 · " : "") + "지금 단계: <b>" + esc(cur.title) + "</b> (" + Math.round(cur.ratio * 100) + "%)</p>" +
         (out.length ? '<ul class="rec-list">' + out.map(r => '<li><span>' + esc(r.text) + '</span> <button type="button" class="btn ghost sm" data-go="' + esc(r.go) + '">하러 가기</button></li>').join("") + "</ul>"
@@ -96,7 +96,6 @@ function render(app) {
             '<div class="meter"><span class="meter-name">' + esc(i.name) + '</span><span class="meter-track" aria-hidden="true"><span style="width:' + Math.round(i.ratio * 100) + '%"></span></span>' +
             '<span class="meter-val">' + i.done + " / " + i.total + "</span>" +
             '<button type="button" class="link-btn" data-go="' + esc(i.go) + '" aria-label="' + esc(i.name + " 하러 가기") + '">하러 가기</button></div>').join("") + "</div>" +
-          '<p class="hint">' + s.items.map(i => esc(i.name) + ": " + esc(i.desc)).join(" · ") + "</p>" +
         "</li>").join("") + "</ol>" +
       '<p class="hint">급수(N5·N4·N3)는 JLPT 시험 단계이고, 레벨(Lv)은 이 공부방에서 쌓은 공부량이에요. 레벨이 높다고 급수가 오르는 것은 아니에요.</p>' +
     "</section>";

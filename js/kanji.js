@@ -182,7 +182,6 @@ function draw() {
   const inWord = split ? split.find(p => p[0] === ch) : null;
   const sameRad = info ? ((EXTRA.kanji && EXTRA.kanji.items) || []).filter(k => k.char !== ch && k.radical && info.radical && k.radical.char === info.radical.char).map(k => k.char) : [];
   const exs = examplesWith(ch, roomId);
-  const roomLabel = roomId === "n1" ? "N1" : "N3";
 
   const head =
     '<div class="kd-head"><div class="kd-char" lang="ja">' + esc(ch) + "</div>" +
@@ -213,9 +212,9 @@ function draw() {
         (info.note ? '<p class="kd-note">' + esc(info.note) + "</p>" : "") + "</section>" +
       '<section class="kd-sec"><h4>모양</h4><dl class="kd-dl">' +
         (info.radical ? '<div><dt>부수</dt><dd><span lang="ja">' + esc(info.radical.char) + "</span> " + esc(info.radical.name) + (info.radical.note ? '<br><small class="hint">' + esc(info.radical.note) + "</small>" : "") + "</dd></div>" : "") +
-        "<div><dt>총 획수</dt><dd>" + info.strokes + "획 <small class=\"hint\">(일본식" + (info.strokesCheck ? " · KanjiVG 획순 데이터와 일치" : "") + ")</small></dd></div>" +
+        "<div><dt>총 획수</dt><dd>" + info.strokes + "획</dd></div>" +
         // 모양 부품: KRADFILE의 분해 (부품이 이 사이트 한자면 눌러서 열 수 있다)
-        (info.parts && info.parts.length ? '<div><dt>모양 부품</dt><dd>' + info.parts.map(p => kanjiInfo(p) ? linkChips([p]) : '<span class="kj part" lang="ja">' + esc(p) + "</span>").join("") + '<small class="hint">한자를 이루는 모양 조각이에요</small></dd></div>' : "") +
+        (info.parts && info.parts.length ? '<div><dt>모양 부품</dt><dd>' + info.parts.map(p => kanjiInfo(p) ? linkChips([p]) : '<span class="kj part" lang="ja">' + esc(p) + "</span>").join("") + "</dd></div>" : "") +
         // 구성 요소·형성 원리는 근거가 확인된 경우(…Source)에만 보여 준다
         (info.components.length && info.componentsSource ? "<div><dt>구성 요소</dt><dd>" + info.components.map(c => '<span class="comp"><b lang="ja">' + esc(c.part) + "</b> " + esc(c.meaning) + "</span>").join("") + "</dd></div>" : "") +
         (info.formation && info.formationSource ? "<div><dt>형성 원리</dt><dd>" + esc(info.formation) + "</dd></div>" : "") +
@@ -230,7 +229,7 @@ function draw() {
     : "";
 
   const related =
-    '<section class="kd-sec"><h4>' + roomLabel + " 단어 목록에서 이 한자가 쓰인 단어 <small class=\"hint\">" + words.length + "개</small></h4>" +
+    '<section class="kd-sec"><h4>이 한자가 쓰인 단어 <small class="hint">' + words.length + "개</small></h4>" +
       (words.length
         ? '<ul class="kd-words">' + words.slice(0, 12).map(v => '<li><b lang="ja">' + esc(v.word) + '</b> <span lang="ja">' + esc(v.reading || "") + "</span>" + sayBtn(v.reading || v.word, "단어 발음 듣기") + " <span class=\"hint\">" + esc(v.meaning) + "</span></li>").join("") + "</ul>" +
           (words.length > 12 ? '<p class="hint">나머지 ' + (words.length - 12) + "개는 단어 화면에서 이 한자로 검색해 보세요.</p>" : "")
@@ -247,8 +246,8 @@ function draw() {
   // 자료 정보: 화면 맨 아래에 작게 (어디서 가져왔고 무엇과 대조했는지)
   const naver = "https://hanja.dict.naver.com/#/search?query=" + encodeURIComponent(ch);
   const foot =
-    '<p class="kd-foot">자료 정보 · ' + roomLabel + " 단어 목록 " + words.length + "개 단어에 나오는 한자예요(JLPT는 공식 한자 급수 목록을 공개하지 않아요)." +
-      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기: KANJIDIC2 (CC BY-SA 4.0)" : "", "한국어 훈음: 공개 한자 자료 대조", info.parts && info.parts.length ? '모양 부품: KRADFILE (EDRDG, <a href="https://www.edrdg.org/edrdg/licence.html" target="_blank" rel="noopener">CC BY-SA 4.0</a>)' : "", info.meaning || info.mnemonic ? "뜻 설명·연상 이야기: 자체 제작 학습 자료" : ""].filter(Boolean).join(" · ") : "") +
+    '<p class="kd-foot">자료 정보' +
+      (info ? "<br>" + [info.strokesCheck ? "획순·획수: KanjiVG (CC BY-SA 3.0)" : "", info.readingsCheck ? "읽기: KANJIDIC2 (CC BY-SA 4.0)" : "", info.parts && info.parts.length ? '모양 부품: KRADFILE (EDRDG, <a href="https://www.edrdg.org/edrdg/licence.html" target="_blank" rel="noopener">CC BY-SA 4.0</a>)' : "", info.meaning || info.mnemonic ? "뜻 설명·연상 이야기: 자체 제작 학습 자료" : ""].filter(Boolean).join(" · ") : "") +
       '<br><a href="' + naver + '" target="_blank" rel="noopener">네이버 한자사전에서 보기</a></p>';
 
   const strokes = info ? '<section class="kd-sec"><h4>획순</h4><div id="kd-strokes"></div></section>' : "";

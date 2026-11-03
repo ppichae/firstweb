@@ -19,7 +19,7 @@ function render(app) {
 
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>오답 노트</h2><p>N3 방에서 틀린 문제가 자동으로 모여요. N1 방의 오답 노트와는 따로 저장돼요.</p></div>' +
+      '<div class="panel-head"><div><h2>오답 노트</h2></div>' +
         '<div class="progress">다시 풀 문제 <strong>' + openCount + "</strong> · 극복한 문제 <strong>" + (all.length - openCount) + "</strong></div></div>" +
       '<div class="toolbar">' + [["all", "전체"], ...Object.entries(AREA)].map(([k, l]) =>
         '<button type="button" class="chip" data-narea="' + k + '" aria-pressed="' + (ui.area === k) + '">' + l + " " + (counts[k] || 0) + "</button>").join("") + "</div>" +

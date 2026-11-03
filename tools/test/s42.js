@@ -40,7 +40,7 @@
     // 함께 보기
     await go("n3/together");
     check("함께 보기 두 사람", $$(".person").length === 2 && $(".person.is-me").textContent.includes("N3 학습자"));
-    check("동기화 안내", app().textContent.includes("자동 동기화는 되지 않아요"));
+    check("틀린 동기화 안내 없음", !app().textContent.includes("자동 동기화는 되지 않아요"));
     const me = $(".person.is-me");
     check("오늘 단어·문제·연속", me.textContent.includes("3회") && /오늘푼문제\d+문제/.test(me.textContent.replace(/\s/g, "")) && me.textContent.includes("1일"), me.querySelector(".person-facts").textContent);
     $("#name-edit").click(); await wait(50);
@@ -61,7 +61,7 @@
     check("N1 메뉴", tabs() === "홈|단어|문법|한자|독해|청해|오답 노트|시험 대비|모의고사|함께 보기|기록 관리", tabs());
     // 기록 관리 (N3)
     await go("n3/backup");
-    check("기록 관리 안내", app().textContent.includes("실시간 동기화는 지원하지 않아요"));
+    check("기록 관리에 틀린 동기화 안내 없음", !app().textContent.includes("실시간 동기화는 지원하지 않아요"));
     check("백업 버튼 3종", $$("[data-export]").map(b => b.textContent).join("|") === "N3 기록만 내려받기|N1 기록만|전체(N1+N3)");
     $("#b-export").click(); await wait(100);
     check("N3 백업 안내", $(".toast").textContent.includes("N3 백업 파일을 내려받았어요"));

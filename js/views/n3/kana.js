@@ -61,7 +61,6 @@ export function renderScript(el, app, data, script, ui) {
     '<div class="kana-head"><div class="progress">' + SCRIPTS[script] + ' 기본 글자 <strong>' + p.done + "</strong> / " + p.total + " 익힘 · 쓰기 연습 " + p.written + "글자</div>" +
       '<div class="bar" aria-hidden="true"><span style="width:' + (p.done / p.total * 100) + '%"></span></div>' +
       (p.complete ? '<span class="badge ok">' + SCRIPTS[script] + " 기본 글자 완료</span>" : "") + "</div>" +
-    '<p class="hint">퀴즈에서 두 번 이상 맞히고, 맞힌 횟수가 틀린 횟수보다 많으면 \'익힘\'으로 세요. ' + SCRIPTS[script] + " 진도는 " + (script === "hira" ? "가타카나" : "히라가나") + "와 따로 기록돼요.</p>" +
     '<div class="toolbar" role="tablist" aria-label="' + SCRIPTS[script] + ' 학습">' + SECTIONS.map(([k, l]) =>
       '<button type="button" class="chip" data-ksec="' + k + '" aria-pressed="' + (sec === k) + '">' + l + "</button>").join("") + "</div>" +
     '<div id="ksec" class="stack"></div>';
@@ -79,7 +78,7 @@ export function renderScript(el, app, data, script, ui) {
 function renderTable(box, data, script, table) {
   const rows = data.kana[table];
   box.innerHTML =
-    '<p class="hint">글자를 누르면 소리를 들을 수 있어요(기기에 일본어 음성이 있을 때). ' + esc(data.kanaNote || "") + "</p>" +
+    '<p class="hint">글자를 누르면 소리를 들을 수 있어요. 한국어 발음은 참고용이고, 실제 발음과 완전히 같지 않아요.</p>' +
     '<p class="p-state" id="voice-msg" role="status"></p>' +
     '<div class="kana-grid cols-' + rows[0].length + '">' + rows.map(r => r.map(c => {
       if (!c) return '<span class="kana empty" aria-hidden="true"></span>';
@@ -136,7 +135,7 @@ function renderQuiz(box, data, ui, opts) {
     '<div class="toolbar"><span class="hint">방식</span>' + [["read", "글자 보고 소리 고르기"], ["write", "소리 듣고(보고) 글자 고르기"]].map(([k, l]) =>
       '<button type="button" class="chip" data-kdir="' + k + '" aria-pressed="' + (q.dir === k) + '">' + l + "</button>").join("") + "</div>" +
     '<div class="toolbar"><span class="score" id="k-score"></span><button type="button" class="link-btn" id="k-new">새 문제</button></div>' +
-    '<p class="hint">답은 \'로마자 (한국어 발음)\'으로 보여 줘요. 예: ぶ → bu (부). ' + esc(data.kanaNote || "") + "</p>" +
+    '<p class="hint">답은 \'로마자 (한국어 발음)\'으로 보여 줘요. 한국어 발음은 참고용이고, 실제 발음과 완전히 같지 않아요.</p>' +
     '<div class="quiz" id="k-quiz"></div>';
   const pick = c => (key === "mix" ? (Math.random() < 0.5 ? "hira" : "kata") : key);
   const start = () => {
@@ -193,7 +192,7 @@ function renderWrite(box, data, script, ui) {
   const cur = ui.writeChar[script] || list[0][0];
   const written = n3store.get("kanaWritten")[script] || {};
   box.innerHTML =
-    '<p class="hint">글자를 고르고 아래 칸에 직접 써 보세요. 연한 가이드와 획순(KanjiVG)을 참고할 수 있어요. 자동으로 채점하지 않는 자유 연습이에요.</p>' +
+    '<p class="hint">자동으로 채점하지 않는 자유 연습이에요.</p>' +
     '<div class="kana-pick">' + list.map(c => {
       const k = show(c, script);
       return '<button type="button" class="kj' + (c[0] === cur ? " on" : "") + (written[c[0]] ? " done" : "") + '" data-wchar="' + esc(c[0]) + '" lang="ja" aria-pressed="' + (c[0] === cur) + '">' + esc(k) + "</button>";
@@ -222,7 +221,6 @@ const MIX = [["compare", "구별하기"], ["which", "어느 문자일까?"], ["m
 export function renderMixed(el, app, data, ui) {
   const sec = ui.sec.mix || "compare";
   el.innerHTML =
-    '<p class="hint">히라가나와 가타카나를 함께 익히는 곳이에요. 여기서 푼 문제도 각 문자 종류의 진도에 따로 기록돼요.</p>' +
     '<div class="toolbar" role="tablist" aria-label="문자 통합 학습">' + MIX.map(([k, l]) =>
       '<button type="button" class="chip" data-msec="' + k + '" aria-pressed="' + (sec === k) + '">' + l + "</button>").join("") + "</div>" +
     '<div id="msec" class="stack"></div>';

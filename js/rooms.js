@@ -33,14 +33,12 @@ sprint.needs = ["n1vocab", "sources"];
 export const ROOMS = {
   n1: {
     id: "n1", name: "N1 공부방", st: store, docTitle: "JLPT N1 合格!",
-    eyebrow: "日本語能力試験 · N1", title: 'JLPT N1 <span lang="ja">合格!</span>',
-    lede: "단어, 문법, 독해, 청해를 매일 조금씩. 틀린 문제는 자동으로 모아 두고, 시험 한 달 전에는 D-30 집중 모드로 마무리해요.",
+    title: 'JLPT N1 <span lang="ja">合格!</span>',
     views: [home, vocab, grammar, createKanjiView("kanji", "n1"), reading, listening, notes, sprint, mock, createTogetherView("together", "n1"), backup, createBadgesView("badges", "n1", "home")],
   },
   n3: {
     id: "n3", name: "N3 공부방", st: n3store, docTitle: "JLPT N3 合格!",
-    eyebrow: "日本語能力試験 · N3", title: 'JLPT N3 <span lang="ja">合格!</span>',
-    lede: "히라가나·가타카나와 N5·N4 기초부터 N3 단어·문법·한자, 시험 대비까지. 4주 추천 일정을 참고해서 원하는 순서로 공부해요.",
+    title: 'JLPT N3 <span lang="ja">合格!</span>',
     views: [n3home, n3roadmap, n3basics, n3vocab.view, n3grammar.view, createKanjiView("n3/kanji", "n3"), n3reading, n3listening, n3notes, n3practice, n3MockView, createTogetherView("n3/together", "n3"), createBackupView("n3/backup", "n3"), createBadgesView("n3/badges", "n3", "n3")],
   },
 };
@@ -61,7 +59,7 @@ function renderRooms(app) {
   const last = lastRoom();
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>급수 선택</h2><p>공부할 급수를 골라 주세요. N1과 N3는 진도, 오답, 단어장, 학습 기록이 따로 저장돼요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>급수 선택</h2><p>공부할 급수를 골라 주세요.</p></div></div>' +
       '<div class="rooms">' +
         roomCard("n1", summaryOf("n1"), "고급 단어·문법·한자 · 독해 · 청해 · 시험 대비(D-30) · 모의고사", last === "n1") +
         roomCard("n3", summaryOf("n3"), "히라가나·가타카나부터 N5·N4 기초 · N3 단어·문법·한자 · 시험 대비(D-30) · 모의고사", last === "n3") +
@@ -80,6 +78,5 @@ function roomCard(id, s, menu, isLast) {
 export const roomsView = {
   id: "rooms", label: "급수 선택", render: renderRooms,
   needs: ["n1vocab", "n1grammar", "n3vocab", "n3grammar", "n3basics", "sources"],
-  docTitle: "JLPT 合格!", eyebrow: "日本語能力試験", title: 'JLPT <span lang="ja">合格!</span>',
-  lede: "공부할 급수를 골라 주세요. N1과 N3 학습 기록은 서로 섞이지 않아요.",
+  docTitle: "JLPT 合格!", title: 'JLPT <span lang="ja">合格!</span>',
 };

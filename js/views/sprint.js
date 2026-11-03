@@ -6,7 +6,7 @@ import { esc, AREAS, today, addDays, diffDays, fmtDate, dateKey, shuffle } from 
 import { mountQuestion } from "../quiz.js";
 import { nextExam } from "../exam.js";
 import { reviewWordIds, openVocabMode } from "./vocab.js";
-import { unresolvedNotes } from "../stats.js";
+import { unresolvedNotes, moreHTML } from "../stats.js";
 import { renderItem as mountListening } from "./listening.js";
 import { passageTextHTML } from "./reading.js";
 import { stopAll } from "../speech.js";
@@ -194,7 +194,7 @@ function renderSetup(app, s) {
   const opt = (obj, cur) => Object.entries(obj).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? " selected" : "") + ">" + esc(typeof l === "string" ? l : l.label) + "</option>").join("");
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>D-30 FINAL SPRINT</h2><p>시험 한 달 전부터 매일 할 일을 정해 주는 집중 모드예요. 정보를 입력하면 진단 테스트 뒤에 계획을 만들어요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>D-30 FINAL SPRINT</h2></div></div>' +
       '<form class="setup card-box" id="setup" novalidate>' +
         '<div class="form-grid">' +
           '<div class="field"><label for="s-date">시험 날짜</label><input id="s-date" type="date" required value="' + esc(v.examDate) + '">' +
@@ -209,9 +209,9 @@ function renderSetup(app, s) {
         '<div class="toolbar"><button type="submit" class="btn">' + (s ? "저장하기" : "시작하기") + "</button>" +
           (s ? '<button type="button" class="btn ghost" id="s-cancel">취소</button>' : "") + "</div>" +
       "</form>" +
-      '<article class="card-box"><h3>이렇게 진행돼요</h3><ol class="phases-list">' + PHASES.map(p =>
+      moreHTML("이렇게 진행돼요", '<ol class="phases-list">' + PHASES.map(p =>
         "<li><b>D-" + p.from + " ~ D-" + p.to + "</b> " + esc(p.name) + ' <span class="hint">' + p.goals.map(esc).join(" · ") + "</span></li>").join("") + "</ol>" +
-        '<p class="hint">D-30보다 일찍 시작하면 D-22까지는 첫 구간 계획으로 공부해요.</p></article>' +
+        '<p class="hint">D-30보다 일찍 시작하면 D-22까지는 첫 구간 계획으로 공부해요.</p>') +
     "</section>";
 
   const cancel = app.querySelector("#s-cancel");
@@ -339,7 +339,7 @@ function renderDaily(app, s, left) {
 
       '<article class="card-box">' +
         '<div class="panel-head"><div><h3>오늘의 학습 · ' + fmtDate(plan.day) + "</h3>" +
-          '<p class="hint" id="plan-time">예상 ' + plan.minutes + "분 / 하루 목표 " + plan.budget + "분 · 진행률은 실제로 푼 문제와 복습 기록으로 자동 계산돼요.</p></div>" +
+          '<p class="hint" id="plan-time">예상 ' + plan.minutes + "분 / 하루 목표 " + plan.budget + "분</p></div>" +
           '<div class="progress">완료 <strong>' + plan.completed + " / " + plan.tasks.length + "</strong> (" + pctDone + "%)</div></div>" +
         '<div class="bar wide" aria-hidden="true"><span style="width:' + pctDone + '%"></span></div>' +
         '<ul class="tasks">' + plan.tasks.map(t =>
@@ -352,10 +352,9 @@ function renderDaily(app, s, left) {
             "</div>" +
             (t.complete ? "" : '<div class="task-actions"><button type="button" class="btn ghost sm" data-go="' + t.link + '">하러 가기</button></div>') +
           "</li>").join("") + "</ul>" +
-        '<p class="hint">못 한 일은 내일로 쌓이지 않아요. 계획은 매일 그날의 복습량과 남은 날짜로 새로 만들어져요.</p>' +
       "</article>" +
 
-      '<div class="home-grid">' +
+      moreHTML("오답·내일 추천·진단·설정 더 보기", '<div class="home-grid">' +
         '<article class="card-box"><h3>복습해야 할 오답</h3>' +
           (notes.length
             ? '<p class="hint">다시 풀 문제 ' + notes.length + "개 · 많이 틀린 순</p><ul class=\"mini-notes\">" + notes.slice(0, 3).map(n =>
@@ -389,7 +388,7 @@ function renderDaily(app, s, left) {
             ? '<span class="confirm">D-30 모드를 끝낼까요? 학습 기록은 남아요.</span><button type="button" class="btn sm danger" id="sp-reset-yes">끝내기</button><button type="button" class="link-btn" id="sp-reset-no">취소</button>'
             : '<button type="button" class="link-btn" id="sp-reset">D-30 모드 끝내기</button>') +
         "</div>" +
-      "</article>" +
+      "</article>") +
     "</section>";
 
   bindCommon(app);

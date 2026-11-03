@@ -92,7 +92,7 @@
     check("N3 시험일 설정", $(".dday-tile .dday").textContent === "D-31" && localStorage.getItem("n3lab:examDate") === JSON.stringify(PLUS31) && localStorage.getItem("n1lab:examDate") === JSON.stringify(PLUS30), $(".dday-tile .dday").textContent);
     check("N3 단어 칸(기존 기록)", $$(".tiles .tile")[0].textContent.includes("1"), $$(".tiles .tile")[0].textContent);
     const linkDeco = getComputedStyle($(".weeks a")).textDecorationLine;
-    check("N3 링크 밑줄 없음", linkDeco === "none", linkDeco + " / 열기: " + getComputedStyle($(".course .q-top a")).textDecorationLine);
+    check("N3 링크 밑줄 없음", linkDeco === "none", linkDeco);
     await go("n3/vocab");
     check("N3 단어 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "단어장|플래시카드|퀴즈" && $("#v-count").textContent.startsWith("733"), $("#v-count").textContent);
     await go("n3/grammar");

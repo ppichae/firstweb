@@ -29,10 +29,8 @@ export function createListeningView(cfg) {
     const used = Object.entries(types).filter(([k]) => all.some(it => it.type === k));
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>청해</h2><p>음성을 듣고 답을 고르세요. 스크립트와 해석은 필요할 때만 펼쳐 보세요.</p></div>' +
+        '<div class="panel-head"><div><h2>청해</h2></div>' +
           '<div class="toolbar">' + furiToggleHTML() + "</div></div>" +
-        // 자료 파일의 안내문(meta.note)은 그대로 두고, 화면에는 같은 내용을 자체 제작 자료 표현으로 보여 준다
-        '<p class="notice">스크립트는 연습용으로 새로 쓴 자체 제작 대화예요. 음성은 이 기기에 들어 있는 일본어 음성으로 읽어요. 「음성 설정」에서 더 자연스러운 음성과 속도를 고를 수 있어요. 실제 시험 음성과는 속도·억양이 조금 달라요.</p>' +
         '<div class="toolbar">' + [["all", "전체"], ...used].map(([k, l]) =>
           '<button type="button" class="chip" data-ltype="' + k + '" aria-pressed="' + (ui.type === k) + '">' + esc(l) + "</button>").join("") + "</div>" +
         '<div class="picker">' + items.map(it =>

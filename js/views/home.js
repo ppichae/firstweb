@@ -1,7 +1,7 @@
 // 홈 대시보드: 실제 학습 기록으로만 계산한 현황
 import { store } from "../store.js";
 import { esc, AREAS, pct, pctText } from "../util.js";
-import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW, statsHelpHTML } from "../stats.js";
+import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW, statsHelpHTML, moreHTML } from "../stats.js";
 import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal, vocabTouched } from "./vocab.js";
 import { grammarStudied, grammarTotal } from "./grammar.js";
 import { ddayTileHTML, bindDday } from "../dday.js";
@@ -9,7 +9,6 @@ import { growthCardHTML } from "../badges.js";
 import { weekCardHTML } from "../weekchart.js";
 import { EXAM_INFO, examCardHTML } from "../exam.js";
 import { sprintSummary } from "./sprint.js";
-import { syncActive } from "../sync.js";
 import { studyWeekHTML } from "../summary.js";
 
 function render(app) {
@@ -24,7 +23,7 @@ function render(app) {
 
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>오늘의 학습</h2><p>모든 숫자는 ' + (syncActive() ? "내 계정에 저장된" : "이 브라우저에 저장된") + ' 실제 학습 기록으로 계산해요.</p></div></div>' +
+      '<div class="panel-head"><div><h2>오늘의 학습</h2></div></div>' +
       studyWeekHTML(store, "N1") +
 
       '<div class="home-top">' +
@@ -42,9 +41,9 @@ function render(app) {
         tile("누적 문제 풀이", attempts.length, "문제") +
         tile("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "") +
       "</div>" +
-      statsHelpHTML("n1") +
       growthCardHTML("n1", "#badges") +
 
+      moreHTML("학습 기록 더 보기", statsHelpHTML("n1") +
       '<div class="home-grid">' +
         '<article class="card-box"><h3>영역별 정답률</h3><div class="meters">' +
           Object.entries(areas).map(([k, r]) =>
@@ -64,7 +63,7 @@ function render(app) {
 
       weekCardHTML(store) +
 
-      examCardHTML(EXAM_INFO, "N1") +
+      examCardHTML(EXAM_INFO, "N1")) +
     "</section>";
 
   app.onclick = e => {

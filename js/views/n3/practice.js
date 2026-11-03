@@ -66,8 +66,8 @@ function make(key, count) {
 
 // 메뉴 두 곳에서 쓴다: '시험 대비'(D-30 계획 · 영역별 연습)와 '모의고사'(시간 제한 테스트 · 결과 기록)
 const PAGES = {
-  exam: { id: "n3/exam", title: "시험 대비", lede: "D-30 계획으로 매일 할 일을 확인하고, 영역별로 연습해요.", tabs: [["plan", "D-30 계획"], ["drill", "영역별 연습"]] },
-  mock: { id: "n3/mock", title: "모의고사", lede: "시간을 재며 풀어 본 뒤 약한 유형을 확인해요. 어휘·문형 문제로 만든 연습 테스트예요.", tabs: [["test", "모의고사 풀기"], ["history", "결과 기록"]] },
+  exam: { id: "n3/exam", title: "시험 대비", tabs: [["plan", "D-30 계획"], ["drill", "영역별 연습"]] },
+  mock: { id: "n3/mock", title: "모의고사", note: "어휘·문형 문제로 만든 연습 테스트예요.", tabs: [["test", "모의고사 풀기"], ["history", "결과 기록"]] },
 };
 let page = "exam";
 
@@ -78,8 +78,8 @@ function render(app) {
   app.innerHTML =
     '<section class="panel">' +
       examNavHTML("n3", P.id) +
-      '<div class="panel-head"><div><h2>' + P.title + "</h2><p>" + P.lede + "</p></div></div>" +
-      (ui.mode === "plan" ? "" : '<p class="notice"><b>자체 제작 연습 문제</b>예요. N3 단어·문형 목록으로 자동으로 만든 문제라 실제 JLPT 기출문제나 공식 문제 형식이 아니에요.</p>') +
+      '<div class="panel-head"><div><h2>' + P.title + "</h2></div></div>" +
+      (P.note ? '<p class="hint">' + P.note + "</p>" : "") +
       '<div class="segmented" role="tablist" aria-label="' + P.title + '">' + P.tabs.map(([k, l]) => seg(k, l)).join("") + "</div>" +
       '<div id="mode" class="stack"></div>' +
     "</section>";

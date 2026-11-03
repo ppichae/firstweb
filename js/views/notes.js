@@ -20,7 +20,7 @@ function render(app) {
 
   app.innerHTML =
     '<section class="panel">' +
-      '<div class="panel-head"><div><h2>오답 노트</h2><p>틀린 문제는 모든 영역에서 자동으로 모여요. 다시 맞혀도 예전 기록은 그대로 남아요.</p></div>' +
+      '<div class="panel-head"><div><h2>오답 노트</h2></div>' +
         '<div class="progress">다시 풀 문제 <strong>' + openCount + "</strong> · 극복한 문제 <strong>" + (all.length - openCount) + "</strong></div></div>" +
       '<div class="toolbar">' + [["all", "전체"], ...Object.entries(AREAS)].map(([k, l]) =>
         '<button type="button" class="chip" data-narea="' + k + '" aria-pressed="' + (ui.area === k) + '">' + l + " " + (counts[k] || 0) + "</button>").join("") + "</div>" +

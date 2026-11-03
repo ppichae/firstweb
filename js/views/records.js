@@ -40,7 +40,7 @@ export function createRecordsView() {
 
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>내 기록</h2><p>학습 기록은 이 기기에 먼저 저장된 뒤 계정(서버)으로 보내져요. 다른 기기에서 로그인해도 이어서 공부할 수 있어요.</p></div>' +
+        '<div class="panel-head"><div><h2>내 기록</h2></div>' +
           '<div class="toolbar"><button type="button" class="btn ghost" id="rc-sync">지금 맞추기</button></div></div>' +
         flash + (err ? '<p class="notice pt-bad">서버에 연결하지 못했어요. (' + esc(err) + ")</p>" : "") +
 

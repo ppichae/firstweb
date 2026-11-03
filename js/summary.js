@@ -110,6 +110,6 @@ export function studyWeekOf(st) {
 export function studyWeekHTML(st, level) {
   const w = studyWeekOf(st);
   return '<p class="study-week">' + (w
-    ? '<span class="badge">' + level + " 학습 " + w.week + "주차</span> <small class=\"hint\">처음 공부한 날(" + w.first.slice(5).replace("-", "/") + ")부터 센 주차예요</small>"
-    : '<span class="badge">' + level + ' 학습 시작 전</span> <small class="hint">문제를 풀거나 카드를 복습한 날부터 1주차가 시작돼요</small>') + "</p>";
+    ? '<span class="badge">' + level + " 학습 " + w.week + "주차</span>"
+    : '<span class="badge">' + level + ' 학습 시작 전</span>') + "</p>";
 }

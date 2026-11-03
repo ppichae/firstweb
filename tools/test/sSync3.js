@@ -29,7 +29,7 @@
 
     // 기록 관리 화면: 계정 모드 안내
     window.location.hash = "backup"; await until(() => $("#b-file"), 15000);
-    check("기록 관리: 계정에 저장된다는 안내", app().textContent.includes("내 계정에 저장돼요") && !app().textContent.includes("실시간 동기화는 지원하지 않아요"));
+    check("기록 관리: 계정에 저장된다는 안내", app().textContent.includes("내 기록에서 관리해요") && !app().textContent.includes("실시간 동기화는 지원하지 않아요"));
     check("기록 관리: 내 기록 화면 링크", !!$('a[href="#records"]'));
     check("휴대폰 폭: 기록 관리 넘치지 않음", noOverflow());
 

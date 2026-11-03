@@ -51,7 +51,7 @@ export function createReadingView(cfg) {
     const usedTypes = [...new Set(all.map(p => p.type))];
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>독해</h2><p>지문을 고르고 읽은 뒤 문제를 푸세요. 해석은 원할 때만 펼쳐요.</p></div>' +
+        '<div class="panel-head"><div><h2>독해</h2></div>' +
           '<div class="toolbar">' + furiToggleHTML() + "</div></div>" +
         (all.length ? "" : '<p class="empty">독해 지문이 아직 없어요.</p>') +
         '<div class="toolbar">' + ["all", ...usedTypes].map(k =>

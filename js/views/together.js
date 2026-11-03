@@ -15,9 +15,7 @@ export function createTogetherView(id, roomId) {
     const cheers = allCheers().slice(0, 12);
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>함께 보기</h2><p>두 사람의 학습 현황을 나란히 보고, 서로 응원 메시지를 남겨요.</p></div></div>' +
-        '<p class="notice"><b>자동 동기화는 되지 않아요.</b> 이 사이트는 서버 없이 각 브라우저에 기록을 저장해요. ' +
-          "같은 기기·같은 브라우저에서 둘 다 공부하면 바로 보이고, 서로 다른 기기라면 상대가 보낸 백업 파일을 '기록 관리'에서 불러와야 상대 기록이 보여요.</p>" +
+        '<div class="panel-head"><div><h2>함께 보기</h2></div></div>' +
         (ui.msg ? '<p class="toast" role="status">' + esc(ui.msg) + "</p>" : "") +
         '<div class="people">' + people.map(p => personCard(p, p.id === me)).join("") + "</div>" +
         '<article class="card-box"><h3>응원 메시지 보내기</h3>' +

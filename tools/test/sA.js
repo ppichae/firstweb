@@ -38,7 +38,7 @@
     $('[data-mode="quiz"]').click(); await wait(200);
     $$(".q").forEach(q => q.querySelectorAll(".opt")[0].click()); await wait(100);
     const fb = $$(".fb").map(f => f.textContent).join(" ");
-    check("퀴즈 해설 문구(뜻이에요)", !BAD.test(fb) && (fb.includes("뜻이에요") || fb.includes("읽기예요") || fb.includes("정답이에요")), (fb.match(BAD) || [""])[0]);
+    check("퀴즈 해설 문구(뜻이에요)", !BAD.test(fb) && (fb.includes("정답이에요") || fb.includes("오답이에요")), (fb.match(BAD) || [""])[0]);
     await go("n3/vocab");
     check("N3 단어: 빈 '헷갈리는 단어' 탭 숨김", !$('[data-mode="compare"]'));
     // 한자 창 별표

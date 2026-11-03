@@ -86,7 +86,7 @@
     $('[data-basics="kata"]').click(); await wait(1300);
     check("일정에서 가타카나로 바로 이동", location.hash === "#n3/basics" && $('[data-mode="kata"]').getAttribute("aria-selected") === "true");
     location.hash = "n3"; await wait(1300);
-    check("홈 과정 칸: 히라가나·가타카나 따로", $$(".course-rows div").some(d => d.textContent.includes("히라가나 기본 글자")) && $$(".course-rows div").some(d => d.textContent.includes("가타카나 기본 글자")));
+    check("홈에 로드맵과 겹치던 과정 칸 없음", !$(".course-rows"));
     check("가로 스크롤 없음", document.documentElement.scrollWidth <= W());
   } catch (e) { log.push("ERROR " + e.message + " @ " + (e.stack || "").split("\n")[1]); }
   return log.join("\n");

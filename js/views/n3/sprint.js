@@ -6,7 +6,7 @@ import { esc, today, addDays, diffDays, fmtDate, dateKey } from "../../util.js";
 import { PHASES, phaseFor } from "../sprint.js";
 import { examTarget } from "../../dday.js";
 import { nextExam } from "../../exam.js";
-import { noteEntries } from "../../stats.js";
+import { noteEntries, moreHTML } from "../../stats.js";
 import { afterExamHTML } from "../../examHub.js";
 import { n3vocab } from "./study.js";
 
@@ -117,7 +117,7 @@ export function renderN3Plan(el) {
       '<li class="' + (i < idx ? "past" : i === idx ? "now" : "") + '"><b>D-' + p.from + "~" + p.to + "</b><span>" + esc(p.name) + "</span></li>").join("") + "</ol>" +
     '<article class="card-box">' +
       '<div class="panel-head"><div><h3>오늘의 학습 · ' + fmtDate(plan.day) + "</h3>" +
-        '<p class="hint">예상 ' + plan.minutes + "분 / 하루 " + s.minutes + "분 · 실제로 푼 문제와 복습 기록으로 자동으로 완료돼요.</p></div>" +
+        '<p class="hint">예상 ' + plan.minutes + "분 / 하루 " + s.minutes + "분</p></div>" +
         '<div class="progress">완료 <strong>' + plan.completed + " / " + plan.tasks.length + "</strong> (" + pctDone + "%)</div></div>" +
       '<div class="bar wide" aria-hidden="true"><span style="width:' + pctDone + '%"></span></div>' +
       '<ul class="tasks">' + plan.tasks.map(t =>
@@ -130,7 +130,6 @@ export function renderN3Plan(el) {
           "</div>" +
           (t.complete ? "" : '<div class="task-actions"><button type="button" class="btn ghost sm" data-go="' + t.link + '">하러 가기</button></div>') +
         "</li>").join("") + "</ul>" +
-      '<p class="hint">못 한 일은 내일로 쌓이지 않아요. 계획은 매일 그날의 복습량과 남은 날짜로 새로 만들어져요.</p>' +
     "</article>" +
     '<article class="card-box"><h3>설정</h3><p class="hint">시험일 ' + fmtDate(s.examDate) + " · 하루 " + s.minutes + "분</p>" +
       '<div class="toolbar"><button type="button" class="btn ghost sm" id="n3s-edit">설정 바꾸기</button>' +
@@ -147,7 +146,6 @@ function setup(el, s) {
   el.innerHTML =
     '<form class="setup card-box" id="n3s-form" novalidate>' +
       "<h3>D-30 계획 " + (s ? "설정 바꾸기" : "시작하기") + "</h3>" +
-      '<p class="hint">시험일과 하루 공부 시간을 정하면 매일 할 일을 만들어 줘요. 시험 30일 전보다 일찍 시작하면 D-22까지는 첫 구간 계획으로 공부해요.</p>' +
       '<div class="form-grid">' +
         '<div class="field"><label for="n3s-date">시험 날짜</label><input id="n3s-date" type="date" required min="' + addDays(today(), 1) + '" value="' + esc(v.examDate) + '"></div>' +
         '<div class="field"><label for="n3s-min">하루 공부 시간</label><select id="n3s-min">' + MINUTES.map(m => '<option value="' + m + '"' + (m === v.minutes ? " selected" : "") + ">" + (m >= 60 ? Math.floor(m / 60) + "시간" + (m % 60 ? " " + m % 60 + "분" : "") : m + "분") + "</option>").join("") + "</select></div>" +
@@ -155,8 +153,8 @@ function setup(el, s) {
       '<p class="form-error" id="n3s-err" role="alert" hidden></p>' +
       '<div class="toolbar"><button type="submit" class="btn">' + (s ? "저장하기" : "시작하기") + "</button>" + (s ? '<button type="button" class="btn ghost" id="n3s-cancel">취소</button>' : "") + "</div>" +
     "</form>" +
-    '<article class="card-box"><h3>이렇게 진행돼요</h3><ol class="phases-list">' + PHASES.map(p =>
-      "<li><b>D-" + p.from + " ~ D-" + p.to + "</b> " + esc(p.name) + ' <span class="hint">' + p.goals.map(esc).join(" · ") + "</span></li>").join("") + "</ol></article>";
+    moreHTML("이렇게 진행돼요", '<ol class="phases-list">' + PHASES.map(p =>
+      "<li><b>D-" + p.from + " ~ D-" + p.to + "</b> " + esc(p.name) + ' <span class="hint">' + p.goals.map(esc).join(" · ") + "</span></li>").join("") + "</ol>");
   const cancel = el.querySelector("#n3s-cancel");
   if (cancel) cancel.onclick = () => { ui.editing = false; renderN3Plan(el); };
   el.querySelector("#n3s-form").onsubmit = e => {

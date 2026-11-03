@@ -27,9 +27,8 @@ function render(app) {
   app.innerHTML =
     '<section class="panel">' +
       '<div class="panel-head"><div><h2>기초 과정</h2>' +
-        "<p>히라가나·가타카나부터 기본 문장, 동사·형용사 활용까지 N3 공부에 꼭 필요한 바탕을 빠르게 익혀요.</p></div>" +
+        "</div>" +
         '<div class="progress">히라가나 <strong>' + h.done + "</strong>/" + h.total + " · 가타카나 <strong>" + k.done + "</strong>/" + k.total + " · 단원 <strong>" + done + "</strong>/" + units.length + "</div></div>" +
-      '<p class="notice"><b>자체 제작 학습 자료</b>예요. 실제 시험 형식은 홈의 「JLPT 공식 문제 예시」에서 볼 수 있어요.</p>' +
       '<div class="segmented" role="tablist" aria-label="기초 과정">' +
         seg("hira", "히라가나") + seg("kata", "가타카나") + seg("mix", "문자 통합 학습") + seg("units", "핵심 단원") + seg("pending", "단어·한자") +
       "</div>" +

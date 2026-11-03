@@ -129,7 +129,7 @@ export function createPartnerView() {
 
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>공부 파트너</h2><p>서로의 학습 현황을 보고 응원해요. 상대에게는 닉네임·급수·학습 요약만 보이고, 오답이나 즐겨찾기 같은 개인 기록은 보이지 않아요.</p></div>' +
+        '<div class="panel-head"><div><h2>공부 파트너</h2><p>상대에게는 닉네임·급수·학습 요약만 보여요.</p></div>' +
           '<div class="toolbar"><a class="btn ghost" href="#profile">프로필 바꾸기</a><button type="button" class="btn ghost" id="pt-refresh">새로고침</button></div></div>' +
         flash + body +
         '<p class="hint">학습 요약은 계정에 저장된 기록(이 기기에서 아직 보내지 않은 기록 포함)으로 계산해요.</p>' +

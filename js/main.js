@@ -27,9 +27,7 @@ const app = document.getElementById("app");
 const tablist = document.getElementById("tablist");
 const roomSwitch = document.getElementById("room-switch");
 const header = {
-  eyebrow: document.getElementById("site-eyebrow"),
   title: document.getElementById("site-title"),
-  lede: document.getElementById("site-lede"),
 };
 
 let currentView = null;
@@ -59,9 +57,7 @@ function resolve(id) {
 function drawRoom(room, view) {
   const info = room || (view && view.docTitle ? view : roomsView);   // 방 밖의 화면(급수 선택·로그인)은 그 화면의 제목을 쓴다
   document.title = info.docTitle;
-  header.eyebrow.textContent = info.eyebrow;
   header.title.innerHTML = info.title;
-  header.lede.textContent = info.lede;
   tablist.innerHTML = (room ? room.views.filter(v => !v.hidden).map(v =>
     '<a class="tab" href="#' + v.id + '" data-view="' + v.id + '">' + esc(v.label) +
     "</a>").join("") : "");   // 메뉴는 한글만 표시한다

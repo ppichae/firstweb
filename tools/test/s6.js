@@ -56,7 +56,7 @@
     const nb = sp().querySelector("[data-sp-nums]"); nb.checked = true; nb.dispatchEvent(new window.Event("change"));
     check("획 번호 보기", sp().querySelector(".sp-svg").classList.contains("show-nums") && sp().querySelectorAll(".nums text").length === 6);
     check("출처 표시", sp().textContent.includes("KanjiVG (CC BY-SA 3.0)"));
-    check("획수 대조 표시", dlg().textContent.includes("KanjiVG 획순 데이터와 일치"));
+    check("획수 자료 출처 표시", dlg().querySelector(".kd-foot").textContent.includes("KanjiVG"));
     const dr = dlg().getBoundingClientRect();
     check("창 안 넘침", dr.right <= W() + 1 && dlg().scrollWidth <= dlg().clientWidth + 1);
     dlg().querySelector('[data-goto-kanji="含"]').click(); await wait(300);

@@ -148,7 +148,7 @@ export function createBadgesView(id, roomId, homeId) {
       const goals = dailyGoals(roomId);
       app.innerHTML =
         '<section class="panel">' +
-          '<div class="panel-head"><div><h2>배지와 레벨</h2><p>' + (roomId === "n1" ? "N1" : "N3") + " 방의 기록으로만 계산해요. 다른 방의 기록과 섞이지 않아요.</p></div>" +
+          '<div class="panel-head"><div><h2>배지와 레벨</h2></div>' +
             '<a class="btn ghost sm" href="#' + homeId + '">홈으로</a></div>' +
           '<article class="card-box"><div class="growth-lv"><span class="lv-emoji" aria-hidden="true">' + lv.emoji + '</span><div><div class="lv-title">Lv ' + lv.lv + " · " + esc(lv.title) + "</div>" +
             '<div class="bar wide" aria-hidden="true"><span style="width:' + (lv.max ? 100 : Math.round(lv.into / lv.need * 100)) + '%"></span></div>' +
