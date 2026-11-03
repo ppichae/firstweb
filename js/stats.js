@@ -82,6 +82,26 @@ export function weakAreas() {
   return judgedAreas().filter(([, r]) => r.rate < WEAK_BELOW).sort((a, b) => a[1].rate - b[1].rate);
 }
 
+// 홈 숫자 칸: 아이콘, 큰 숫자, 원형 그래프(pct가 있을 때). tone: mint·sky·lav·peach
+const ICONS = {
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 21H20v-3"/>',
+  pen: '<path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/>',
+  flame: '<path d="M12 3c.6 3.5 5.5 5.8 5.5 11a5.5 5.5 0 0 1-11 0c0-2.2 1-3.6 2.2-4.8.3 1.5 1 2.3 1.8 2.8C10.2 9 10.5 5.800 12 3z"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+};
+export function statTileHTML(label, value, sub, opts = {}) {
+  const R = 25, C = 2 * Math.PI * R, pct = opts.pct;
+  const ring = pct === undefined || pct === null ? "" :
+    '<svg class="stat-ring" viewBox="0 0 60 60" aria-hidden="true"><circle class="ring-bg" cx="30" cy="30" r="' + R + '"/>' +
+    '<circle class="ring-fg" cx="30" cy="30" r="' + R + '" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - Math.min(100, Math.max(0, pct)) / 100)).toFixed(1) + '"/>' +
+    '<text x="30" y="30">' + Math.round(pct) + "</text></svg>";
+  return '<article class="tile stat-tile tone-' + (opts.tone || "mint") + '"><div class="stat-head"><span class="stat-icon" aria-hidden="true">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONS[opts.icon] || ICONS.book) + "</svg></span>" +
+    '<span class="tile-label">' + label + "</span></div>" +
+    '<div class="stat-main"><span class="tile-value">' + String(value).replace(/[&<>"']/g, "") + '</span><span class="tile-sub">' + String(sub).replace(/[&<>"']/g, "") + "</span></div>" + ring + "</article>";
+}
+
 // 가끔만 보는 정보를 접어 두는 칸 (누르면 펼쳐진다)
 export const moreHTML = (label, inner) => '<details class="more-box"><summary>' + label + "</summary>" + inner + "</details>";
 

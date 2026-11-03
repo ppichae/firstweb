@@ -15,6 +15,7 @@ function ensure() {
   sheet = document.createElement("dialog");
   sheet.className = "m-sheet";
   sheet.setAttribute("aria-label", "더보기");
+  sheet.tabIndex = -1;
   document.body.appendChild(sheet);
   sheet.addEventListener("click", e => {
     if (e.target === sheet || e.target.closest("[data-m-close]") || e.target.closest("a")) { sheet.close(); return; }
@@ -39,14 +40,17 @@ function openSheet() {
     '<div class="q-top"><h3>더보기</h3><button type="button" class="btn ghost sm" data-m-close>닫기</button></div>' +
     '<div class="m-grid">' + others.map(v =>
       '<a class="m-link" href="#' + v.id + '"' + (v === view ? ' aria-current="page"' : "") + ">" + esc(v.label) + "</a>").join("") + "</div>" +
-    '<div class="m-actions">' +
-      '<a class="theme-toggle" href="#rooms">방 바꾸기</a>' +
-      (partner ? '<a class="theme-toggle" href="#partner">' + esc(partner.textContent) + "</a>" : "") +
-      (chip ? '<a class="sync-chip' + (chip.classList.contains("warn") ? " warn" : "") + '" href="#records">' + esc(chip.textContent) + "</a>" : "") +
-      (theme ? '<button type="button" class="theme-toggle" data-m-proxy="theme-toggle">' + esc(theme.textContent) + "</button>" : "") +
-      (signOut ? '<button type="button" class="theme-toggle" data-m-proxy="sign-out">로그아웃' + (name ? " (" + esc(name.textContent) + ")" : "") + "</button>" : "") +
+    // 메뉴는 둥근 칸, 설정은 목록 줄로 구분한다
+    '<div class="m-rows">' +
+      '<a class="m-row" href="#rooms">방 바꾸기</a>' +
+      (partner ? '<a class="m-row" href="#partner">' + esc(partner.textContent) + "</a>" : "") +
+      (chip ? '<a class="m-row' + (chip.classList.contains("warn") ? " warn" : "") + '" href="#records">' + esc(chip.textContent) + "</a>" : "") +
+      (theme ? '<button type="button" class="m-row" data-m-proxy="theme-toggle">' + esc(theme.textContent) + "</button>" : "") +
+      (signOut ? '<button type="button" class="m-row" data-m-proxy="sign-out">로그아웃' + (name ? " (" + esc(name.textContent) + ")" : "") + "</button>" : "") +
     "</div>";
   if (sheet.showModal) sheet.showModal(); else sheet.setAttribute("open", "");
+  // 창을 열면 브라우저가 첫 버튼(닫기)에 초점을 줘서 테두리가 생긴다. 창 자체에 초점을 둔다
+  sheet.focus();
 }
 
 // 화면을 옮길 때마다 부른다. 방 밖의 화면(로그인·급수 선택·공부 파트너·내 기록)에서는 하단 메뉴를 쓰지 않는다

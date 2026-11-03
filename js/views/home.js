@@ -1,7 +1,7 @@
 // 홈 대시보드: 실제 학습 기록으로만 계산한 현황
 import { store } from "../store.js";
 import { esc, AREAS, pct, pctText } from "../util.js";
-import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW, statsHelpHTML, moreHTML } from "../stats.js";
+import { areaStats, unresolvedNotes, weakAreas, judgedAreas, MIN_FOR_WEAKNESS, WEAK_BELOW, statsHelpHTML, moreHTML, statTileHTML } from "../stats.js";
 import { reviewWordIds, openVocabMode, vocabStudied, vocabTotal, vocabTouched } from "./vocab.js";
 import { grammarStudied, grammarTotal } from "./grammar.js";
 import { ddayTileHTML, bindDday } from "../dday.js";
@@ -36,11 +36,12 @@ function render(app) {
       "</div>" +
 
       '<div class="tiles">' +
-        tile("학습한 단어", vocabStudied(), "/ " + vocabTotal() + "개 · 공부 중 " + vocabTouched() + "개") +
-        tile("공부한 문법", grammarStudied(), "/ " + grammarTotal() + "개") +
-        tile("누적 문제 풀이", attempts.length, "문제") +
-        tile("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "") +
+        statTileHTML("학습한 단어", vocabStudied(), "/ " + vocabTotal() + "개 · 공부 중 " + vocabTouched() + "개", { tone: "mint", icon: "book", pct: vocabTotal() ? vocabStudied() / vocabTotal() * 100 : 0 }) +
+        statTileHTML("공부한 문법", grammarStudied(), "/ " + grammarTotal() + "개", { tone: "sky", icon: "pen", pct: grammarTotal() ? grammarStudied() / grammarTotal() * 100 : 0 }) +
+        statTileHTML("누적 문제 풀이", attempts.length, "문제", { tone: "lav", icon: "check" }) +
+        statTileHTML("전체 정답률", attempts.length ? pct(correct, attempts.length) + "%" : "기록 없음", attempts.length ? correct + "문제 정답" : "", { tone: "peach", icon: "target", pct: attempts.length ? pct(correct, attempts.length) : null }) +
       "</div>" +
+      weekCardHTML(store) +
       growthCardHTML("n1", "#badges") +
 
       moreHTML("학습 기록 더 보기", statsHelpHTML("n1") +
@@ -60,9 +61,6 @@ function render(app) {
               : '<p class="hint">아직 판단할 기록이 부족해요. 영역별로 ' + MIN_FOR_WEAKNESS + "문제 이상 풀면 약점을 보여 드려요.</p>") +
         "</article>" +
       "</div>" +
-
-      weekCardHTML(store) +
-
       examCardHTML(EXAM_INFO, "N1")) +
     "</section>";
 
@@ -71,10 +69,6 @@ function render(app) {
     if (g) { e.preventDefault(); openVocabMode(g.dataset.goto); }
   };
   bindDday(app, store, () => render(app));
-}
-
-function tile(label, value, sub) {
-  return '<article class="tile"><span class="tile-label">' + label + '</span><span class="tile-value">' + esc(value) + '</span><span class="tile-sub">' + esc(sub) + "</span></article>";
 }
 
 export default { id: "home", label: "홈", render };

@@ -3,7 +3,7 @@ import { EXTRA } from "../../data.js";
 import { n3store } from "../../store.js";
 import { esc, pct } from "../../util.js";
 import { daysUntil, examCardHTML, EXAM_INFO_N3 } from "../../exam.js";
-import { noteEntries, statsHelpHTML, moreHTML } from "../../stats.js";
+import { noteEntries, statsHelpHTML, moreHTML, statTileHTML } from "../../stats.js";
 import { ddayTileHTML, bindDday, examTarget } from "../../dday.js";
 import { level, streak, todayCount, XP_RULES } from "./game.js";
 import { unitDone, coreUnits, openBasics } from "./basics.js";
@@ -52,13 +52,14 @@ function render(app) {
       "</div>" +
 
       '<div class="tiles">' +
-        tile("학습한 단어", n3vocab.studiedCount(), "/ " + n3vocab.total() + "개 · 공부 중 " + n3vocab.touchedCount() + "개") +
-        tile("공부한 문법", n3grammar.studiedCount(), "/ " + n3grammar.total() + "개") +
-        tile("누적 문제 풀이", attempts.length, attempts.length ? "정답률 " + pct(correct, attempts.length) + "%" : "문제") +
-        tile("연속 학습", streak() + "일", "오늘 학습 " + todayCount() + "회") +
+        statTileHTML("학습한 단어", n3vocab.studiedCount(), "/ " + n3vocab.total() + "개 · 공부 중 " + n3vocab.touchedCount() + "개", { tone: "mint", icon: "book", pct: n3vocab.total() ? n3vocab.studiedCount() / n3vocab.total() * 100 : 0 }) +
+        statTileHTML("공부한 문법", n3grammar.studiedCount(), "/ " + n3grammar.total() + "개", { tone: "sky", icon: "pen", pct: n3grammar.total() ? n3grammar.studiedCount() / n3grammar.total() * 100 : 0 }) +
+        statTileHTML("누적 문제 풀이", attempts.length, attempts.length ? "정답률 " + pct(correct, attempts.length) + "%" : "문제", { tone: "lav", icon: "check" }) +
+        statTileHTML("연속 학습", streak() + "일", "오늘 학습 " + todayCount() + "회", { tone: "peach", icon: "flame" }) +
       "</div>" +
+      weekCardHTML(n3store) +
       growthCardHTML("n3", "#n3/badges") +
-      moreHTML("학습 기록·일정 더 보기", statsHelpHTML("n3") + weekCardHTML(n3store) +
+      moreHTML("학습 기록·일정 더 보기", statsHelpHTML("n3") +
       '<article class="card-box"><div class="q-top"><h3>4주 추천 일정 <small class="hint">시험일 기준</small></h3><a href="#n3/roadmap">N5→N3 로드맵 보기 →</a></div>' +
         (week ? '<p class="hint">지금은 <b>' + week + "주차</b>쯤이에요.</p>" : "") +
         '<ol class="weeks">' + WEEKS.map(w =>
@@ -79,9 +80,6 @@ function render(app) {
   bindDday(app, n3store, () => render(app));
 }
 
-function tile(label, value, sub) {
-  return '<article class="tile"><span class="tile-label">' + label + '</span><span class="tile-value">' + esc(value) + '</span><span class="tile-sub">' + esc(sub) + "</span></article>";
-}
 
 
 export default { id: "n3", label: "홈", needs: ["n3basics", "n3vocab", "n3grammar", "sources", "kanji", "kanjiN3"], render };

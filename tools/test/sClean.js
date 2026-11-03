@@ -19,7 +19,7 @@
     check("N3 홈: 지금 할 일·숫자 칸·성장은 바로 보임", visible($(".todo-tile")) && visible($(".tiles")) && visible($(".growth")));
     check("N3 홈: 로드맵과 겹치던 과정 칸 없음", !$(".courses"));
     more.querySelector("summary").click(); await wait(100);
-    check("N3 홈: 펼치면 4주 일정·7일 그래프·시험 구성·숫자 기준", more.open && visible(more.querySelector(".weeks")) && more.textContent.includes("최근 7일") && more.textContent.includes("N3 시험 구성") && !!more.querySelector(".stat-help"));
+    check("N3 홈: 펼치면 4주 일정·7일 그래프·시험 구성·숫자 기준", more.open && visible(more.querySelector(".weeks")) && app().textContent.includes("최근 7일") && more.textContent.includes("N3 시험 구성") && !!more.querySelector(".stat-help"));
     // 단어 카드
     await go("n3/vocab");
     const card = $$(".card").find(c => c.querySelector(".word").textContent === "計算");

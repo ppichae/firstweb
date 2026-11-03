@@ -159,7 +159,7 @@ export function createBadgesView(id, roomId, homeId) {
           "</article>" +
           '<article class="card-box" id="lv-view">' + levelViewHTML(roomId, viewing[roomId] || lv.lv, lv) + "</article>" +
           '<article class="card-box"><h3>오늘의 작은 목표</h3><ul class="goals">' + goals.map(g =>
-            '<li class="' + (g.done ? "done" : "") + '"><span>' + (g.done ? "✅ " : "⬜ ") + esc(g.label) + "</span><b>" + g.n + " / " + g.need + "</b></li>").join("") + "</ul></article>" +
+            '<li class="' + (g.done ? "done" : "") + '"><span><i class="goal-dot" aria-hidden="true"></i>' + (g.done ? '<span class="sr-only">완료: </span>' : "") + esc(g.label) + "</span><b>" + g.n + " / " + g.need + "</b></li>").join("") + "</ul></article>" +
           CATS.map(([c, label]) => {
             const items = list.filter(b => b.cat === c && !b.pending);   // 아직 받을 수 없는 배지(자료가 없는 영역)는 보여 주지 않는다
             if (!items.length) return "";

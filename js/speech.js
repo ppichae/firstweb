@@ -122,7 +122,7 @@ export function sayBtn(ja, label = "발음 듣기") {
   if (!ja) return "";
   // 카드 버튼 안에도 넣을 수 있게 button 대신 role="button"인 span을 쓴다 (키보드 Enter·Space도 처리)
   return '<span class="say-btn" role="button" tabindex="0" data-say-ja="' + String(ja).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;") +
-    '" aria-label="' + label + '" title="' + label + '"><span aria-hidden="true">🔊</span></span>';
+    '" aria-label="' + label + '" title="' + label + '"><svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.500v5h3.500l4.500 4v-13l-4.500 4z"/><path d="M15.500 9a4.200 4.200 0 0 1 0 6"/><path d="M18.200 6.300a8 8 0 0 1 0 11.400"/></svg></span>';
 }
 
 let sayingBtn = null;

@@ -174,6 +174,9 @@ export const rerender = route;
 
 async function start() {
   installSayButtons();   // 🔊 발음 버튼은 어느 화면에서나 이 한 곳에서 처리한다
+  // 초점 테두리는 키보드로 움직일 때만 보여 준다 (마우스·터치 중에 화면이 초점을 옮겨도 테두리가 생기지 않게)
+  addEventListener("pointerdown", () => document.documentElement.setAttribute("data-pointer", ""), true);
+  addEventListener("keydown", e => { if (e.key === "Tab") document.documentElement.removeAttribute("data-pointer"); }, true);
   installFuriToggle();   // 후리가나 보이기·숨기기 (이 기기에 기억)
   try {
     await loadData();
