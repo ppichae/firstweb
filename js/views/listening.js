@@ -2,10 +2,11 @@
 import { DB, EXTRA } from "../data.js";
 import { store, n3store } from "../store.js";
 import { award } from "../game.js";
-import { esc, badges } from "../util.js";
+import { esc } from "../util.js";
 import { mountQuestion } from "../quiz.js";
 import { getJaVoices, Player, stopAll, sayBtn, voiceSettingsHTML, bindVoiceSettings, orderedVoices, VOICE_HELP } from "../speech.js";
 import { rubyHTML, furiToggleHTML } from "../examples.js";
+import { pickListHTML, handlePickList, detailNavHTML, PICK_PAGE } from "./pickList.js";
 
 let player = null;   // 지금 화면의 플레이어 (한 번에 하나)
 
@@ -18,44 +19,60 @@ function solvedCount(item, st) {
 
 // cfg: { id, roomId, st(저장소), data()(자료), needs } — N1 방과 N3 방이 같은 화면을 쓴다
 export function createListeningView(cfg) {
-  const ui = { type: "all", current: null };
+  // current가 있으면 풀이 화면, 없으면 목록 화면을 보여 준다
+  const ui = { type: "all", status: "all", shown: PICK_PAGE, current: null };
   const data = () => cfg.data() || { meta: { types: {} }, items: [] };
 
   function render(app) {
     if (player) { player.stop(); player = null; }
+    stopAll();
     const d = data(), types = d.meta.types || {}, all = d.items || [];
     const items = all.filter(it => ui.type === "all" || it.type === ui.type);
-    if (!items.find(it => it.id === ui.current)) ui.current = items.length ? items[0].id : null;
     const used = Object.entries(types).filter(([k]) => all.some(it => it.type === k));
+    const cur = all.find(it => it.id === ui.current);
+    if (cur) {
+      const pos = items.indexOf(cur) >= 0 ? items : all, index = pos.indexOf(cur);
+      app.innerHTML =
+        '<section class="panel">' + detailNavHTML(index, pos.length) +
+          '<div class="toolbar">' + furiToggleHTML() + "</div>" +
+          '<div id="item"></div>' +
+          (index < pos.length - 1 ? '<button type="button" class="btn next-passage" data-dnav="next" hidden>다음 문제 →</button>' : "") +
+        "</section>";
+      app.onclick = e => {
+        const n = e.target.closest("[data-dnav]");
+        if (!n) return;
+        ui.current = n.dataset.dnav === "list" ? null : n.dataset.dnav === "prev" ? pos[index - 1].id : pos[index + 1].id;
+        render(app); window.scrollTo(0, 0);
+      };
+      let answered = 0;
+      renderItem(app.querySelector("#item"), cur, {
+        types, st: cfg.st, roomId: cfg.roomId,
+        onAnswer: () => { answered++; const b = app.querySelector(".next-passage"); if (b && answered >= cur.questions.length) b.hidden = false; },
+      });
+      return;
+    }
+    const rows = items.map(it => ({ id: it.id, type: types[it.type] || it.type, title: String(it.title).replace(/\{([^|}]+)\|[^}]+\}/g, "$1"), meta: "난이도 " + levelDots(it.difficulty), solved: solvedCount(it, cfg.st), total: it.questions.length }));
     app.innerHTML =
       '<section class="panel">' +
-        '<div class="panel-head"><div><h2>청해</h2></div>' +
-          '<div class="toolbar">' + furiToggleHTML() + "</div></div>" +
+        '<div class="panel-head"><div><h2>청해</h2></div></div>' +
+        (all.length ? "" : '<p class="empty">청해 문제가 아직 없어요.</p>') +
         '<div class="toolbar">' + [["all", "전체"], ...used].map(([k, l]) =>
           '<button type="button" class="chip" data-ltype="' + k + '" aria-pressed="' + (ui.type === k) + '">' + esc(l) + "</button>").join("") + "</div>" +
-        '<div class="picker">' + items.map(it =>
-          '<button type="button" class="pick" data-item="' + it.id + '" aria-pressed="' + (it.id === ui.current) + '">' +
-            '<span class="pick-type">' + esc(types[it.type] || it.type) + "</span>" +
-            '<span class="pick-title" lang="ja">' + esc(String(it.title).replace(/\{([^|}]+)\|[^}]+\}/g, "$1")) + "</span>" +
-            '<span class="pick-meta">난이도 ' + levelDots(it.difficulty) + " · " + solvedCount(it, cfg.st) + "/" + it.questions.length + " 풂</span>" +
-          "</button>").join("") + "</div>" +
-        '<div id="item"></div>' +
+        pickListHTML(rows, ui, "item") +
       "</section>";
     app.onclick = e => {
       const t = e.target.closest("[data-ltype]");
       const p = e.target.closest("[data-item]");
-      if (t) { ui.type = t.dataset.ltype; render(app); }
-      else if (p) { ui.current = p.dataset.item; render(app); app.querySelector("#item").scrollIntoView({ block: "start" }); }
+      if (t) { ui.type = t.dataset.ltype; ui.shown = PICK_PAGE; render(app); }
+      else if (p) { ui.current = p.dataset.item; render(app); window.scrollTo(0, 0); }
+      else handlePickList(e, ui, () => render(app));
     };
-    const item = all.find(it => it.id === ui.current);
-    if (item) renderItem(app.querySelector("#item"), item, { types, st: cfg.st, roomId: cfg.roomId });
-    else app.querySelector("#item").innerHTML = '<p class="empty">' + (all.length ? "이 유형의 문제가 아직 없어요." : "청해 문제가 아직 없어요.") + "</p>";
   }
 
   return {
     id: cfg.id, label: "청해", jp: "聴解", needs: cfg.needs, render,
     leave() { stopAll(); player = null; },   // 다른 화면으로 갈 때 음성을 멈춘다
-    open(id) { ui.type = "all"; ui.current = id; location.hash = cfg.id; },
+    open(id) { ui.type = "all"; ui.status = "all"; ui.current = id; location.hash = cfg.id; },
   };
 }
 
@@ -67,7 +84,7 @@ export function renderItem(el, item, opts = {}) {
   const n3 = opts.roomId === "n3";
   el.innerHTML =
     '<article class="listen">' +
-      '<div class="q-top"><span class="q-num">' + esc(types[item.type]) + " · 난이도 " + levelDots(item.difficulty) + "</span>" + badges(item) + "</div>" +
+      '<div class="q-top"><span class="q-num">' + esc(types[item.type]) + " · 난이도 " + levelDots(item.difficulty) + "</span></div>" +
       '<h3 lang="ja">' + rubyHTML(item.title) + "</h3>" +
       '<div class="player"><p class="hint">음성을 준비하고 있어요…</p></div>' +
       '<div class="listen-tools"' + (opts.hideTools ? " hidden" : "") + ">" +
@@ -91,7 +108,7 @@ export function renderItem(el, item, opts = {}) {
     const box = document.createElement("div");
     quiz.appendChild(box);
     // N3 방의 문제는 문제 목록(QUESTIONS)에 없으므로 문제 내용을 기록에 함께 남긴다(오답 노트용)
-    mountQuestion(box, Object.assign({ area: "listening" }, q, n3 ? { generated: true, kind: "listening" } : {}), {
+    mountQuestion(box, Object.assign({ area: "listening" }, q, n3 ? { generated: true } : {}), {
       number: opts.number || i + 1, wide: true, mode: opts.mode, record: opts.record, store: opts.st,
       onAnswer: (ok, choice) => {
         if (n3 && opts.record !== false) award("n3", ok ? "correct" : "wrong", q.id);

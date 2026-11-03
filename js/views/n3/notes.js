@@ -42,7 +42,7 @@ function noteHTML(n) {
   const q = n.q;
   const mine = n.lastChoice >= 0 ? (n.lastChoice + 1) + ". " + esc(q.options[n.lastChoice]) : "답하지 않음";
   return '<article class="note">' +
-    '<div class="q-top"><span class="q-num">' + (AREA[n.area] || n.area) + (q.kind ? " · " + esc(q.kind) : "") + "</span>" +
+    '<div class="q-top"><span class="q-num">' + (AREA[n.area] || n.area) + (q.kind && !/^(reading|listening)$/.test(q.kind) ? " · " + esc(q.kind) : "") + "</span>" +
       '<span class="badges"><span class="badge ' + (n.resolved ? "ok" : "warn") + '">' + (n.resolved ? "극복함" : "다시 풀기 필요") + "</span>" +
       '<span class="badge ai">자체 제작 연습</span></span></div>' +
     '<div class="q-text" lang="ja">' + multiline(q.prompt) + "</div>" +

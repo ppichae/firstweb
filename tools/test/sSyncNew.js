@@ -26,6 +26,11 @@
     const uid = auth.currentUser().id;
     await until(() => sync.syncStatus().active, 15000);
     check("로그인하면 동기화 시작", sync.syncStatus().active);
+    // 오른쪽 위 버튼: 내 기록(백업 권장)·공부 파트너·로그아웃이 같은 모양
+    await until(() => D().getElementById("sync-chip"), 10000);
+    const look = el => { const c = window.getComputedStyle(el); return [c.borderRadius, c.fontSize, c.fontWeight, c.minHeight, c.paddingLeft, c.borderTopWidth].join(" "); };
+    const chip = D().getElementById("sync-chip"), partner = D().querySelector('.site-actions a[href="#partner"]'), out = D().getElementById("sign-out");
+    check("상단 버튼 모양이 같음(백업·공부 파트너·로그아웃)", look(chip) === look(out) && look(partner) === look(out) && window.getComputedStyle(out).borderRadius === "999px", look(chip) + " / " + look(partner) + " / " + look(out));
     window.localStorage.removeItem("sync:unregistered");
     n3store.update("lists", l => { l["n3-v0010"] = { cardOk: "2026-11-01", right: 2 }; });
     game.award("n3", "correct", "nq1"); game.award("n3", "correct", "nq1");

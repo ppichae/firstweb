@@ -19,9 +19,11 @@
   const vocabWrong = !!q0.querySelector(".fb-verdict.bad");
   // 독해 틀리기
   location.hash = "reading"; await wait(300);
+  $(".pick").click(); await wait(200);   // 목록에서 지문을 고르면 풀이 화면이 열린다
   $$(".q")[0].querySelector('[data-o="1"]').click(); await wait(30);
   // 청해 틀리기
   location.hash = "listening"; await wait(300);
+  $(".pick").click(); await wait(200);
   $(".q").querySelector('[data-o="0"]').click(); await wait(30);
 
   location.hash = "notes"; await wait(300);
