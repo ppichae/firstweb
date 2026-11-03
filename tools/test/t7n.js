@@ -19,7 +19,7 @@
   const answers = [0, 1, 2, 0, 1, 0];
   // 한 문제씩: 답을 고르고 '다음 문제'로 넘어간다
   for (let i = 0; i < 6; i++) { $(".qr-q .q").querySelector('[data-o="' + (i < 3 ? answers[i] : (answers[i] + 1) % 4) + '"]').click(); await wait(20); $(".qr-next").click(); await wait(60); }
-  document.querySelector("[data-mode=learn]").click(); await wait(100);
+  document.querySelector("[data-mode=learn]").click(); await wait(100); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(60); } }
   $('[data-gact="studied"]').click(); await wait(30);
   location.hash = "vocab"; await wait(1500); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await wait(60); } } { const s = document.querySelector("#v-src"); s.value = "core"; s.dispatchEvent(new window.Event("change", { bubbles: true })); await wait(100); }
   $('[data-act="known"]').click(); await wait(30);

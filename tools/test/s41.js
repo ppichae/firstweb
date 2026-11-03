@@ -59,7 +59,7 @@
     $('[data-mode="compare"]').click(); await wait(100);
     check("헷갈리는 단어(기존) 유지", $$(".compare").length > 0);
     // 문법
-    await go("grammar");
+    await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("문법 탭: 학습/플래시카드/퀴즈", $$(".seg").map(s => s.textContent).join("|") === "문법 학습|플래시카드|문법 퀴즈");
     check("퀴즈가 학습 화면 아래에 섞여 있지 않음", !$(".q"));
     const gc = $("#g-count").textContent;
@@ -95,7 +95,7 @@
     check("N3 링크 밑줄 없음", linkDeco === "none", linkDeco);
     await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 단어 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "단어장|플래시카드|퀴즈" && $("#v-count").textContent.startsWith("733"), $("#v-count").textContent);
-    await go("n3/grammar");
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 문법 화면 구조 = N1", $$(".seg").map(s => s.textContent).join("|") === "문법 학습|플래시카드|문법 퀴즈" && $("#g-count").textContent.startsWith("306"));
     $('[data-mode="quiz"]').click(); await wait(100);
     check("N3 문법 퀴즈(시험형 없음)", $$("[data-gq]").map(b => b.textContent).join("|") === "전체 섞기|문장 빈칸|뜻 고르기|문형 고르기" && /\/ 10/.test($(".qr-head").textContent));

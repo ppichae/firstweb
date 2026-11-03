@@ -22,6 +22,17 @@ const PAGE = 60;
 // 기본 단어장(N1)의 예전 주제 이름을 단어 주제로 옮긴다
 const CORE_TOPIC = { "사회·경제": "society", "학술·사고": "study", "생활·감정": "mind", "업무·조직": "biz", "교육·성장": "study" };
 const TOPIC_TONES = ["mint", "sky", "lav", "peach"];
+const topicNumber = id => { const m = /-[vg]0*(\d+)$/.exec(id); return m ? Number(m[1]) : null; };
+// 주제 칸: 아이콘, 이름, 해낸 수, 진행 막대
+function topicTileHTML(id, label, icon, done, total, tone) {
+  return '<button type="button" class="topic-tile tone-' + tone + '" data-cat="' + id + '"><span class="stat-icon">' + iconSVG(icon) + "</span>" +
+    '<span class="topic-name">' + esc(label) + '</span><span class="topic-sub">' + done + " / " + total + '</span><span class="bar" aria-hidden="true"><span style="width:' + (total ? done / total * 100 : 0) + '%"></span></span></button>';
+}
+// 퀴즈·플래시카드 위의 주제 선택 칸
+function topicPickHTML(id, topics, current) {
+  return '<div class="filters topic-pick"><div class="field"><label for="' + id + '">주제</label><select id="' + id + '"><option value="">전체</option>' +
+    topics.map(t => '<option value="' + t.id + '"' + (current === t.id ? " selected" : "") + ">" + esc(t.label) + "</option>").join("") + "</select></div></div>";
+}
 const NEW_PER_SESSION = 10;
 const isKana = s => /^[぀-ヿ～ー・]+$/.test(s || "");
 const normPattern = s => String(s || "").replace(/[～〜…\s]/g, "").replace(/\(.*?\)|（.*?）/g, "");
@@ -142,16 +153,15 @@ export function createVocabView(cfg) {
   }
   function topicOf(e) {
     if (e.core) return CORE_TOPIC[e.item.topic] || "study";
-    const m = /-v0*(\d+)$/.exec(e.item.id), map = topicMap();
-    return m && map ? map.get(Number(m[1])) : undefined;
+    const map = topicMap();
+    return map ? map.get(topicNumber(e.item.id)) : undefined;
   }
+  // 고른 주제의 단어 (주제를 안 골랐으면 전체)
+  const topicItems = () => (ui.cat && ui.cat !== "all" ? entries().filter(e => topicOf(e) === ui.cat).map(e => e.item) : items());
   const topicLabel = id => { const t = EXTRA.vocabTopics && EXTRA.vocabTopics.topics.find(x => x.id === id); return t ? t.label : "전체 단어"; };
 
-  // 주제 칸: 아이콘, 이름, 외운 수, 진행 막대
   function topicTile(id, label, list, tone) {
-    const known = list.filter(e => state(e.item.id).status === "known").length;
-    return '<button type="button" class="topic-tile tone-' + tone + '" data-cat="' + id + '"><span class="stat-icon">' + iconSVG(id === "all" ? "grid" : id) + "</span>" +
-      '<span class="topic-name">' + esc(label) + '</span><span class="topic-sub">' + known + " / " + list.length + '</span><span class="bar" aria-hidden="true"><span style="width:' + (list.length ? known / list.length * 100 : 0) + '%"></span></span></button>';
+    return topicTileHTML(id, label, id === "all" ? "grid" : id, list.filter(e => state(e.item.id).status === "known").length, list.length, tone);
   }
   function hubHTML() {
     const all = entries();
@@ -173,7 +183,8 @@ export function createVocabView(cfg) {
     if (!topicsOn && !ui.cat) ui.cat = "all";   // 주제 자료를 못 읽으면 전체 목록을 바로 보여 준다
     el.innerHTML =
       (ui.cat && topicsOn
-        ? '<div class="cat-head"><button type="button" class="btn ghost sm" id="cat-back">← 주제 목록</button><h3>' + esc(topicLabel(ui.cat)) + "</h3></div>"
+        ? '<div class="cat-head"><button type="button" class="btn ghost sm" id="cat-back">← 주제 목록</button><h3>' + esc(topicLabel(ui.cat)) + "</h3>" +
+            (ui.cat !== "all" ? '<div class="cat-go"><button type="button" class="chip" data-mode="cards">이 주제 카드</button><button type="button" class="chip" data-mode="quiz">이 주제 퀴즈</button></div>' : "") + "</div>"
         : "") +
       '<div class="filters">' +
         '<div class="field search"><label for="v-q">검색</label><input id="v-q" type="search" placeholder="한자, 읽기, 뜻으로 찾기" value="' + esc(ui.q) + '"></div>' +
@@ -303,14 +314,18 @@ export function createVocabView(cfg) {
 
   /* ---------- 플래시카드 (간격 반복) ---------- */
   function buildSession() {
-    const all = items();
+    const all = topicItems();
     const due = all.filter(v => { const s = state(v.id); return s.srs && s.srs.due <= today(); });
     const fresh = all.filter(v => !state(v.id).srs).slice(0, NEW_PER_SESSION);
-    return { queue: [...shuffle(due), ...fresh].map(v => v.id), done: 0, flipped: false, total: due.length + fresh.length, dueCount: due.length, newCount: fresh.length };
+    return { cat: ui.cat, queue: [...shuffle(due), ...fresh].map(v => v.id), done: 0, flipped: false, total: due.length + fresh.length, dueCount: due.length, newCount: fresh.length };
   }
 
-  function renderCards(el) {
-    if (!session) session = buildSession();
+  function renderCards(host) {
+    if (!session || session.cat !== ui.cat) session = buildSession();
+    const pickOn = !!topicMap();
+    host.innerHTML = (pickOn ? topicPickHTML("v-topic", EXTRA.vocabTopics.topics, ui.cat) : "") + '<div id="c-area" class="stack"></div>';
+    if (pickOn) host.querySelector("#v-topic").onchange = e => { ui.cat = e.target.value || null; session = null; renderCards(host); };
+    const el = host.querySelector("#c-area");
     const draw = () => {
       if (!session.queue.length) {
         el.innerHTML = '<div class="flash-done"><h3>' + (session.total ? "오늘 복습을 마쳤어요" : "지금 복습할 카드가 없어요") + "</h3>" +
@@ -370,6 +385,7 @@ export function createVocabView(cfg) {
     if (coreQs.length) types.push(["exam", "시험형 문제"]);
     if (!types.some(t => t[0] === ui.quizType)) ui.quizType = "mix";
     el.innerHTML =
+      (topicMap() ? topicPickHTML("v-topic", EXTRA.vocabTopics.topics, ui.cat) : "") +
       '<div class="toolbar">' + chipRow("qt", types, ui.quizType) + "</div>" +
       '<div class="toolbar"><span class="hint">한 번에</span>' + chipRow("qc", QUIZ_COUNTS, ui.count) +
         furiToggleHTML() +
@@ -378,14 +394,16 @@ export function createVocabView(cfg) {
       '<p class="quiz-progress" id="quiz-progress" role="status"></p>' +
       '<div class="quiz" id="quiz"></div>';
     const fixedIds = coreQs.map(q => q.id);
-    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(items(), st.get("attempts"), fixedIds), "단어"); };
+    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(topicItems(), st.get("attempts"), ui.cat && ui.cat !== "all" ? [] : fixedIds), "단어"); };
+    const topicSel = el.querySelector("#v-topic");
     const start = () => {
       let qs;
       const n = Number(ui.count);
+      if (topicSel) topicSel.closest(".topic-pick").style.display = ui.quizType === "exam" ? "none" : "";   // 시험형 문제는 정해진 문제라 주제를 고르지 않는다
       if (ui.quizType === "exam") qs = coreQs.map(q => Object.assign({ area: "vocab" }, q));
       else {
         const set = { area: "vocab" }, attempts = st.get("attempts");
-        let pool = items();
+        let pool = topicItems();
         if (ui.quizType === "reading") pool = pool.filter(v => /[一-鿿々]/.test(v.word) && v.reading);
         if (ui.quizType === "blank") pool = pool.filter(blankOf);
         // 틀린 단어·처음 보는 단어·오래전에 맞힌 단어를 섞고, 최근 퀴즈에 나온 단어는 되도록 피한다 (pick.js)
@@ -397,6 +415,7 @@ export function createVocabView(cfg) {
       // 한 문제씩 풀고, 답한 뒤에는 그 단어의 학습 정보(읽기·뜻·예문·헷갈린 단어)를 보여 준다
       runQuiz(el.querySelector("#quiz"), qs.map(q => ({ q, extra: vocabExtra })), {
         store: st, label: "문제", onRestart: start, restartLabel: ui.quizType === "exam" ? "처음부터 다시" : "새 문제 " + n + "개",
+        empty: "이 주제에는 이 방식으로 낼 문제가 없어요. 다른 방식을 골라 보세요.",
         onAnswer: (it, ok) => {
           const wid = it.q.wordId || it.q.word;
           st.logActivity("words");
@@ -419,6 +438,7 @@ export function createVocabView(cfg) {
         start();
       } else if (e.target.closest("#new-set")) start();
     };
+    if (topicSel) topicSel.onchange = e => { ui.cat = e.target.value || null; start(); };
     start();
   }
 
@@ -484,7 +504,7 @@ export function createVocabView(cfg) {
    ========================================================= */
 export function createGrammarView(cfg) {
   const st = cfg.st;
-  const ui = { mode: "learn", q: "", src: "", filter: "all", shown: PAGE, quiz: null, scope: "all", count: "10", open: new Set() };
+  const ui = { mode: "learn", cat: null, q: "", src: "", filter: "all", shown: PAGE, quiz: null, scope: "all", count: "10", open: new Set() };   // cat: 고른 주제 (null이면 주제 목록)
   let session = null;
   let cache = null;
 
@@ -541,28 +561,71 @@ export function createGrammarView(cfg) {
     if (b) b.style.width = (n / items().length * 100) + "%";
   }
 
+  /* ---------- 쓰임새 주제 ---------- */
+  let topicIndex = null;
+  const topicData = () => { const t = EXTRA.grammarTopics; return t && t[cfg.roomId] ? t : null; };
+  function topicOf(e) {
+    const t = topicData();
+    if (!t) return undefined;
+    if (e.core) return t.core[e.item.id];
+    if (!topicIndex) {
+      topicIndex = new Map();
+      Object.entries(t[cfg.roomId]).forEach(([k, nums]) => nums.forEach(n => topicIndex.set(n, k)));
+    }
+    return topicIndex.get(topicNumber(e.item.id));
+  }
+  const topicItems = () => (ui.cat && ui.cat !== "all" ? entries().filter(e => topicOf(e) === ui.cat).map(e => e.item) : items());
+  const topicLabel = id => { const t = topicData() && topicData().topics.find(x => x.id === id); return t ? t.label : "전체 문법"; };
+  function hubHTML() {
+    const all = entries();
+    const tile = (id, label, icon, list, tone) => topicTileHTML(id, label, icon, list.filter(e => state(e.item.id).studied).length, list.length, tone);
+    const n = f => all.filter(e => f(state(e.item.id))).length;
+    const quick = [["studied", "공부함", n(s => s.studied)], ["fav", "즐겨찾기", n(s => s.fav)]].filter(x => x[2] > 0);
+    return (quick.length ? '<div class="toolbar">' + quick.map(([k, l, c]) => '<button type="button" class="chip" data-cat="all" data-st="' + k + '">' + l + " " + c + "</button>").join("") + "</div>" : "") +
+      '<div class="topic-grid">' +
+        topicData().topics.map((t, i) => tile(t.id, t.label, t.icon, all.filter(e => topicOf(e) === t.id), TOPIC_TONES[i % 4])).join("") +
+        tile("all", "전체 문법", "grid", all, "mint") +
+      "</div>";
+  }
+
   /* ---------- 문법 학습 ---------- */
   function renderLearn(el, app) {
+    const topicsOn = !!topicData();
+    if (!topicsOn && !ui.cat) ui.cat = "all";   // 주제 자료를 못 읽으면 전체 목록을 바로 보여 준다
     el.innerHTML =
+      (ui.cat && topicsOn
+        ? '<div class="cat-head"><button type="button" class="btn ghost sm" id="cat-back">← 주제 목록</button><h3>' + esc(topicLabel(ui.cat)) + "</h3>" +
+            (ui.cat !== "all" ? '<div class="cat-go"><button type="button" class="chip" data-mode="cards">이 주제 카드</button><button type="button" class="chip" data-mode="quiz">이 주제 퀴즈</button></div>' : "") + "</div>"
+        : "") +
       '<div class="filters">' +
         '<div class="field search"><label for="g-q">검색</label><input id="g-q" type="search" placeholder="문형이나 뜻으로 찾기" value="' + esc(ui.q) + '"></div>' +
-        (coreData()
+        (coreData() && ui.cat
           ? '<div class="field"><label for="g-src">자료</label><select id="g-src"><option value="">전체</option>' +
               '<option value="core"' + (ui.src === "core" ? " selected" : "") + ">기본 문법</option>" +
               '<option value="pdf"' + (ui.src === "pdf" ? " selected" : "") + ">참고 목록 문형</option></select></div>"
           : "") +
       "</div>" +
-      '<div class="toolbar">' + chipRow("gfilter", [["all", "전체"], ["todo", "아직 안 함"], ["studied", "공부함"], ["fav", "즐겨찾기"]], ui.filter) + "</div>" +
-      '<p class="result-count" id="g-count"></p>' +
-      '<div class="grammar-list" id="g-list"></div>' +
-      '<div class="toolbar" id="g-more"></div>' +
-      '<div class="toolbar"><button type="button" class="btn ghost" id="to-quiz">이 범위로 문법 퀴즈 풀기</button></div>';
+      '<div id="g-body" class="stack"></div>';
+    const paint = () => {
+      const body = el.querySelector("#g-body");
+      if (!ui.cat && !ui.q) { body.innerHTML = hubHTML(); return; }
+      if (!body.querySelector("#g-list")) body.innerHTML =
+        '<div class="toolbar">' + chipRow("gfilter", [["all", "전체"], ["todo", "아직 안 함"], ["studied", "공부함"], ["fav", "즐겨찾기"]], ui.filter) + "</div>" +
+        '<p class="result-count" id="g-count"></p>' +
+        '<div class="grammar-list" id="g-list"></div>' +
+        '<div class="toolbar more-list" id="g-more"></div>' +
+        '<div class="toolbar"><button type="button" class="btn ghost" id="to-quiz">이 범위로 문법 퀴즈 풀기</button></div>';
+      drawList(el, app);
+    };
     const draw = () => drawList(el, app);
-    el.querySelector("#g-q").oninput = e => { ui.q = e.target.value.trim(); ui.shown = PAGE; draw(); };
+    el.querySelector("#g-q").oninput = e => { ui.q = e.target.value.trim(); ui.shown = PAGE; paint(); };
     const src = el.querySelector("#g-src");
-    if (src) src.onchange = e => { ui.src = e.target.value; ui.shown = PAGE; draw(); };
+    if (src) src.onchange = e => { ui.src = e.target.value; ui.shown = PAGE; paint(); };
     el.onclick = e => {
       if (handleKanjiClick(e, cfg.roomId)) return;
+      const cat = e.target.closest("[data-cat]");
+      if (cat) { ui.cat = cat.dataset.cat; ui.filter = cat.dataset.st || "all"; ui.shown = PAGE; renderLearn(el, app); scrollTo(0, 0); return; }
+      if (e.target.closest("#cat-back")) { ui.cat = null; ui.q = ""; ui.src = ""; ui.filter = "all"; ui.shown = PAGE; renderLearn(el, app); return; }
       const f = e.target.closest("[data-gfilter]"), act = e.target.closest("[data-gact]");
       if (f) {
         ui.filter = f.dataset.gfilter; ui.shown = PAGE;
@@ -581,11 +644,12 @@ export function createGrammarView(cfg) {
       } else return;
       draw();
     };
-    draw();
+    paint();
   }
 
   function matches(e) {
     const g = e.item, s = state(g.id);
+    if (ui.cat && ui.cat !== "all" && topicOf(e) !== ui.cat) return false;
     if (ui.src === "core" && !e.core) return false;
     if (ui.src === "pdf" && e.core) return false;
     if (ui.filter === "studied" && !s.studied) return false;
@@ -597,11 +661,14 @@ export function createGrammarView(cfg) {
 
   function drawList(el) {
     const list = entries().filter(matches);
-    el.querySelector("#g-count").textContent = list.length + "개 문형" + (list.length > ui.shown ? " 중 " + ui.shown + "개 표시" : "");
-    el.querySelector("#g-more").innerHTML = list.length > ui.shown ? '<button type="button" class="btn ghost" id="g-more-btn">' + Math.min(PAGE, list.length - ui.shown) + "개 더 보기</button>" : "";
+    if (!el.querySelector("#g-list")) return;
+    // 주제 안에서는 한 번에 모두 보여 주고, 전체·검색 결과만 나눠서 보여 준다
+    const limit = ui.cat && ui.cat !== "all" ? list.length : ui.shown;
+    el.querySelector("#g-count").textContent = list.length + "개 문형" + (list.length > limit ? " 중 " + limit + "개 표시" : "");
+    el.querySelector("#g-more").innerHTML = list.length > limit ? '<button type="button" class="btn ghost" id="g-more-btn">' + Math.min(PAGE, list.length - limit) + "개 더 보기</button>" : "";
     const box = el.querySelector("#g-list");
     if (!list.length) { box.innerHTML = '<p class="empty">조건에 맞는 문법이 없어요.</p>'; return; }
-    box.innerHTML = list.slice(0, ui.shown).map(itemHTML).join("");
+    box.innerHTML = list.slice(0, limit).map(itemHTML).join("");
   }
 
   function itemHTML(e) {
@@ -662,14 +729,18 @@ export function createGrammarView(cfg) {
 
   /* ---------- 플래시카드 ---------- */
   function buildSession() {
-    const all = items();
+    const all = topicItems();
     const due = all.filter(g => { const s = state(g.id); return s.srs && s.srs.due <= today(); });
     const fresh = all.filter(g => !state(g.id).srs).slice(0, NEW_PER_SESSION);
-    return { queue: [...shuffle(due), ...fresh].map(g => g.id), done: 0, flipped: false, total: due.length + fresh.length, dueCount: due.length, newCount: fresh.length };
+    return { cat: ui.cat, queue: [...shuffle(due), ...fresh].map(g => g.id), done: 0, flipped: false, total: due.length + fresh.length, dueCount: due.length, newCount: fresh.length };
   }
 
-  function renderCards(el) {
-    if (!session) session = buildSession();
+  function renderCards(host) {
+    if (!session || session.cat !== ui.cat) session = buildSession();
+    const pickOn = !!topicData();
+    host.innerHTML = (pickOn ? topicPickHTML("g-topic", topicData().topics, ui.cat) : "") + '<div id="c-area" class="stack"></div>';
+    if (pickOn) host.querySelector("#g-topic").onchange = e => { ui.cat = e.target.value || null; session = null; renderCards(host); };
+    const el = host.querySelector("#c-area");
     const draw = () => {
       if (!session.queue.length) {
         el.innerHTML = '<div class="flash-done"><h3>' + (session.total ? "오늘 복습을 마쳤어요" : "지금 복습할 카드가 없어요") + "</h3>" +
@@ -726,6 +797,7 @@ export function createGrammarView(cfg) {
       ? [["all", "전체 유형"], ...kinds.map(k => [k, k])]
       : [["all", "전체 문형"], ["studied", "공부한 문형"], ["fav", "즐겨찾기"]];
     el.innerHTML =
+      (topicData() && ui.quiz !== "exam" ? topicPickHTML("g-topic", topicData().topics, ui.cat) : "") +
       '<div class="toolbar">' + chipRow("gq", types, ui.quiz) + "</div>" +
       '<div class="toolbar"><span class="hint">범위</span>' + chipRow("gscope", scopes, ui.scope) + "</div>" +
       '<div class="toolbar"><span class="hint">한 번에</span>' + chipRow("gc", QUIZ_COUNTS, ui.count) + furiToggleHTML() + '<button type="button" class="link-btn" id="reset">' + (ui.quiz === "exam" ? "다시 풀기" : "새 문제") + "</button></div>" +
@@ -733,7 +805,7 @@ export function createGrammarView(cfg) {
       '<p class="hint" id="gq-note"></p>' +
       '<div class="quiz" id="quiz"></div>';
     const fixedIds = coreQs.map(q => q.id);
-    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(items(), st.get("attempts"), fixedIds), "문형"); };
+    const showProgress = () => { el.querySelector("#quiz-progress").textContent = progressText(quizProgress(topicItems(), st.get("attempts"), ui.cat && ui.cat !== "all" ? [] : fixedIds), "문형"); };
     const start = () => {
       let qs;
       const note = el.querySelector("#gq-note"), n = Number(ui.count);
@@ -742,7 +814,7 @@ export function createGrammarView(cfg) {
         note.textContent = "";
       } else {
         const set = { area: "grammar" }, attempts = st.get("attempts");
-        let pool = items().filter(g => ui.scope === "all" || (ui.scope === "studied" ? state(g.id).studied : state(g.id).fav));
+        let pool = topicItems().filter(g => ui.scope === "all" || (ui.scope === "studied" ? state(g.id).studied : state(g.id).fav));
         if (ui.quiz === "blank") pool = pool.filter(blankOf);
         const tried = new Set(attempts.map(a => a.qid));
         qs = pickItems(pool, n, { attempts, weak: g => (state(g.id).wrong || 0) > 0 })
@@ -763,11 +835,13 @@ export function createGrammarView(cfg) {
       else if (c) { ui.count = c.dataset.gc; renderQuiz(el); }
       else if (e.target.closest("#reset")) start();
     };
+    const topicSel = el.querySelector("#g-topic");
+    if (topicSel) topicSel.onchange = e => { ui.cat = e.target.value || null; start(); };
     start();
   }
 
   return {
-    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji", "checks", EXAMPLE_KEYS[cfg.extraKey]], render },
+    view: { id: cfg.id, label: cfg.label || "문법", jp: cfg.jp || "文法", needs: [cfg.extraKey, "sources", "kanji", "checks", "grammarTopics", EXAMPLE_KEYS[cfg.extraKey]], render },
     studiedCount, total: () => items().length,
   };
 }

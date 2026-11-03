@@ -59,7 +59,7 @@
   out.push("  reading q: " + app().querySelector(".q-text").textContent + " " + [...app().querySelector(".q").querySelectorAll(".opt")].map(o=>o.textContent).join(","));
   app().querySelectorAll(".q").forEach(q => q.querySelectorAll(".opt")[0].click()); await wait(100);
   out.push("  score " + app().querySelector("#score").textContent);
-  await go("n3/grammar"); out.push("n3/grammar: " + app().querySelector("#l-count").textContent);
+  await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } out.push("n3/grammar: " + app().querySelector("#l-count").textContent);
   await go("n3/more"); out.push("n3/more pending cards: " + app().querySelectorAll(".pending").length);
   await go("n3/exam"); out.push("exam: " + app().querySelector("h2").textContent);
   app().querySelector('[data-mode="test"]').click(); await wait(100);

@@ -51,7 +51,7 @@
     if (r1.wrongSeen && $("[data-qr=retry]")) { $("[data-qr=retry]").click(); await wait(300); check("틀린 문제만 다시 풀기", !!$(".qr-q .q") && /문제 1 \//.test($(".qr-head").textContent)); }
     $('[data-qt="exam"]').click(); await wait(300);
     await solveAll("N1 단어 시험형", $("#quiz"), false);
-    await go("grammar");
+    await go("grammar"); { const _c = app().querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     $('[data-mode="quiz"]').click(); await wait(300);
     $('[data-gq="meaning"]').click(); await wait(300);
     await solveAll("N1 문법 뜻", $("#quiz"), true);

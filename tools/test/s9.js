@@ -17,7 +17,7 @@
     check("복습 버튼 이름", $$(".grade span").map(s => s.textContent).join("|") === "모르겠어요|헷갈려요|알았어요|쉬워요", $$(".grade span").map(s => s.textContent).join("|"));
     check("복습 시점 표시", $$(".grade small").map(s => s.textContent).join("|") === "오늘 다시|내일 다시|내일 다시|3일 뒤 다시", $$(".grade small").map(s => s.textContent).join("|"));
     check("복습 간격 안내", !!$(".srs-help") && $(".srs-help").textContent.includes("180일"));
-    await go("n3/grammar");
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N3 문법 화면 'PDF' 없음", !app().textContent.includes("PDF"));
     await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     check("N1 자료 필터 이름", [...$("#v-src").options].map(o => o.textContent).join("|") === "전체|기본 단어장|참고 목록 단어");

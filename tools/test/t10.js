@@ -29,14 +29,14 @@
   const go = async (hash, ms = 350) => { location.hash = hash; await wait(ms); };
   try {
     // 기록 조금 만들기
-    await go("grammar"); $$(".q")[0].querySelector('[data-o="1"]').click(); $$(".q")[1].querySelector('[data-o="1"]').click();
+    await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $$(".q")[0].querySelector('[data-o="1"]').click(); $$(".q")[1].querySelector('[data-o="1"]').click();
     await go("home"); audit("홈");
     await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } audit("단어장");
     $(".card-face").click(); await wait(50); audit("단어장(펼침)");
     $('[data-mode="cards"]').click(); await wait(80); $("#flip").click(); await wait(50); audit("플래시카드");
     $('[data-mode="quiz"]').click(); await wait(80); $$(".q")[0].querySelector('[data-o="0"]').click(); await wait(30); audit("단어 퀴즈");
     $('[data-mode="compare"]').click(); await wait(80); audit("헷갈리는 단어");
-    await go("grammar"); $("details.g-more summary").click(); await wait(30); audit("문법");
+    await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $("details.g-more summary").click(); await wait(30); audit("문법");
     await go("reading"); $("#toggle-trans").click(); await wait(30); audit("독해(중문)");
     $('[data-rtype="info"]').click(); await wait(150); audit("독해(정보 검색)");
     await go("listening", 2600); $(".l-show-script").click(); await wait(30); audit("청해");

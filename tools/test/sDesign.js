@@ -15,7 +15,7 @@
       const lefts = [...app().querySelectorAll("section.panel > *:not(.more-list)")].filter(e => e.getBoundingClientRect().width > 0).map(e => Math.round(e.getBoundingClientRect().left));
       check(h + " 왼쪽 끝이 모두 같음", lefts.length > 0 && new Set(lefts).size === 1, [...new Set(lefts)].join());
     }
-    await go("n3/grammar");
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const items = $$(".g-item");
     const g1 = items[0].getBoundingClientRect(), g2 = items[1].getBoundingClientRect();
     check("문법 칸 사이 간격 12px 이상", g2.top - g1.bottom >= 12, Math.round(g2.top - g1.bottom));

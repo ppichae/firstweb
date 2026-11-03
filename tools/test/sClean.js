@@ -36,7 +36,7 @@
     check("한자 창: 라이선스 안내 유지", dlg.querySelector(".kd-foot").textContent.includes("KanjiVG") && dlg.querySelector(".kd-foot").textContent.includes("KRADFILE"));
     dlg.close(); await wait(100);
     // 문법
-    await go("n3/grammar");
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const g = $(".g-item");
     check("문법: 평소에는 문형과 뜻만", !!g.querySelector(".g-mean") && !visible(g.querySelector(".g-ex")) && g.querySelector("summary").textContent === "예문·설명 보기");
     g.querySelector("summary").click(); await wait(100);
@@ -52,7 +52,7 @@
     await go("n3/mock");
     check("N3 모의고사: 연습 테스트 안내 유지", app().textContent.includes("어휘·문형 문제로 만든 연습 테스트예요"));
     // 빈 범위 안내는 남긴다
-    await go("n3/grammar"); $('[data-mode="quiz"]').click(); await wait(300); $('[data-gscope="fav"]').click(); await wait(300);
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $('[data-mode="quiz"]').click(); await wait(300); $('[data-gscope="fav"]').click(); await wait(300);
     check("퀴즈: 범위에 문형이 없으면 안내", $("#gq-note").textContent.includes("이 범위에 문형이 없어요"));
     $('[data-gscope="all"]').click(); await wait(200);
     // N1

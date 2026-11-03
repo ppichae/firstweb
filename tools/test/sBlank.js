@@ -9,7 +9,7 @@
   const mod = p => window.eval('import("./js/' + p + '")');
   try {
     const L = await mod("views/listStudy.js"), Ex = await mod("examples.js"), P = await mod("pick.js"), D = await mod("data.js");
-    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("grammar"); await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("n3/grammar");
+    await go("vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("n3/vocab"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const merged = (core, extra) => { const seen = new Set(), out = []; [...(core || []), ...(extra || [])].forEach(v => { const k = v.word || v.pattern; if (!seen.has(k)) { seen.add(k); out.push(v); } }); return out; };
     const sets = [
       ["N1 단어", merged(D.DB.vocab.items, D.EXTRA.n1vocab.items), "vocab", D.DB.vocab.questions.length],
@@ -81,14 +81,14 @@
     $(".q .opt").click(); await wait(100);
     check("답한 뒤 학습 정보", !!$(".learn-box"));
     check("가로 스크롤 없음(단어)", document.documentElement.scrollWidth <= document.documentElement.clientWidth);
-    await go("n3/grammar"); $('[data-mode="quiz"]').click(); await wait(400);
+    await go("n3/grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $('[data-mode="quiz"]').click(); await wait(400);
     check("문법 퀴즈 풀어 본 정도", /문형 306개 중 0개/.test($("#quiz-progress").textContent), $("#quiz-progress").textContent);
     $('[data-gq="blank"]').click(); await wait(300);
     check("문법 문장 빈칸", !!$(".q-text .q-blank"));
     await go("n3/exam"); $('[data-mode="drill"]').click(); await wait(400);
     check("N3 영역별 연습에 문장 빈칸", !!$('[data-drill="vocab:blank"]') && !!$("#d-quiz .q-blank"));
     localStorage.setItem("jlpt:room", "n1");
-    await go("grammar"); $('[data-mode="quiz"]').click(); await wait(400);
+    await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } } $('[data-mode="quiz"]').click(); await wait(400);
     check("N1 문법 첫 화면이 고정 문제가 아님", $('[data-gq="mix"]').getAttribute("aria-pressed") === "true" && /\/ 10/.test($(".qr-head").textContent));
     $('[data-gq="exam"]').click(); await wait(300);
     check("시험형 문제 유지", $$(".q").length > 0);

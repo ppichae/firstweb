@@ -46,7 +46,7 @@
     $('[data-mode="cards"]').click(); await wait(100); $("#flip").click(); await wait(50);
     check("플래시카드 뒷면에 한자 버튼", !!$(".flash-back .kanji-row") || !/[一-龯]/.test($(".flash-word").textContent), $(".flash-word").textContent);
     // 문법
-    await go("grammar");
+    await go("grammar"); { const _c = document.querySelector('.topic-tile[data-cat="all"]'); if (_c) { _c.click(); await new Promise(r => setTimeout(r, 60)); } }
     const gi = $$(".g-item").find(g => g.querySelector(".kanji-row"));
     check("문형 속 한자 버튼", !!gi, gi && gi.querySelector(".g-pattern").textContent);
     // 한자 메뉴 (N1)

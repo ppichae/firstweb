@@ -1652,3 +1652,12 @@ select, .field select, .rate select, .voice-set select, select.inline-input {
 .week-scroll { overflow: visible; }
 .week-col:nth-child(-n+3) .week-tip { left: 0; transform: none; }
 .week-col:nth-child(n+5) .week-tip { left: auto; right: 0; transform: none; }
+
+/* 주제 안의 바로 가기, 퀴즈·카드의 주제 선택 */
+.cat-go { display: flex; gap: 6px; margin-left: auto; }
+.topic-pick .field { flex: 0 1 260px; max-width: 260px; }
+@media (max-width: 640px) {
+  .cat-go { margin-left: 0; width: 100%; }
+  .cat-go .chip { flex: 1; }
+  .topic-pick .field { flex: 1 1 100%; max-width: none; }
+}
