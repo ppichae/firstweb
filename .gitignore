@@ -59,3 +59,6 @@ node_modules/
 *.vvpp
 *.zip
 *.exe
+
+# ---------- Netlify 명령 도구가 이 폴더에 만드는 연결 정보 ----------
+.netlify/
