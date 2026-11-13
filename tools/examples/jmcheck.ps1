@@ -5,7 +5,7 @@ $words = New-Object 'System.Collections.Generic.HashSet[string]'
 foreach ($line in [IO.File]::ReadLines($Pairs, [Text.Encoding]::UTF8)) { [void]$set.Add($line); [void]$words.Add($line.Split("`t")[0]) }
 $toHira = { param($s) -join ($s.ToCharArray() | ForEach-Object { $c = [int]$_; if ($c -ge 0x30A1 -and $c -le 0x30F6) { [char]($c - 0x60) } else { $_ } }) }
 foreach ($f in "n1\vocab.json", "n3\vocab.json", "vocabulary.json") {
-  $j = [IO.File]::ReadAllText("$Repo\data\$f", [Text.Encoding]::UTF8) | ConvertFrom-Json
+  $j = [IO.File]::ReadAllText("$Repo\public\data\$f", [Text.Encoding]::UTF8) | ConvertFrom-Json
   $ok = 0; $wordOnly = @(); $none = @()
   foreach ($v in $j.items) {
     $w = $v.word; $r = $v.reading

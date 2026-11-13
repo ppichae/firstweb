@@ -7,12 +7,12 @@ function Chars($words) {
   foreach ($w in $words) { foreach ($c in $w.ToCharArray()) { $n = [int]$c; if (($n -ge 0x4E00 -and $n -le 0x9FFF) -or $n -eq 0x3005) { if ($c -ne [char]0x3005) { $h["$c"] = 1 + [int]$h["$c"] } } } }
   $h
 }
-$n3w = (J "data/n3/vocab.json").items | ForEach-Object { $_.word }
-$n1a = J "data/n1/vocab.json"; $n1b = J "data/vocabulary.json"
+$n3w = (J "public/data/n3/vocab.json").items | ForEach-Object { $_.word }
+$n1a = J "public/data/n1/vocab.json"; $n1b = J "public/data/vocabulary.json"
 $n1w = @($n1a.items | ForEach-Object { $_.word }) + @(($n1b.items + $n1b.vocabulary) | Where-Object { $_ } | ForEach-Object { $_.word })
 $n3c = Chars $n3w; $n1c = Chars $n1w
-$siteN3 = (J "data/kanji/n3.json").kanji; $siteN1 = (J "data/kanji/n1.json").kanji
-$common = J "data/kanji/common.json"
+$siteN3 = (J "public/data/kanji/n3.json").kanji; $siteN1 = (J "public/data/kanji/n1.json").kanji
+$common = J "public/data/kanji/common.json"
 $detail = @{}; foreach ($k in ($common.kanji + $common.items) | Where-Object { $_ }) { $detail[$k.char] = $k }
 
 # KANJIDIC2: 한자별 옛 JLPT 급수, 학년(1~6 교육, 8 상용, 9·10 인명용), 한국 한자음
@@ -30,7 +30,7 @@ while ($xr.Read()) {
   }
 }
 $xr.Close()
-$kvg = @{}; Get-ChildItem (Join-Path $R "data/kanjivg") -Filter *.svg | ForEach-Object { $kvg["" + [char][Convert]::ToInt32(($_.BaseName -replace "-.*",""), 16)] = 1 }
+$kvg = @{}; Get-ChildItem (Join-Path $R "public/data/kanjivg") -Filter *.svg | ForEach-Object { $kvg["" + [char][Convert]::ToInt32(($_.BaseName -replace "-.*",""), 16)] = 1 }
 
 function Desc($name, $set) {
   $ks = @($set.Keys)

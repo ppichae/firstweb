@@ -6,8 +6,8 @@ function J($p) { [IO.File]::ReadAllText((Join-Path $RepoDir $p), $enc) | Convert
 function Chars($words) { $h = [ordered]@{}; foreach ($w in $words) { foreach ($ch in $w.ToCharArray()) { $n = [int]$ch; if ($n -ge 0x4E00 -and $n -le 0x9FFF) { $h["$ch"] = 1 } } }; $h }
 
 # 대상 987자와 급수(이 사이트 단어장 기준)
-$n3 = Chars ((J "data/n3/vocab.json").items | ForEach-Object { $_.word })
-$n1 = Chars (@((J "data/n1/vocab.json").items | ForEach-Object { $_.word }) + @((J "data/vocabulary.json").items | ForEach-Object { $_.word }))
+$n3 = Chars ((J "public/data/n3/vocab.json").items | ForEach-Object { $_.word })
+$n1 = Chars (@((J "public/data/n1/vocab.json").items | ForEach-Object { $_.word }) + @((J "public/data/vocabulary.json").items | ForEach-Object { $_.word }))
 $target = [ordered]@{}; foreach ($k in $n3.Keys) { $target[$k] = "N3" }; foreach ($k in $n1.Keys) { if (-not $target.Contains($k)) { $target[$k] = "N1" } }
 
 # libhangul: 한 글자 항목(훈음이 비어 있는 항목도 음은 기록)

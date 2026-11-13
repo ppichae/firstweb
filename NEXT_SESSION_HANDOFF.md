@@ -9,6 +9,11 @@
 - 절대 금지: 기존 기능·학습 기록·진도·오답·배지·설정·콘텐츠 초기화/삭제, API 키·비밀번호를 프런트엔드나 GitHub에 노출, 승인 없는 유료 API 사용, 교재 문제·지문 복사, 검수 안 된 자료를 검수 완료처럼 표시.
 - **C단계(발음 버튼)는 사용자 승인 전 시작 금지. D단계(Google Cloud TTS) 과금·음성 생성은 승인 전 금지.**
 
+## 0-1. 폴더 구조 변경 (2026-11-13)
+- **사이트 파일은 모두 `public/` 안에 있다** (`public/index.html`, `public/css`, `public/js`, `public/data`). 아래 문서에 나오는 `js/…`, `data/…` 경로는 `public/js/…`, `public/data/…`로 읽는다.
+- 배포는 `public/`만 올린다: GitHub Pages는 `.github/workflows/pages.yml`(Pages 설정 Source = GitHub Actions), Netlify는 `netlify.toml`(publish = "public"). `.env`, `docs/`, `tools/`, `supabase/`는 배포되지 않는다.
+- 내 PC 테스트: `powershell -File tools\serve.ps1 -Root C:\Users\Owner\Documents\firstweb\public` 로 서버를 켜고 `sh tools/test/run.sh tools/test/<테스트>.js 1440 1000 "#n3"` (PRE=tools/test/pre*.js 로 예전 기록을 넣을 수 있다). 전체 확인용은 `tools/test/sSmoke.js`.
+
 ## 1. 프로젝트 구조와 목적
 - 목적: JLPT N1·N3 학습 사이트. 실제 주소 https://ppichae.github.io/firstweb/ (GitHub Pages, main 브랜치 루트).
 - 저장소: https://github.com/ppichae/firstweb (공개), 로컬 `C:\Users\Owner\Documents\firstweb`.

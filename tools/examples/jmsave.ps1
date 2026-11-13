@@ -4,7 +4,7 @@ $set = New-Object 'System.Collections.Generic.HashSet[string]'
 foreach ($line in [IO.File]::ReadLines($Pairs, [Text.Encoding]::UTF8)) { [void]$set.Add($line) }
 $out = [ordered]@{}
 foreach ($pair in @(@("n1vocab", "n1\vocab.json"), @("n3vocab", "n3\vocab.json"), @("core", "vocabulary.json"))) {
-  $j = [IO.File]::ReadAllText("$Repo\data\$($pair[1])", [Text.Encoding]::UTF8) | ConvertFrom-Json
+  $j = [IO.File]::ReadAllText("$Repo\public\data\$($pair[1])", [Text.Encoding]::UTF8) | ConvertFrom-Json
   $ok = @(); $phrase = @()
   foreach ($v in $j.items) { if ($set.Contains("$($v.word)`t$($v.reading)")) { $ok += $v.id } else { $phrase += $v.id } }
   $out[$pair[0]] = [ordered]@{ readingMatched = $ok; notInDictionary = $phrase }
@@ -17,6 +17,6 @@ $doc = [ordered]@{
   }
   vocab = $out
 }
-New-Item -ItemType Directory -Force "$Repo\data\review" | Out-Null
-[IO.File]::WriteAllText("$Repo\data\review\checks.json", ($doc | ConvertTo-Json -Depth 5 -Compress), (New-Object Text.UTF8Encoding $false))
+New-Item -ItemType Directory -Force "$Repo\public\data\review" | Out-Null
+[IO.File]::WriteAllText("$Repo\public\data\review\checks.json", ($doc | ConvertTo-Json -Depth 5 -Compress), (New-Object Text.UTF8Encoding $false))
 foreach ($k in $out.Keys) { "$k : 일치 " + $out[$k].readingMatched.Count + " / 대조 못함 " + $out[$k].notInDictionary.Count }

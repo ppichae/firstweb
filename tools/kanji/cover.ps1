@@ -11,8 +11,8 @@ foreach ($line in [IO.File]::ReadLines($HunFile, $enc)) {
 }
 function J($p) { [IO.File]::ReadAllText((Join-Path $R $p), $enc) | ConvertFrom-Json }
 function Chars($words) { $h = @{}; foreach ($w in $words) { foreach ($c in $w.ToCharArray()) { $n = [int]$c; if ($n -ge 0x4E00 -and $n -le 0x9FFF) { $h["$c"] = 1 } } }; $h }
-$n3 = Chars ((J "data/n3/vocab.json").items | ForEach-Object { $_.word })
-$n1 = Chars (@((J "data/n1/vocab.json").items | ForEach-Object { $_.word }) + @((J "data/vocabulary.json").items | ForEach-Object { $_.word }))
+$n3 = Chars ((J "public/data/n3/vocab.json").items | ForEach-Object { $_.word })
+$n1 = Chars (@((J "public/data/n1/vocab.json").items | ForEach-Object { $_.word }) + @((J "public/data/vocabulary.json").items | ForEach-Object { $_.word }))
 $all = @{}; foreach ($k in $n3.Keys + $n1.Keys) { $all[$k] = 1 }
 $miss = @($all.Keys | Where-Object { -not $hun.ContainsKey($_) })
 "한 글자 훈음 항목 수: " + $hun.Count

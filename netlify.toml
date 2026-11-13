@@ -1,0 +1,5 @@
+# Netlify 배포 설정: public 폴더 안의 파일만 사이트로 올린다
+# 이 사이트는 따로 빌드(변환)할 것이 없는 정적 사이트라 빌드 명령이 없다.
+[build]
+  publish = "public"
+  command = ""

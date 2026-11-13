@@ -21,7 +21,7 @@ while ($xr.Read()) {
 $xr.Close()
 # 훈독은 실제로 쓰는 말만: JMdict 상용 표기(ke_pri가 있는 말)이거나 이 사이트 단어장에 나오는 말
 $common = New-Object 'System.Collections.Generic.HashSet[string]'; foreach ($w in [IO.File]::ReadLines("$Scr\kj\jm-common.txt", $enc)) { [void]$common.Add($w) }
-foreach ($f in "data/n3/vocab.json", "data/n1/vocab.json", "data/vocabulary.json") { ([IO.File]::ReadAllText((Join-Path $RepoDir $f), $enc) | ConvertFrom-Json).items | ForEach-Object { [void]$common.Add($_.word) } }
+foreach ($f in "public/data/n3/vocab.json", "public/data/n1/vocab.json", "public/data/vocabulary.json") { ([IO.File]::ReadAllText((Join-Path $RepoDir $f), $enc) | ConvertFrom-Json).items | ForEach-Object { [void]$common.Add($_.word) } }
 $kunAll = 0; $kunKept = 0
 foreach ($c in @($kd.Keys)) { $keep = @($kd[$c].kun | Where-Object { $common.Contains($c + ($_ -replace "^[^-]*-?", "")) }); $kunAll += $kd[$c].kun.Count; $kunKept += $keep.Count; $kd[$c].kun = $keep }
 "훈독 {0}개 중 {1}개 남김" -f $kunAll, $kunKept
@@ -34,7 +34,7 @@ $items = foreach ($x in $rows) {
   if (-not $eum -and $cat -eq "3") { $e = @($x."KANJIDIC2 음" -split ",")[0]; if ($e) { $eum = $e } }   # 込·働: 음만 확인
   $alt = @($x."libhangul 훈음" -split ",\s*" | Where-Object { $_ -and $_ -ne $rep -and $_ -match " " -and $_ -notmatch "[一-鿿]" } | Select-Object -Unique | Select-Object -First 3)
   $cp = [char]::ConvertToUtf32($c, 0); $ref = "{0:x5}" -f $cp
-  $svg = "$RepoDir\data\kanjivg\$ref.svg"; $n = 0
+  $svg = "$RepoDir\public\data\kanjivg\$ref.svg"; $n = 0
   if (Test-Path $svg) { $n = ([regex]::Matches([IO.File]::ReadAllText($svg, $enc), 'id="kvg:' + $ref + '-s\d+"')).Count }
   [ordered]@{
     char = $c; lv = $x."급수(사이트 단어장 기준)"; ko = [ordered]@{ hun = $hun; eum = $eum }; alt = $alt
@@ -50,5 +50,5 @@ $meta = [ordered]@{
 }
 $lines = $items | ForEach-Object { "    " + ([pscustomobject]$_ | ConvertTo-Json -Compress -Depth 5) }
 $out = "{`n  `"meta`": " + ([pscustomobject]$meta | ConvertTo-Json -Compress) + ",`n  `"items`": [`n" + ($lines -join ",`n") + "`n  ]`n}`n"
-[IO.File]::WriteAllText("$RepoDir\data\kanji\index.json", $out, (New-Object Text.UTF8Encoding $false))
+[IO.File]::WriteAllText("$RepoDir\public\data\kanji\index.json", $out, (New-Object Text.UTF8Encoding $false))
 "한자 {0}자 · 훈 있음 {1} · 음만 {2} · 없음 {3} · 획수 0인 것 {4} · 음독/훈독 없음 {5}" -f @($items).Count, @($items | Where-Object { $_.ko.hun }).Count, @($items | Where-Object { -not $_.ko.hun -and $_.ko.eum }).Count, @($items | Where-Object { -not $_.ko.eum }).Count, @($items | Where-Object { $_.strokes -eq 0 }).Count, @($items | Where-Object { -not $_.on.Count -and -not $_.kun.Count }).Count
