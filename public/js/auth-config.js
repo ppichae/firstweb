@@ -8,6 +8,8 @@ export const AUTH_CONFIG = {
   // 로그인을 마치고 돌아올 주소: 지금 열린 사이트 주소(실제 사이트 또는 테스트 서버).
   // Supabase의 Redirect URLs에 등록된 주소(https://ppichae.github.io/firstweb/, http://localhost:8765/)만 허용된다
   redirectTo: location.origin + location.pathname,
+  // 카카오 로그인에서 요청할 정보 (이메일은 비즈 앱 심사 뒤 "account_email"을 더한다)
+  kakaoScopes: "profile_nickname profile_image",
 };
 
 // 테스트용 프로젝트(firstweb-test): 이 컴퓨터의 테스트 서버(localhost)에서 주소에 ?sb=test를 붙였을 때만 쓴다.

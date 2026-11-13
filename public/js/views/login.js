@@ -1,6 +1,10 @@
-// 로그인 화면: Google 계정으로 로그인한다
+// 로그인 화면: Google 또는 카카오 계정으로 로그인한다
 // Supabase가 아직 연결되지 않았으면 버튼을 누를 수 없게 두고 '준비 중'이라고 솔직하게 알린다 (로그인된 것처럼 꾸미지 않는다)
-import { authConfigured, authPreview, signedIn, signInWithGoogle, peekNext, peekLoginError, clearLoginError, usingTestProject, signInTestAccount } from "../auth.js";
+import { authConfigured, authPreview, signedIn, signInWithGoogle, signInWithKakao, peekNext, peekLoginError, clearLoginError, usingTestProject, signInTestAccount } from "../auth.js";
+
+// 카카오 말풍선 심볼 (카카오 로그인 버튼 안내 모양)
+const KAKAO_LOGO = '<svg class="kakao-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+  '<path fill="#000" d="M12 3C6.48 3 2 6.48 2 10.78c0 2.78 1.86 5.22 4.66 6.6-.15.52-.97 3.36-1 3.58 0 0-.02.17.09.23.11.06.24.01.24.01.31-.04 3.62-2.37 4.2-2.78.59.08 1.19.13 1.81.13 5.52 0 10-3.48 10-7.77C22 6.48 17.52 3 12 3z"/></svg>';
 
 // Google 로고 (Google 로그인 버튼 안내에 맞춘 G 모양)
 const G_LOGO = '<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">' +
@@ -18,10 +22,14 @@ function render(app) {
       '<div class="login-card">' +
         '<div class="login-mark" lang="ja" aria-hidden="true">合</div>' +
         "<h2>로그인</h2>" +
-        '<p class="login-lede">Google 계정으로 로그인하면 학습 기록이 내 계정에 저장되고, 다른 기기에서도 이어서 공부할 수 있어요.</p>' +
+        '<p class="login-lede">Google 또는 카카오 계정으로 로그인하면 학습 기록이 내 계정에 저장되고, 다른 기기에서도 이어서 공부할 수 있어요.</p>' +
         (wanted && !signedIn() ? '<p class="notice" role="status">학습 화면은 로그인한 뒤에 볼 수 있어요. 로그인하면 보려던 화면으로 바로 이동해요.</p>' : "") +
-        '<button type="button" class="google-btn" id="google-login"' + (ready ? "" : ' disabled aria-describedby="login-state"') + ">" +
-          G_LOGO + "<span>Google 계정으로 로그인</span></button>" +
+        '<div class="login-btns">' +
+          '<button type="button" class="kakao-btn" id="kakao-login"' + (ready ? "" : ' disabled aria-describedby="login-state"') + ">" +
+            KAKAO_LOGO + "<span>카카오 로그인</span></button>" +
+          '<button type="button" class="google-btn" id="google-login"' + (ready ? "" : ' disabled aria-describedby="login-state"') + ">" +
+            G_LOGO + "<span>Google 계정으로 로그인</span></button>" +
+        "</div>" +
         (ready
           ? '<p class="login-error" id="login-error" role="alert" hidden></p>'
           : '<p class="login-state" id="login-state"><span class="badge warn">준비 중</span> 로그인 기능을 아직 연결하지 않았어요. 지금은 버튼을 눌러도 로그인되지 않아요.</p>') +
@@ -32,14 +40,14 @@ function render(app) {
               '<input id="tl-email" type="email" placeholder="이메일" autocomplete="off"><input id="tl-pass" type="password" placeholder="비밀번호" autocomplete="off">' +
               '<button class="btn ghost" type="submit">테스트 계정으로 로그인</button></form>'
           : "") +
-        '<p class="hint login-note">로그인에는 이름·이메일·프로필 사진만 쓰여요. 기존에 이 브라우저에 저장된 학습 기록은 지워지지 않아요.</p>' +
+        '<p class="hint login-note">로그인에는 이름(닉네임)·이메일·프로필 사진만 쓰여요. 카카오 로그인은 닉네임과 프로필 사진만 받아요. 기존에 이 브라우저에 저장된 학습 기록은 지워지지 않아요.</p>' +
       "</div>" +
     "</section>";
   const btn = app.querySelector("#google-login");
   const returned = ready ? peekLoginError() : "";   // 다시 로그인 버튼을 누를 때까지 남겨 둔다
-  if (returned) {   // Google 화면에서 취소했거나 로그인이 거절되고 돌아온 경우
+  if (returned) {   // Google·카카오 화면에서 취소했거나 로그인이 거절되고 돌아온 경우
     const box = app.querySelector("#login-error");
-    box.textContent = "로그인을 마치지 못했어요. 다시 시도해 주세요. 등록된 Google 계정만 로그인할 수 있어요. (" + returned + ")";
+    box.textContent = "로그인을 마치지 못했어요. 다시 시도해 주세요. (" + returned + ")";
     box.hidden = false;
   }
   const tl = app.querySelector("#test-login");
@@ -49,17 +57,23 @@ function render(app) {
     try { await signInTestAccount(app.querySelector("#tl-email").value, app.querySelector("#tl-pass").value); }
     catch (err) { box.textContent = "테스트 계정 로그인 실패: " + (err.message || "오류"); box.hidden = false; }
   };
-  if (ready) btn.onclick = async () => {
-    btn.disabled = true;
-    clearLoginError();
-    try { await signInWithGoogle(); }   // 성공하면 Google 화면으로 넘어갔다가 돌아온다
-    catch (e) {
-      btn.disabled = false;
-      const box = app.querySelector("#login-error");
-      box.textContent = "로그인하지 못했어요. 잠시 뒤 다시 시도해 주세요. (" + (e.message || "알 수 없는 오류") + ")";
-      box.hidden = false;
-    }
+  // 두 버튼이 같은 순서로 동작한다: 누르면 잠그고, 성공하면 그 회사 로그인 화면으로 넘어갔다가 돌아온다
+  const hook = (button, signIn) => {
+    if (!ready) return;
+    button.onclick = async () => {
+      app.querySelectorAll(".login-btns button").forEach(b => { b.disabled = true; });
+      clearLoginError();
+      try { await signIn(); }
+      catch (e) {
+        app.querySelectorAll(".login-btns button").forEach(b => { b.disabled = false; });
+        const box = app.querySelector("#login-error");
+        box.textContent = "로그인하지 못했어요. 잠시 뒤 다시 시도해 주세요. (" + (e.message || "알 수 없는 오류") + ")";
+        box.hidden = false;
+      }
+    };
   };
+  hook(btn, () => signInWithGoogle());
+  hook(app.querySelector("#kakao-login"), () => signInWithKakao());
 }
 
 export const loginView = {

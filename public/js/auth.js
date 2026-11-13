@@ -72,12 +72,12 @@ export async function initAuth(onChange) {
 
 export const signedIn = () => !!session;
 export const currentUser = () => (session ? session.user : null);
-// 화면에 보일 이름: Google 이름 → 이메일 순
+// 화면에 보일 이름: Google·카카오 이름(닉네임) → 이메일 순 (카카오는 이메일이 없을 수 있다)
 export function userLabel() {
   const u = currentUser();
   if (!u) return "";
   const m = u.user_metadata || {};
-  return m.full_name || m.name || u.email || "로그인한 사용자";
+  return m.full_name || m.name || m.nickname || m.preferred_username || m.user_name || u.email || "로그인한 사용자";
 }
 
 // 자동 테스트용: 이 컴퓨터의 테스트 서버(localhost)에서 ?auth=off를 붙였을 때만 잠금을 끈다 (실제 사이트에서는 통하지 않는다)
@@ -91,6 +91,20 @@ export async function signInWithGoogle() {
   if (!client) throw new Error("로그인 기능이 아직 연결되지 않았어요.");
   const { error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo: AUTH_CONFIG.redirectTo } });
   if (error) throw error;
+}
+
+// 카카오 로그인: Supabase가 카카오 로그인 화면으로 보냈다가, 로그인이 끝나면 이 사이트로 돌려보낸다
+// 카카오 앱 키와 Client Secret은 Supabase 대시보드에만 넣는다 (이 파일과 저장소에는 넣지 않는다).
+// 이메일은 카카오 비즈 앱 심사가 있어야 받을 수 있어서, 기본으로는 닉네임·프로필 사진만 요청한다.
+// dryRun: 화면을 옮기지 않고 이동할 주소만 돌려준다 (자동 테스트용)
+export async function signInWithKakao({ dryRun = false } = {}) {
+  if (!client) throw new Error("로그인 기능이 아직 연결되지 않았어요.");
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "kakao",
+    options: { redirectTo: AUTH_CONFIG.redirectTo, scopes: AUTH_CONFIG.kakaoScopes || "profile_nickname profile_image", skipBrowserRedirect: dryRun },
+  });
+  if (error) throw error;
+  return data && data.url;
 }
 
 export async function signOut() { if (client) await client.auth.signOut(); session = null; }

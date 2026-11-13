@@ -1661,3 +1661,14 @@ select, .field select, .rate select, .voice-set select, select.inline-input {
   .cat-go .chip { flex: 1; }
   .topic-pick .field { flex: 1 1 100%; max-width: none; }
 }
+
+/* 카카오 로그인 버튼: 카카오 버튼 안내 모양 (노란 바탕 #FEE500, 검은 말풍선, 글자 85% 검정) */
+.kakao-btn {
+  width: 100%; min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  border: 0; border-radius: 999px; background: #FEE500; color: rgba(0, 0, 0, .85);
+  font: 600 15px/1 var(--font-body); padding: 0 20px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.kakao-btn:hover:not(:disabled) { filter: brightness(.97); }
+.kakao-btn:disabled { opacity: .55; cursor: not-allowed; }
+.kakao-logo { width: 18px; height: 18px; flex: 0 0 auto; }
+.login-btns { display: grid; gap: 10px; width: 100%; }
