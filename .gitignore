@@ -5,6 +5,7 @@
 # 환경 변수 파일: API 키·비밀번호를 담는 곳
 .env
 .env.*
+!.env.example
 *.local
 # 인증서·개인 키
 *.pem
