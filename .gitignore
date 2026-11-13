@@ -1,7 +1,60 @@
-# 비밀 정보가 담길 수 있는 파일은 GitHub에 올리지 않는다
+# GitHub에 올리지 않을 파일 목록
+# 여기에 적은 이름과 맞는 파일은 git이 무시한다. 이미 올라간 파일에는 적용되지 않으니, 그런 파일은 따로 빼야 한다.
+
+# ---------- 비밀 정보 (절대 올리지 않는다) ----------
+# 환경 변수 파일: API 키·비밀번호를 담는 곳
 .env
 .env.*
 *.local
-supabase/.temp/
+# 인증서·개인 키
 *.pem
 *.p8
+*.p12
+*.pfx
+*.key
+id_rsa*
+id_ed25519*
+# Google·Supabase 등에서 내려받은 비밀 설정 파일
+client_secret*.json
+*service-account*.json
+*service_account*.json
+*credentials*.json
+secrets.*
+*.secret
+# Supabase 명령 도구가 만드는 임시 폴더 (로그인 정보가 들어갈 수 있다)
+supabase/.temp/
+supabase/.branches/
+
+# ---------- 백업·기록 파일 (개인 학습 기록이 들어 있다) ----------
+jlpt-*-backup-*.json
+
+# ---------- 테스트 도구가 잠깐 만드는 파일 ----------
+_test.html
+_shot_*.html
+
+# ---------- 운영체제가 자동으로 만드는 파일 ----------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---------- 편집기 설정 ----------
+.vscode/
+.idea/
+*.swp
+*~
+
+# ---------- 임시·로그 파일 ----------
+*.log
+*.tmp
+*.bak
+*.orig
+
+# ---------- 설치 도구가 만드는 폴더 (지금은 쓰지 않지만 대비) ----------
+node_modules/
+
+# ---------- 큰 프로그램 파일 (음성 엔진·변환 도구는 저장소 밖에 둔다) ----------
+*.vvpp
+*.zip
+*.exe
